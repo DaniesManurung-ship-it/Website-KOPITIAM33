@@ -1,0 +1,326 @@
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Color Variables */
+    :root {
+        --sage: #8BA888;
+        --cream: #F5EFE6;
+        --wood: #A67B5B;
+        --accent: #D97642;
+    }
+    
+    /* Container */
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    /* Header Section */
+    .contact-header {
+        background: var(--sage);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+    }
+    
+    .contact-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-header p {
+        font-size: 1.25rem;
+        max-width: 768px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+    
+    /* Section */
+    .section {
+        padding: 4rem 0;
+    }
+    
+    /* Grid */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    @media (min-width: 1024px) {
+        .contact-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    /* Contact Info */
+    .contact-info-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 2rem;
+    }
+    
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .info-icon {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        background: rgba(139, 168, 136, 0.2);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .info-icon svg {
+        width: 24px;
+        height: 24px;
+        color: var(--sage);
+    }
+    
+    .info-content h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-content p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+    
+    .hours-list {
+        margin-top: 0.5rem;
+    }
+    
+    .hours-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+    }
+    
+    .hours-row span:first-child {
+        color: #6b7280;
+    }
+    
+    .hours-row span:last-child {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .contact-details {
+        margin-top: 0.5rem;
+    }
+    
+    .contact-detail {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        color: #6b7280;
+    }
+    
+    .contact-detail svg {
+        width: 16px;
+        height: 16px;
+        margin-right: 0.5rem;
+        color: var(--sage);
+    }
+    
+    /* Social Icons */
+    .social-icons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    
+    .social-link {
+        width: 40px;
+        height: 40px;
+        background: var(--sage);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .social-link:hover {
+        background: var(--wood);
+        transform: scale(1.1);
+    }
+    
+    .social-link svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Map Section */
+    .map-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .map-container {
+        position: relative;
+        height: 384px;
+        background: #e5e7eb;
+        overflow: hidden;
+    }
+    
+    .map-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .map-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .map-marker {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .marker-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--accent);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+    }
+    
+    .marker-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .marker-title {
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 0.25rem;
+    }
+    
+    .marker-address {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+    
+    .map-info {
+        padding: 1.5rem;
+    }
+    
+    .map-info h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 1rem;
+    }
+    
+    .transport-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .transport-list li {
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+    
+    .transport-list li .font-medium {
+        font-weight: 500;
+    }
+    
+    /* Space utilities */
+    .space-y-8 > * + * {
+        margin-top: 2rem;
+    }
+    
+    .space-y-2 > * + * {
+        margin-top: 0.5rem;
+    }
+    
+    .space-y-1 > * + * {
+        margin-top: 0.25rem;
+    }
+    
+    .space-x-3 > * + * {
+        margin-left: 0.75rem;
+    }
+    
+    /* Text utilities */
+    .text-gray-600 {
+        color: #6b7280;
+    }
+    
+    .font-medium {
+        font-weight: 500;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .contact-header h1 {
+            font-size: 2rem;
+        }
+        
+        .contact-header p {
+            font-size: 1rem;
+        }
+        
+        .section {
+            padding: 3rem 0;
+        }
+        
+        .contact-info-title {
+            font-size: 1.5rem;
+        }
+        
+        .info-item {
+            flex-direction: column;
+        }
+        
+        .info-icon {
+            margin-bottom: 0.5rem;
+            margin-right: 0;
+        }
+        
+        .map-container {
+            height: 300px;
+        }
+    }
