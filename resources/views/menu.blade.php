@@ -336,7 +336,7 @@
         font-weight: 500;
     }
     
-    /* Button Group - SAMA SEPERTI HALAMAN PROMO */
+    /* Button Group */
     .button-group {
         display: flex;
         gap: 0.5rem;
@@ -409,7 +409,7 @@
         cursor: not-allowed;
     }
     
-    /* Alert Login - SAMA SEPERTI HALAMAN PROMO */
+    /* Alert Login */
     .alert-login {
         background: #FEF3C7;
         color: #D97706;
@@ -466,68 +466,6 @@
     .page-btn.active {
         background: var(--sage);
         color: white;
-    }
-    
-    /* Order Info Section */
-    .order-info {
-        background: var(--cream);
-        padding: 3rem 0;
-        text-align: center;
-    }
-    
-    .order-info h2 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.875rem;
-        font-weight: 600;
-        color: var(--wood);
-        margin-bottom: 1.5rem;
-    }
-    
-    .steps-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        max-width: 768px;
-        margin: 0 auto;
-    }
-    
-    @media (min-width: 768px) {
-        .steps-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    
-    .step {
-        padding: 1.5rem;
-    }
-    
-    .step-icon {
-        width: 64px;
-        height: 64px;
-        background: rgba(139, 168, 136, 0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-    }
-    
-    .step-number {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--sage);
-    }
-    
-    .step-title {
-        font-weight: 600;
-        font-size: 1.125rem;
-        color: var(--wood);
-        margin-bottom: 0.5rem;
-    }
-    
-    .step-text {
-        color: #6b7280;
-        font-size: 0.875rem;
     }
     
     /* Modal */
@@ -637,10 +575,6 @@
         
         .filter-buttons {
             justify-content: center;
-        }
-        
-        .order-info h2 {
-            font-size: 1.5rem;
         }
         
         .button-group {
@@ -812,7 +746,6 @@
                     </div>
                 `;
             } else if (!isLoggedIn) {
-                // Guest: tombol dengan alert login (SAMA SEPERTI PROMO)
                 buttonHtml = `
                     <div class="button-group">
                         <button class="cart-btn" onclick="requireLogin()">
@@ -830,7 +763,6 @@
                     </div>
                 `;
             } else {
-                // User sudah login: tombol normal (SAMA SEPERTI PROMO)
                 buttonHtml = `
                     <div class="button-group">
                         <button class="cart-btn" onclick="addToCart(${item.id})">
@@ -934,13 +866,24 @@
         document.getElementById('juiceDropdown')?.classList.remove('show');
     }
     
-    // Fungsi untuk user yang sudah login (aksi nyata)
+    // Fungsi untuk user yang sudah login (aksi nyata) - SAMA SEPERTI PROMO
     function addToCart(itemId) {
         const item = menuData.find(m => m.id === itemId);
         if (!item) return;
+        
         const existing = cart.find(c => c.id === itemId);
-        if (existing) existing.quantity += 1;
-        else cart.push({ id: item.id, name: item.name, price: item.price, image: item.image, quantity: 1 });
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({ 
+                id: item.id, 
+                name: item.name, 
+                price: item.price, 
+                image: item.image, 
+                quantity: 1 
+            });
+        }
+        
         localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
         showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
         window.dispatchEvent(new CustomEvent('cart-updated'));
@@ -954,12 +897,67 @@
         document.getElementById('quantityModal').classList.add('show');
     }
     
-    function incrementQty() { selectedQty++; document.getElementById('qtyValue').textContent = selectedQty; }
-    function decrementQty() { if (selectedQty > 1) { selectedQty--; document.getElementById('qtyValue').textContent = selectedQty; } }
+    function incrementQty() { 
+        selectedQty++; 
+        document.getElementById('qtyValue').textContent = selectedQty; 
+    }
+    
+    function decrementQty() { 
+        if (selectedQty > 1) { 
+            selectedQty--; 
+            document.getElementById('qtyValue').textContent = selectedQty; 
+        } 
+    }
     
     function confirmOrder() {
-        const total = selectedItem.price * selectedQty;
-        showNotification(`${selectedItem.name} (${selectedQty} porsi) - Total Rp ${total.toLocaleString('id-ID')} 🎉`);
+        if (!selectedItem) {
+            closeModal();
+            return;
+        }
+        
+        const confirmBtn = document.querySelector('.modal-confirm');
+        const originalText = confirmBtn.textContent;
+        confirmBtn.textContent = '⏳ Memproses...';
+        confirmBtn.disabled = true;
+        
+        const orderItem = {
+            id: selectedItem.id,
+            name: selectedItem.name,
+            price: parseInt(selectedItem.price),
+            quantity: parseInt(selectedQty),
+            image: selectedItem.image || '',
+            is_promo: false
+        };
+        
+        fetch('{{ route("order.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ cart: [orderItem] })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('✅ Pesanan berhasil!');
+                setTimeout(() => {
+                    window.location.href = '{{ route("orders.history") }}';
+                }, 1500);
+            } else {
+                showNotification('❌ Gagal: ' + (data.message || 'Error'));
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('⚠️ Terjadi kesalahan');
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+        });
+        
         closeModal();
     }
     

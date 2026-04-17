@@ -1,3 +1,4 @@
+{{-- resources/views/menu_spesial.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Menu Spesial - Café Kopitiam33')
@@ -10,6 +11,7 @@
         box-sizing: border-box;
     }
     
+    /* Color Variables - SAMA DENGAN MENU */
     :root {
         --sage: #8BA888;
         --cream: #F5EFE6;
@@ -23,44 +25,122 @@
         background: #F5EFE6;
     }
     
+    /* Container */
     .container {
         max-width: 1280px;
         margin: 0 auto;
         padding: 0 1rem;
     }
     
-    .page-header {
-        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+    /* Menu Header - SAMA DENGAN MENU */
+    .menu-header {
+        background: var(--sage);
         color: white;
         padding: 3rem 0;
         text-align: center;
     }
     
-    .page-header h1 {
+    .menu-header h1 {
         font-family: 'Playfair Display', serif;
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
     }
     
-    .page-header p {
+    .menu-header p {
         font-size: 1rem;
         max-width: 600px;
         margin: 0 auto;
         opacity: 0.9;
     }
     
-    .section {
-        padding: 3rem 0;
+    /* Featured Section */
+    .featured-section {
+        padding: 2rem 0 1rem 0;
     }
     
-    .section-cream {
-        background: var(--cream);
+    .featured-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
     
+    .featured-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    .featured-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 768px) {
+        .featured-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    
+    .featured-image {
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--gold);
+        color: var(--wood);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+    
+    .featured-content {
+        padding: 1.5rem;
+    }
+    
+    .featured-category {
+        display: inline-block;
+        background: rgba(217, 118, 66, 0.1);
+        color: var(--accent);
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .featured-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--wood);
+        margin-bottom: 0.5rem;
+    }
+    
+    .featured-desc {
+        color: #6b7280;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .featured-price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+    
+    /* Section Header */
     .section-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin: 2rem 0 1.5rem 0;
     }
     
     .section-title {
@@ -68,21 +148,26 @@
         font-size: 1.75rem;
         font-weight: 600;
         color: var(--wood);
+        position: relative;
+        display: inline-block;
     }
     
     .section-title::after {
         content: '';
         display: block;
-        width: 50px;
-        height: 2px;
+        width: 60px;
+        height: 3px;
         background: var(--accent);
         margin: 0.5rem auto 0;
+        border-radius: 2px;
     }
     
+    /* Menu Grid - SAMA DENGAN MENU */
     .menu-grid {
         display: grid;
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr;
         gap: 1.5rem;
+        padding: 2rem 0 3rem 0;
     }
     
     @media (min-width: 640px) {
@@ -93,10 +178,17 @@
     
     @media (min-width: 1024px) {
         .menu-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (min-width: 1280px) {
+        .menu-grid {
             grid-template-columns: repeat(4, 1fr);
         }
     }
     
+    /* Menu Card - SAMA DENGAN MENU */
     .menu-card {
         background: white;
         border-radius: 0.75rem;
@@ -110,55 +202,95 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
     
-    .menu-image {
-        width: 100%;
+    .menu-image-container {
+        position: relative;
         height: 160px;
-        object-fit: cover;
+        overflow: hidden;
     }
     
-    .menu-content {
+    .menu-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    
+    .menu-card:hover .menu-image {
+        transform: scale(1.05);
+    }
+    
+    .badge {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    
+    .badge-accent {
+        background: var(--accent);
+        color: white;
+    }
+    
+    .badge-gold {
+        background: var(--gold);
+        color: var(--wood);
+    }
+    
+    .badge-right {
+        left: auto;
+        right: 0.75rem;
+    }
+    
+    .menu-info {
         padding: 0.75rem;
     }
     
-    .menu-title {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--wood);
+    .menu-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         margin-bottom: 0.25rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    }
+    
+    .menu-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--wood);
     }
     
     .menu-price {
         font-weight: bold;
         color: var(--accent);
         font-size: 0.85rem;
-        margin-bottom: 0.5rem;
     }
     
-    .menu-desc {
+    .menu-description {
         color: #6b7280;
         font-size: 0.7rem;
+        margin-bottom: 0.5rem;
         line-height: 1.4;
-        margin-bottom: 0.75rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
     
-    .menu-badge {
-        display: inline-block;
-        background: rgba(217, 118, 66, 0.1);
-        color: var(--accent);
-        padding: 0.2rem 0.5rem;
-        border-radius: 20px;
-        font-size: 0.6rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
+    .menu-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
+    .menu-category {
+        font-size: 0.65rem;
+        color: var(--sage);
+        font-weight: 500;
+    }
+    
+    /* Button Group - SAMA DENGAN MENU */
     .button-group {
         display: flex;
         gap: 0.5rem;
@@ -169,14 +301,14 @@
         flex: 1;
         background: var(--sage);
         color: white;
-        padding: 0.4rem 0.5rem;
+        padding: 0.35rem 0.5rem;
         border: none;
         border-radius: 0.375rem;
         font-weight: 500;
         cursor: pointer;
         transition: background 0.2s;
         font-family: 'Poppins', sans-serif;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -191,14 +323,14 @@
         flex: 1;
         background: var(--accent);
         color: white;
-        padding: 0.4rem 0.5rem;
+        padding: 0.35rem 0.5rem;
         border: none;
         border-radius: 0.375rem;
         font-weight: 500;
         cursor: pointer;
         transition: background 0.2s;
         font-family: 'Poppins', sans-serif;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -209,7 +341,7 @@
         background: #c0392b;
     }
     
-    /* Alert Login */
+    /* Alert Login - SAMA DENGAN MENU */
     .alert-login {
         background: #FEF3C7;
         color: #D97706;
@@ -229,79 +361,46 @@
         height: 14px;
     }
     
-    .featured-card {
-        background: white;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* Pagination - SAMA DENGAN MENU */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
         margin-bottom: 2rem;
     }
     
-    .featured-grid {
-        display: grid;
-        grid-template-columns: 1fr;
+    .pagination-nav {
+        display: flex;
+        gap: 0.5rem;
     }
     
-    @media (min-width: 768px) {
-        .featured-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-    
-    .featured-image {
-        height: 260px;
-        background-size: cover;
-        background-position: center;
-        position: relative;
-    }
-    
-    .featured-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: var(--gold);
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        background: var(--cream);
         color: var(--wood);
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
     }
     
-    .featured-content {
-        padding: 1.5rem;
+    .page-btn:hover {
+        background: var(--sage);
+        color: white;
     }
     
-    .featured-category {
-        display: inline-block;
-        background: rgba(217, 118, 66, 0.1);
-        color: var(--accent);
-        padding: 0.2rem 0.6rem;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        margin-bottom: 0.75rem;
+    .page-btn.active {
+        background: var(--sage);
+        color: white;
     }
     
-    .featured-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--wood);
-        margin-bottom: 0.5rem;
-    }
-    
-    .featured-desc {
-        color: #6b7280;
-        font-size: 0.8rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-    }
-    
-    .featured-price {
-        font-size: 1.25rem;
-        font-weight: bold;
-        color: var(--accent);
-        margin-bottom: 1rem;
-    }
-    
+    /* Modal - SAMA DENGAN MENU */
     .quantity-modal {
         display: none;
         position: fixed;
@@ -329,7 +428,7 @@
     }
     
     .modal-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         color: var(--wood);
         margin-bottom: 1rem;
@@ -399,56 +498,58 @@
         grid-column: 1/-1;
     }
     
+    /* Responsive - SAMA DENGAN MENU */
     @media (max-width: 640px) {
-        .page-header h1 {
+        .menu-header h1 {
             font-size: 1.75rem;
         }
         
-        .section {
-            padding: 2rem 0;
+        .button-group {
+            flex-direction: column;
         }
         
         .featured-image {
             height: 200px;
         }
         
-        .button-group {
-            flex-direction: column;
+        .featured-title {
+            font-size: 1.1rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<!-- Header -->
-<section class="page-header">
+<!-- Menu Header - SAMA DENGAN MENU -->
+<section class="menu-header">
     <div class="container">
-        <h1>Menu Spesial</h1>
+        <h1>✨ Menu Spesial</h1>
         <p>Hidangan pilihan dengan bahan terbaik dan resep eksklusif</p>
     </div>
 </section>
 
-<!-- Featured Menu -->
+<!-- Featured Menu - MENU UNGGULAN DI ATAS -->
 @if(isset($featuredMenu) && $featuredMenu)
-<section class="section">
+<section class="featured-section">
     <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Signature Dish</h2>
-        </div>
         <div class="featured-card">
             <div class="featured-grid">
-                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? asset('uploads/default/default-menu.jpg') }}');">
+                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? asset('storage/default-menu.jpg') }}');">
                     <div class="featured-badge">⭐ {{ $featuredMenu->badge ?? 'Signature' }}</div>
                 </div>
                 <div class="featured-content">
-                    <span class="featured-category">Chef's Signature</span>
+                    <span class="featured-category">👨‍🍳 Chef's Signature</span>
                     <h3 class="featured-title">{{ $featuredMenu->name }}</h3>
                     <p class="featured-desc">{{ $featuredMenu->description ?? 'Nikmati kelezatan menu spesial kami' }}</p>
                     <div class="featured-price">Rp {{ number_format($featuredMenu->price, 0, ',', '.') }}</div>
                     <div class="button-group">
                         @auth
                             <button class="cart-btn" onclick="addToCart({{ $featuredMenu->id }})">🛒 Keranjang</button>
-                            <button class="order-btn" onclick="openOrderModal({{ $featuredMenu->id }})">📝 Pesan</button>
+                            <button class="order-btn" onclick="orderNow({{ $featuredMenu->id }})">📝 Pesan</button>
                         @else
                             <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
                             <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
@@ -469,54 +570,23 @@
 </section>
 @endif
 
-<!-- Menu Spesial Grid -->
-<section class="section section-cream">
+<!-- Section Header -->
+<div class="container">
+    <div class="section-header">
+        <h2 class="section-title">🍽️ Koleksi Menu Spesial</h2>
+    </div>
+</div>
+
+<!-- Menu Grid -->
+<section>
     <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Menu Spesial</h2>
-        </div>
-        <div class="menu-grid">
-            @forelse($regularMenus ?? [] as $menu)
-            <div class="menu-card">
-                <img src="{{ $menu->image_url ?? asset('uploads/default/default-menu.jpg') }}" alt="{{ $menu->name }}" class="menu-image" loading="lazy">
-                <div class="menu-content">
-                    <h4 class="menu-title">{{ $menu->name }}</h4>
-                    <div class="menu-price">Rp {{ number_format($menu->price, 0, ',', '.') }}</div>
-                    <p class="menu-desc">{{ $menu->description ?? 'Nikmati kelezatan menu spesial kami' }}</p>
-                    @if($menu->badge)
-                        <span class="menu-badge">{{ $menu->badge }}</span>
-                    @endif
-                    <div class="button-group">
-                        @auth
-                            <button class="cart-btn" onclick="addToCart({{ $menu->id }})">🛒 Keranjang</button>
-                            <button class="order-btn" onclick="openOrderModal({{ $menu->id }})">📝 Pesan</button>
-                        @else
-                            <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
-                            <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
-                        @endauth
-                    </div>
-                    @guest
-                        <div class="alert-login">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                            <span>Login untuk membeli</span>
-                        </div>
-                    @endguest
-                </div>
-            </div>
-            @empty
-            <div class="empty-state">
-                <p>Belum ada menu spesial saat ini</p>
-                <p style="font-size: 0.8rem; margin-top: 0.5rem;">Kunjungi lagi nanti untuk menu menarik</p>
-            </div>
-            @endforelse
-        </div>
+        <div class="menu-grid" id="menuGrid"></div>
+        <div class="pagination" id="pagination"></div>
     </div>
 </section>
 
-<!-- Modal -->
-<div id="orderModal" class="quantity-modal">
+<!-- Modal - SAMA DENGAN MENU -->
+<div id="quantityModal" class="quantity-modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modalTitle">Pilih Jumlah Pesanan</h3>
         <div class="quantity-control">
@@ -533,14 +603,17 @@
 
 <script>
     // Data dari database
-    const menuSpesial = @json($menuSpesial ?? []);
-    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    const menuSpesialData = @json($menuSpesial ?? []);
+    const featuredMenuData = @json($featuredMenu ?? null);
     
-    console.log('Menu Spesial Data:', menuSpesial);
-    
+    let currentPage = 1;
+    const itemsPerPage = 8;
     let cart = JSON.parse(localStorage.getItem('kopitiam_cart')) || [];
     let selectedItem = null;
     let selectedQty = 1;
+    
+    // Cek apakah user sudah login
+    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
     function requireLogin() {
         if (!isLoggedIn) {
@@ -552,61 +625,176 @@
         return true;
     }
     
-    // Fungsi untuk user yang sudah login
-    function addToCart(itemId) {
-        const item = menuSpesial.find(m => m.id === itemId);
-        if (!item) {
-            showNotification('Error: Menu tidak ditemukan');
+    function getImageUrl(image) {
+        if (!image) return '/storage/default-menu.jpg';
+        if (image.startsWith('http')) return image;
+        if (image.startsWith('/storage/')) return image;
+        if (image.startsWith('uploads/')) return '/' + image;
+        return '/storage/' + image;
+    }
+    
+    // Ambil semua menu (tanpa featured menu untuk grid, karena featured sudah ditampilkan terpisah)
+    function getRegularMenus() {
+        let filtered = [...menuSpesialData];
+        // Jika ada featured menu, exclude dari grid
+        if (featuredMenuData) {
+            filtered = filtered.filter(item => item.id !== featuredMenuData.id);
+        }
+        return filtered;
+    }
+    
+    function renderMenu() {
+        const regularMenus = getRegularMenus();
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const paginatedItems = regularMenus.slice(startIndex, startIndex + itemsPerPage);
+        const container = document.getElementById('menuGrid');
+        
+        if (!container) return;
+        container.innerHTML = '';
+        
+        if (regularMenus.length === 0 && !featuredMenuData) {
+            container.innerHTML = `<div class="empty-state"><p>✨ Belum ada menu spesial saat ini</p><p style="font-size: 0.8rem; margin-top: 0.5rem;">Kunjungi lagi nanti untuk menu menarik</p></div>`;
+            document.getElementById('pagination').innerHTML = '';
             return;
         }
         
-        const existing = cart.find(c => c.id === itemId && c.is_menu_spesial === true);
+        if (regularMenus.length === 0 && featuredMenuData) {
+            container.innerHTML = `<div class="empty-state"><p>✨ Belum ada menu spesial lainnya</p><p style="font-size: 0.8rem; margin-top: 0.5rem;">Kunjungi lagi nanti untuk menu menarik</p></div>`;
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+        
+        paginatedItems.forEach(item => {
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-card';
+            
+            let badgeHtml = '';
+            if (item.badge === 'best-seller') {
+                badgeHtml = '<span class="badge badge-accent">⭐ BEST SELLER</span>';
+            } else if (item.badge === 'new') {
+                badgeHtml = '<span class="badge badge-accent badge-right">✨ BARU</span>';
+            }
+            
+            const imageUrl = getImageUrl(item.image);
+            
+            // Tampilan SAMA SEPERTI MENU
+            let buttonHtml = '';
+            if (!isLoggedIn) {
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
+                        <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
+                    </div>
+                    <div class="alert-login">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Login untuk membeli</span>
+                    </div>
+                `;
+            } else {
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="addToCart(${item.id})">🛒 Keranjang</button>
+                        <button class="order-btn" onclick="orderNow(${item.id})">📝 Pesan</button>
+                    </div>
+                `;
+            }
+            
+            menuItem.innerHTML = `
+                <div class="menu-image-container">
+                    <img src="${imageUrl}" alt="${item.name}" class="menu-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
+                    ${badgeHtml}
+                </div>
+                <div class="menu-info">
+                    <div class="menu-header-row">
+                        <h3 class="menu-title">${item.name}</h3>
+                        <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                    </div>
+                    <p class="menu-description">${item.description || 'Nikmati kelezatan menu spesial kami'}</p>
+                    <div class="menu-footer">
+                        <span class="menu-category">Menu Spesial</span>
+                    </div>
+                    ${buttonHtml}
+                </div>
+            `;
+            container.appendChild(menuItem);
+        });
+        
+        renderPagination(regularMenus.length);
+    }
+    
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer) return;
+        if (totalPages <= 1) { paginationContainer.innerHTML = ''; return; }
+        
+        let html = '<div class="pagination-nav">';
+        html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.5;"' : ''}>&laquo;</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.5;"' : ''}>&raquo;</button>`;
+        html += '</div>';
+        paginationContainer.innerHTML = html;
+    }
+    
+    function changePage(page) {
+        const regularMenus = getRegularMenus();
+        const totalPages = Math.ceil(regularMenus.length / itemsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Fungsi add to cart - SAMA SEPERTI MENU
+    function addToCart(itemId) {
+        const item = menuSpesialData.find(m => m.id === itemId);
+        if (!item) return;
+        
+        const existing = cart.find(c => c.id === itemId);
         if (existing) {
             existing.quantity += 1;
         } else {
-            cart.push({
-                id: item.id,
-                name: item.name,
-                price: item.price,
+            cart.push({ 
+                id: item.id, 
+                name: item.name, 
+                price: item.price, 
+                image: item.image, 
                 quantity: 1,
-                image: item.image,
-                is_menu_spesial: true,
-                type: 'menu_spesial'
+                is_menu_spesial: true
             });
         }
         
         localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
         showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
         window.dispatchEvent(new CustomEvent('cart-updated'));
-        
-        if (typeof updateCartCount === 'function') {
-            updateCartCount();
-        }
     }
     
-    function openOrderModal(itemId) {
-        selectedItem = menuSpesial.find(m => m.id === itemId);
-        if (!selectedItem) {
-            showNotification('Error: Menu tidak ditemukan');
-            return;
-        }
+    // Fungsi order now - SAMA SEPERTI MENU
+    function orderNow(itemId) {
+        const item = menuSpesialData.find(m => m.id === itemId);
+        if (!item) return;
         
+        selectedItem = item;
         selectedQty = 1;
         document.getElementById('qtyValue').textContent = selectedQty;
         document.getElementById('modalTitle').textContent = selectedItem.name;
-        document.getElementById('orderModal').classList.add('show');
+        document.getElementById('quantityModal').classList.add('show');
     }
     
-    function incrementQty() {
-        selectedQty++;
-        document.getElementById('qtyValue').textContent = selectedQty;
+    function incrementQty() { 
+        selectedQty++; 
+        document.getElementById('qtyValue').textContent = selectedQty; 
     }
     
-    function decrementQty() {
-        if (selectedQty > 1) {
-            selectedQty--;
-            document.getElementById('qtyValue').textContent = selectedQty;
-        }
+    function decrementQty() { 
+        if (selectedQty > 1) { 
+            selectedQty--; 
+            document.getElementById('qtyValue').textContent = selectedQty; 
+        } 
     }
     
     function confirmOrder() {
@@ -624,14 +812,11 @@
         const orderItem = {
             id: selectedItem.id,
             name: selectedItem.name,
-            price: selectedItem.price,
-            quantity: selectedQty,
-            image: selectedItem.image,
-            is_menu_spesial: true,
-            type: 'menu_spesial'
+            price: parseInt(selectedItem.price),
+            quantity: parseInt(selectedQty),
+            image: selectedItem.image || '',
+            is_menu_spesial: true
         };
-        
-        console.log('Sending order:', orderItem);
         
         fetch('{{ route("order.store") }}', {
             method: 'POST',
@@ -644,22 +829,20 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Server response:', data);
-            
             if (data.success) {
-                showNotification('✅ Pesanan berhasil dibuat!');
+                showNotification('✅ Pesanan berhasil!');
                 setTimeout(() => {
                     window.location.href = '{{ route("orders.history") }}';
                 }, 1500);
             } else {
-                showNotification('❌ Gagal: ' + (data.message || 'Terjadi kesalahan'));
+                showNotification('❌ Gagal: ' + (data.message || 'Error'));
                 confirmBtn.textContent = originalText;
                 confirmBtn.disabled = false;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('⚠️ Terjadi kesalahan: ' + error.message);
+            showNotification('⚠️ Terjadi kesalahan');
             confirmBtn.textContent = originalText;
             confirmBtn.disabled = false;
         });
@@ -668,54 +851,25 @@
     }
     
     function closeModal() {
-        document.getElementById('orderModal').classList.remove('show');
+        document.getElementById('quantityModal').classList.remove('show');
         selectedItem = null;
         selectedQty = 1;
     }
     
     function showNotification(message) {
-        const oldNotif = document.querySelector('.custom-notification');
-        if (oldNotif) oldNotif.remove();
-        
         const notif = document.createElement('div');
-        notif.className = 'custom-notification';
-        notif.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--sage);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        `;
+        notif.style.cssText = `position:fixed;bottom:20px;right:20px;background:var(--sage);color:white;padding:10px 18px;border-radius:8px;font-size:13px;z-index:1000;animation:slideIn 0.3s ease;box-shadow:0 4px 12px rgba(0,0,0,0.15);`;
         notif.textContent = message;
         document.body.appendChild(notif);
-        
-        setTimeout(() => {
-            notif.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notif.remove(), 300);
-        }, 3000);
+        setTimeout(() => notif.remove(), 2000);
     }
     
-    document.getElementById('orderModal')?.addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
+    document.addEventListener('DOMContentLoaded', function() {
+        renderMenu();
     });
     
     const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
+    style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}`;
     document.head.appendChild(style);
 </script>
 @endsection
