@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Admin/PromoController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -22,7 +23,7 @@ class PromoController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'description' => 'nullable|string',
-            'original_price' => 'required|integer|min:1000',  // ← PASTIKAN INI
+            'original_price' => 'required|integer|min:1000',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -31,13 +32,20 @@ class PromoController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('promos', $filename, 'public');
+            
+            // Simpan ke public/uploads/promos
+            $destinationPath = public_path('uploads/promos');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = 'uploads/promos/' . $filename;
             
             Promo::create([
                 'name' => $request->name,
-                'image' => '/storage/' . $path,
+                'image' => $imagePath,
                 'description' => $request->description,
-                'original_price' => $request->original_price,  // ← PASTIKAN INI
+                'original_price' => $request->original_price,
                 'discount' => $request->discount,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
@@ -62,7 +70,7 @@ class PromoController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'description' => 'nullable|string',
-            'original_price' => 'required|integer|min:1000',  // ← PASTIKAN INI
+            'original_price' => 'required|integer|min:1000',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -71,21 +79,23 @@ class PromoController extends Controller
         $data = [
             'name' => $request->name,
             'description' => $request->description,
-            'original_price' => $request->original_price,  // ← PASTIKAN INI
+            'original_price' => $request->original_price,
             'discount' => $request->discount,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ];
         
         if ($request->hasFile('image')) {
+            // Hapus gambar lama
             if ($promo->image && file_exists(public_path($promo->image))) {
                 unlink(public_path($promo->image));
             }
             
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('promos', $filename, 'public');
-            $data['image'] = '/storage/' . $path;
+            $destinationPath = public_path('uploads/promos');
+            $file->move($destinationPath, $filename);
+            $data['image'] = 'uploads/promos/' . $filename;
         }
         
         $promo->update($data);
@@ -97,6 +107,7 @@ class PromoController extends Controller
     {
         $promo = Promo::findOrFail($id);
         
+        // Hapus gambar dari public/uploads
         if ($promo->image && file_exists(public_path($promo->image))) {
             unlink(public_path($promo->image));
         }

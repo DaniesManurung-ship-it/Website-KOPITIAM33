@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/PromoController.php
 
 namespace App\Http\Controllers;
 
@@ -10,13 +11,14 @@ class PromoController extends Controller
 {
     public function index()
     {
-        // Ambil semua promo yang aktif (tanpa filter tanggal untuk testing)
         $promos = Promo::where('is_active', true)
             ->orderBy('created_at', 'desc')
             ->get();
         
-        // Debug: cek apakah data promo punya original_price
-        // dd($promos);
+        // Tambahkan image_url untuk setiap promo
+        foreach ($promos as $promo) {
+            $promo->image_url = $promo->image_url;
+        }
         
         return view('promo', compact('promos'));
     }

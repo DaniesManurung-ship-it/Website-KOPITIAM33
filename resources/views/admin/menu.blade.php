@@ -596,7 +596,7 @@
                     <td>
                         <div class="menu-image-wrapper">
                             @if($menu->image)
-                                <img src="{{ asset('storage/' . $menu->image) }}" class="menu-image" alt="{{ $menu->name }}">
+                                <img src="{{ asset($menu->image) }}" class="menu-image" alt="{{ $menu->name }}">
                             @else
                                 <div class="no-image">No Image</div>
                             @endif
@@ -608,8 +608,6 @@
                             <span class="badge-best-seller">⭐ Best Seller</span>
                         @elseif($menu->badge == 'new')
                             <span class="badge-new">✨ Baru</span>
-                        @elseif($menu->badge == 'promo')
-                            <span class="badge-promo">🔥 Promo</span>
                         @endif
                     </td>
                     <td>
@@ -658,7 +656,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 0h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             <p>Belum ada menu</p>
-                            <button class="btn-add" onclick="openAddModal()" style="margin-top: 1rem; display: inline-flex;">+ Tambah Menu Pertama</button>
                         </div>
                     </td>
                 </tr>

@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
@@ -27,12 +26,17 @@ class MenuController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
         
-        $imagePath = null;
-        
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('menus', $filename, 'public');
+            
+            // Simpan ke public/uploads/menus
+            $destinationPath = public_path('uploads/menus');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = 'uploads/menus/' . $filename;
         }
         
         Menu::create([
@@ -76,14 +80,15 @@ class MenuController extends Controller
         
         if ($request->hasFile('image')) {
             // Hapus gambar lama
-            if ($menu->image && Storage::disk('public')->exists($menu->image)) {
-                Storage::disk('public')->delete($menu->image);
+            if ($menu->image && file_exists(public_path($menu->image))) {
+                unlink(public_path($menu->image));
             }
             
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('menus', $filename, 'public');
-            $data['image'] = $imagePath;
+            $destinationPath = public_path('uploads/menus');
+            $file->move($destinationPath, $filename);
+            $data['image'] = 'uploads/menus/' . $filename;
         }
         
         $menu->update($data);
@@ -95,8 +100,8 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($id);
         
-        if ($menu->image && Storage::disk('public')->exists($menu->image)) {
-            Storage::disk('public')->delete($menu->image);
+        if ($menu->image && file_exists(public_path($menu->image))) {
+            unlink(public_path($menu->image));
         }
         
         $menu->delete();

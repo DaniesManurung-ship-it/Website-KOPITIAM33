@@ -13,6 +13,24 @@
         --accent: #D97642;
     }
     
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #F5EFE6;
+    }
+    
+    /* Container */
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
     /* Promo Header - SAME AS MENU HEADER */
     .promo-header {
         background: var(--sage);
@@ -26,7 +44,6 @@
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
-        text-align: center;
     }
     
     .promo-header p {
@@ -34,7 +51,6 @@
         max-width: 600px;
         margin: 0 auto;
         opacity: 0.9;
-        text-align: center;
     }
     
     /* Filter Section - SAME AS MENU */
@@ -335,6 +351,26 @@
         height: 12px;
     }
     
+    /* Alert Login */
+    .alert-login {
+        background: #FEF3C7;
+        color: #D97706;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.65rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+    
+    .alert-login svg {
+        width: 14px;
+        height: 14px;
+    }
+    
     /* Pagination - SAME AS MENU */
     .pagination {
         display: flex;
@@ -535,7 +571,7 @@
 @endpush
 
 @section('content')
-<!-- Promo Header - SAME STYLE AS MENU HEADER -->
+<!-- Promo Header - SAME AS MENU HEADER -->
 <section class="promo-header">
     <div class="container">
         <h1>🎁 Promo Spesial</h1>
@@ -601,6 +637,7 @@
 
 <script>
     const promoData = @json($promos);
+    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
     let currentSearch = '';
     let currentPage = 1;
@@ -624,6 +661,24 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+    
+    function requireLogin() {
+        if (!isLoggedIn) {
+            if(confirm('🔒 Anda harus login terlebih dahulu. Buka halaman login?')) {
+                window.location.href = '{{ route("login") }}';
+            }
+            return false;
+        }
+        return true;
+    }
+    
+    function getImageUrl(image) {
+        if (!image) return '/storage/default-menu.jpg';
+        if (image.startsWith('http')) return image;
+        if (image.startsWith('/storage/')) return image;
+        if (image.startsWith('uploads/')) return '/' + image;
+        return '/storage/' + image;
     }
     
     function getFilteredItems() {
@@ -657,13 +712,46 @@
         paginatedItems.forEach(promo => {
             const originalPrice = promo.original_price || 0;
             const finalPrice = Math.floor(originalPrice - (originalPrice * promo.discount / 100));
+            const imageUrl = getImageUrl(promo.image);
+            
+            // Tampilan untuk guest (belum login) vs user (sudah login)
+            let buttonHtml = '';
+            if (!isLoggedIn) {
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="requireLogin()">
+                            🛒 Keranjang
+                        </button>
+                        <button class="order-now-btn" onclick="requireLogin()">
+                            📝 Pesan
+                        </button>
+                    </div>
+                    <div class="alert-login">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Login untuk membeli</span>
+                    </div>
+                `;
+            } else {
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="addToCart(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
+                            🛒 Keranjang
+                        </button>
+                        <button class="order-now-btn" onclick="orderNow(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
+                            📝 Pesan
+                        </button>
+                    </div>
+                `;
+            }
             
             const card = document.createElement('div');
             card.className = 'promo-card';
             card.innerHTML = `
                 <div class="promo-badge">⚡ ${promo.discount}% OFF</div>
                 <div class="promo-image-container">
-                    <img src="${promo.image}" alt="${promo.name}" class="promo-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
+                    <img src="${imageUrl}" alt="${promo.name}" class="promo-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
                 </div>
                 <div class="promo-content">
                     <h3 class="promo-title">${escapeHtml(promo.name)}</h3>
@@ -679,20 +767,7 @@
                         </svg>
                         <span>${formatDate(promo.start_date)} - ${formatDate(promo.end_date)}</span>
                     </div>
-                    <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            Keranjang
-                        </button>
-                        <button class="order-now-btn" onclick="orderNow(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                            </svg>
-                            Pesan
-                        </button>
-                    </div>
+                    ${buttonHtml}
                 </div>
             `;
             container.appendChild(card);
@@ -736,6 +811,7 @@
         renderPromo();
     }
     
+    // Fungsi untuk user yang sudah login (aksi nyata)
     function addToCart(promoId, price, originalPrice, discount) {
         const promo = promoData.find(p => p.id === promoId);
         if (!promo) return;

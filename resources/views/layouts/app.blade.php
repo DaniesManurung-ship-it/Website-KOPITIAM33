@@ -530,4 +530,4 @@
             Alpine.data('testimonialWidget', testimonialWidget);
         });
     </script>
-    @endauth
+    @endauth 

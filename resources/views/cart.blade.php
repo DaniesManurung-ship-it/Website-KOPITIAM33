@@ -276,6 +276,18 @@
         box-shadow: 0 4px 12px rgba(217, 118, 66, 0.3);
     }
     
+    .checkout-btn.disabled {
+        background: #e5e7eb;
+        color: #6b7280;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .checkout-btn.disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
     .payment-note {
         font-size: 0.65rem;
         color: #6b7280;
@@ -284,6 +296,32 @@
         padding: 0.5rem;
         background: var(--cream);
         border-radius: 0.5rem;
+    }
+    
+    /* Login Alert */
+    .login-alert {
+        background: #FEF3C7;
+        color: #D97706;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .login-alert svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .login-alert a {
+        color: #D97706;
+        font-weight: 600;
+        text-decoration: underline;
     }
     
     /* Empty Cart */
@@ -451,7 +489,7 @@
     <div class="loading-text">Memproses pesanan...</div>
 </div>
 
-<!-- Cart Header - SOLID SAGE BACKGROUND (dipastikan warna #8BA888) -->
+<!-- Cart Header - SOLID SAGE BACKGROUND -->
 <section class="cart-header" style="background: #8BA888 !important; background-color: #8BA888 !important;">
     <div class="container">
         <h1>🛒 Keranjang Belanja</h1>
@@ -468,11 +506,30 @@
 
 <script>
     let cart = JSON.parse(localStorage.getItem('kopitiam_cart')) || [];
+    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
+    // Fungsi untuk mendapatkan URL gambar yang benar
     function getImageUrl(image) {
-        if (!image) return '/storage/default-menu.jpg';
-        if (image.startsWith('http')) return image;
-        if (image.startsWith('/storage/')) return image;
+        if (!image) {
+            return '/storage/default-menu.jpg';
+        }
+        
+        if (image.startsWith('http')) {
+            return image;
+        }
+        
+        if (image.startsWith('/storage/')) {
+            return image;
+        }
+        
+        if (image.startsWith('storage/')) {
+            return '/' + image;
+        }
+        
+        if (image.startsWith('uploads/')) {
+            return '/' + image;
+        }
+        
         return '/storage/' + image;
     }
     
@@ -497,6 +554,16 @@
                 cartCount.style.display = 'none';
             }
         }
+    }
+    
+    function requireLogin() {
+        if (!isLoggedIn) {
+            if(confirm('🔒 Anda harus login terlebih dahulu untuk melanjutkan checkout. Buka halaman login?')) {
+                window.location.href = '{{ route("login") }}';
+            }
+            return false;
+        }
+        return true;
     }
     
     function renderCart() {
@@ -554,6 +621,28 @@
             `;
         });
         
+        // Tampilkan tombol checkout yang berbeda untuk guest dan user
+        let checkoutButtonHtml = '';
+        if (!isLoggedIn) {
+            checkoutButtonHtml = `
+                <div class="login-alert">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span>🔒 Silakan <a href="{{ route('login') }}">login</a> terlebih dahulu untuk melanjutkan checkout</span>
+                </div>
+                <button class="checkout-btn disabled" onclick="requireLogin()" disabled>
+                    🔒 Login untuk Checkout
+                </button>
+            `;
+        } else {
+            checkoutButtonHtml = `
+                <button class="checkout-btn" onclick="checkout()">
+                    ✅ Lanjutkan Pesanan
+                </button>
+            `;
+        }
+        
         container.innerHTML = `
             <div class="cart-grid">
                 <div class="cart-items">
@@ -581,9 +670,7 @@
                         <span class="summary-value">Rp ${total.toLocaleString('id-ID')}</span>
                     </div>
                     
-                    <button class="checkout-btn" onclick="checkout()">
-                        ✅ Lanjutkan Pesanan
-                    </button>
+                    ${checkoutButtonHtml}
                     
                     <div class="payment-note">
                         💳 Pembayaran dilakukan di tempat saat mengambil pesanan
@@ -658,8 +745,6 @@
             showNotification('Keranjang masih kosong!', true);
             return;
         }
-        
-        const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
         
         if (!isLoggedIn) {
             showNotification('Silakan login terlebih dahulu!', true);

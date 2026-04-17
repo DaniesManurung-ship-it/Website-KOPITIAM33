@@ -22,11 +22,11 @@ class MenuSpesial extends Model
         'is_active' => 'boolean',
     ];
     
-    // Accessor untuk URL gambar yang benar
+    // Accessor untuk URL gambar - SAMA PERSIS DENGAN MENU
     public function getImageUrlAttribute()
     {
         if (!$this->image) {
-            return asset('storage/default-menu.jpg');
+            return asset('uploads/default/default-menu.jpg');
         }
         
         // Jika sudah URL lengkap
@@ -39,13 +39,17 @@ class MenuSpesial extends Model
             return asset($this->image);
         }
         
-        // Default: asset dengan storage
+        // Jika sudah ada storage/ di depan
+        if (str_starts_with($this->image, 'storage/')) {
+            return asset($this->image);
+        }
+        
+        // Jika sudah ada uploads/ di depan (data baru)
+        if (str_starts_with($this->image, 'uploads/')) {
+            return asset($this->image);
+        }
+        
+        // Default: tambahkan storage di depan
         return asset('storage/' . $this->image);
-    }
-    
-    // Untuk mendapatkan path gambar yang disimpan di database
-    public function getImagePathAttribute()
-    {
-        return $this->image;
     }
 }

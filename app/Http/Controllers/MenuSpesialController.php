@@ -15,9 +15,31 @@ class MenuSpesialController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
+        // Tambahkan accessor image_url untuk setiap menu
+        foreach ($menuSpesial as $menu) {
+            $menu->image_url = $this->getImageUrl($menu->image);
+        }
+        
         $featuredMenu = $menuSpesial->where('is_featured', true)->first();
         $regularMenus = $menuSpesial->where('is_featured', false);
         
         return view('menu_spesial', compact('menuSpesial', 'featuredMenu', 'regularMenus'));
+    }
+    
+    private function getImageUrl($image)
+    {
+        if (!$image) {
+            return asset('uploads/default/default-menu.jpg');
+        }
+        if (filter_var($image, FILTER_VALIDATE_URL)) {
+            return $image;
+        }
+        if (str_starts_with($image, '/storage/')) {
+            return asset($image);
+        }
+        if (str_starts_with($image, 'uploads/')) {
+            return asset($image);
+        }
+        return asset('storage/' . $image);
     }
 }

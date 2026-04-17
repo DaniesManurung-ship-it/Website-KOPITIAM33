@@ -209,6 +209,26 @@
         background: #c0392b;
     }
     
+    /* Alert Login */
+    .alert-login {
+        background: #FEF3C7;
+        color: #D97706;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.65rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+    
+    .alert-login svg {
+        width: 14px;
+        height: 14px;
+    }
+    
     .featured-card {
         background: white;
         border-radius: 1rem;
@@ -417,7 +437,7 @@
         </div>
         <div class="featured-card">
             <div class="featured-grid">
-                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? asset('storage/default-menu.jpg') }}');">
+                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? asset('uploads/default/default-menu.jpg') }}');">
                     <div class="featured-badge">⭐ {{ $featuredMenu->badge ?? 'Signature' }}</div>
                 </div>
                 <div class="featured-content">
@@ -426,19 +446,22 @@
                     <p class="featured-desc">{{ $featuredMenu->description ?? 'Nikmati kelezatan menu spesial kami' }}</p>
                     <div class="featured-price">Rp {{ number_format($featuredMenu->price, 0, ',', '.') }}</div>
                     <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart({{ $featuredMenu->id }})">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            Keranjang
-                        </button>
-                        <button class="order-btn" onclick="openOrderModal({{ $featuredMenu->id }})">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                            </svg>
-                            Pesan
-                        </button>
+                        @auth
+                            <button class="cart-btn" onclick="addToCart({{ $featuredMenu->id }})">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="openOrderModal({{ $featuredMenu->id }})">📝 Pesan</button>
+                        @else
+                            <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
+                        @endauth
                     </div>
+                    @guest
+                        <div class="alert-login">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <span>Login untuk membeli</span>
+                        </div>
+                    @endguest
                 </div>
             </div>
         </div>
@@ -455,7 +478,7 @@
         <div class="menu-grid">
             @forelse($regularMenus ?? [] as $menu)
             <div class="menu-card">
-                <img src="{{ $menu->image_url ?? asset('storage/default-menu.jpg') }}" alt="{{ $menu->name }}" class="menu-image" loading="lazy">
+                <img src="{{ $menu->image_url ?? asset('uploads/default/default-menu.jpg') }}" alt="{{ $menu->name }}" class="menu-image" loading="lazy">
                 <div class="menu-content">
                     <h4 class="menu-title">{{ $menu->name }}</h4>
                     <div class="menu-price">Rp {{ number_format($menu->price, 0, ',', '.') }}</div>
@@ -464,19 +487,22 @@
                         <span class="menu-badge">{{ $menu->badge }}</span>
                     @endif
                     <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart({{ $menu->id }})">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            Keranjang
-                        </button>
-                        <button class="order-btn" onclick="openOrderModal({{ $menu->id }})">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                            </svg>
-                            Pesan
-                        </button>
+                        @auth
+                            <button class="cart-btn" onclick="addToCart({{ $menu->id }})">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="openOrderModal({{ $menu->id }})">📝 Pesan</button>
+                        @else
+                            <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
+                        @endauth
                     </div>
+                    @guest
+                        <div class="alert-login">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <span>Login untuk membeli</span>
+                        </div>
+                    @endguest
                 </div>
             </div>
             @empty
@@ -508,6 +534,7 @@
 <script>
     // Data dari database
     const menuSpesial = @json($menuSpesial ?? []);
+    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
     console.log('Menu Spesial Data:', menuSpesial);
     
@@ -515,6 +542,17 @@
     let selectedItem = null;
     let selectedQty = 1;
     
+    function requireLogin() {
+        if (!isLoggedIn) {
+            if(confirm('🔒 Anda harus login terlebih dahulu. Buka halaman login?')) {
+                window.location.href = '{{ route("login") }}';
+            }
+            return false;
+        }
+        return true;
+    }
+    
+    // Fungsi untuk user yang sudah login
     function addToCart(itemId) {
         const item = menuSpesial.find(m => m.id === itemId);
         if (!item) {
@@ -538,7 +576,7 @@
         }
         
         localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
-        showNotification(`${item.name} ditambahkan ke keranjang!`);
+        showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
         window.dispatchEvent(new CustomEvent('cart-updated'));
         
         if (typeof updateCartCount === 'function') {
@@ -580,7 +618,7 @@
         
         const confirmBtn = document.querySelector('.modal-confirm');
         const originalText = confirmBtn.textContent;
-        confirmBtn.textContent = 'Memproses...';
+        confirmBtn.textContent = '⏳ Memproses...';
         confirmBtn.disabled = true;
         
         const orderItem = {
@@ -609,19 +647,19 @@
             console.log('Server response:', data);
             
             if (data.success) {
-                showNotification('Pesanan berhasil dibuat!');
+                showNotification('✅ Pesanan berhasil dibuat!');
                 setTimeout(() => {
                     window.location.href = '{{ route("orders.history") }}';
                 }, 1500);
             } else {
-                showNotification('Gagal: ' + (data.message || 'Terjadi kesalahan'));
+                showNotification('❌ Gagal: ' + (data.message || 'Terjadi kesalahan'));
                 confirmBtn.textContent = originalText;
                 confirmBtn.disabled = false;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('Terjadi kesalahan: ' + error.message);
+            showNotification('⚠️ Terjadi kesalahan: ' + error.message);
             confirmBtn.textContent = originalText;
             confirmBtn.disabled = false;
         });

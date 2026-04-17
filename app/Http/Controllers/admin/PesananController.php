@@ -17,8 +17,8 @@ class PesananController extends Controller
         if($request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('customer_name', 'like', '%'.$request->search.'%')
-                  ->orWhere('customer_email', 'like', '%'.$request->search.'%')
-                  ->orWhere('order_number', 'like', '%'.$request->search.'%');
+                ->orWhere('customer_email', 'like', '%'.$request->search.'%')
+                ->orWhere('order_number', 'like', '%'.$request->search.'%');
             });
         }
         

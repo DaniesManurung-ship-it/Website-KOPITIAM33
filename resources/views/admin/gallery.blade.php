@@ -566,7 +566,7 @@
         @forelse($galleries as $gallery)
         <div class="gallery-card" data-category="{{ $gallery->category }}">
             <div class="gallery-image-wrapper">
-                <img src="{{ $gallery->image }}" alt="{{ $gallery->title }}" class="gallery-image">
+                <img src="{{ asset($gallery->image) }}" alt="{{ $gallery->title }}" class="gallery-image">
                 <div class="gallery-overlay">
                     <button class="overlay-btn edit" onclick="editGallery({{ $gallery->id }})">
                         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">

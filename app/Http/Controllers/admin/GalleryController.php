@@ -20,20 +20,26 @@ class GalleryController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validasi file gambar
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'category' => 'required|string',
             'description' => 'nullable|string'
         ]);
         
-        // Upload gambar
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('gallery', $filename, 'public');
+            
+            // SIMPAN KE PUBLIC/UPLOADS (bukan storage)
+            $destinationPath = public_path('uploads/gallery');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = 'uploads/gallery/' . $filename;
             
             Gallery::create([
                 'title' => $request->title,
-                'image' => '/storage/' . $path,
+                'image' => $imagePath,
                 'category' => $request->category,
                 'description' => $request->description,
             ]);
@@ -46,10 +52,9 @@ class GalleryController extends Controller
     {
         $gallery = Gallery::findOrFail($id);
         
-        // Hapus file gambar dari folder
-        $imagePath = public_path($gallery->image);
-        if (file_exists($imagePath)) {
-            unlink($imagePath);
+        // Hapus file gambar dari public/uploads
+        if ($gallery->image && file_exists(public_path($gallery->image))) {
+            unlink(public_path($gallery->image));
         }
         
         $gallery->delete();
@@ -80,19 +85,17 @@ class GalleryController extends Controller
             'description' => $request->description,
         ];
         
-        // Upload gambar baru jika ada
         if ($request->hasFile('image')) {
             // Hapus gambar lama
-            $oldImagePath = public_path($gallery->image);
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath);
+            if ($gallery->image && file_exists(public_path($gallery->image))) {
+                unlink(public_path($gallery->image));
             }
             
-            // Upload gambar baru
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('gallery', $filename, 'public');
-            $data['image'] = '/storage/' . $path;
+            $destinationPath = public_path('uploads/gallery');
+            $file->move($destinationPath, $filename);
+            $data['image'] = 'uploads/gallery/' . $filename;
         }
         
         $gallery->update($data);

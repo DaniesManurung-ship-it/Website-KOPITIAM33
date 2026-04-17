@@ -336,7 +336,7 @@
         font-weight: 500;
     }
     
-    /* Button Group */
+    /* Button Group - SAMA SEPERTI HALAMAN PROMO */
     .button-group {
         display: flex;
         gap: 0.5rem;
@@ -407,6 +407,26 @@
         background: #e5e7eb;
         color: #6b7280;
         cursor: not-allowed;
+    }
+    
+    /* Alert Login - SAMA SEPERTI HALAMAN PROMO */
+    .alert-login {
+        background: #FEF3C7;
+        color: #D97706;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.65rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+    
+    .alert-login svg {
+        width: 14px;
+        height: 14px;
     }
     
     /* Pagination */
@@ -560,6 +580,7 @@
         background: white;
         cursor: pointer;
         font-size: 1.1rem;
+        transition: all 0.2s;
     }
     
     .qty-btn:hover {
@@ -599,6 +620,15 @@
         cursor: pointer;
     }
     
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 1rem;
+        grid-column: 1/-1;
+    }
+    
     /* Responsive */
     @media (max-width: 640px) {
         .menu-header h1 {
@@ -616,12 +646,6 @@
         .button-group {
             flex-direction: column;
         }
-    }
-    /* Sertakan semua style yang sudah ada, tambahkan ini: */
-    .menu-image {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
     }
 </style>
 @endpush
@@ -705,6 +729,19 @@
     let selectedItem = null;
     let selectedQty = 1;
     
+    // Cek apakah user sudah login
+    const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    
+    function requireLogin() {
+        if (!isLoggedIn) {
+            if(confirm('🔒 Anda harus login terlebih dahulu. Buka halaman login?')) {
+                window.location.href = '{{ route("login") }}';
+            }
+            return false;
+        }
+        return true;
+    }
+    
     function getCategoryName(category) {
         const categories = {
             'makanan': 'Makanan Berat',
@@ -722,6 +759,7 @@
         if (!image) return '/storage/default-menu.jpg';
         if (image.startsWith('http')) return image;
         if (image.startsWith('/storage/')) return image;
+        if (image.startsWith('uploads/')) return '/' + image;
         return '/storage/' + image;
     }
     
@@ -764,6 +802,47 @@
             const isSoldOut = !item.is_available;
             const imageUrl = getImageUrl(item.image);
             
+            // Tampilan SAMA SEPERTI HALAMAN PROMO
+            let buttonHtml = '';
+            if (isSoldOut) {
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
+                        <button class="order-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
+                    </div>
+                `;
+            } else if (!isLoggedIn) {
+                // Guest: tombol dengan alert login (SAMA SEPERTI PROMO)
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="requireLogin()">
+                            🛒 Keranjang
+                        </button>
+                        <button class="order-btn" onclick="requireLogin()">
+                            📝 Pesan
+                        </button>
+                    </div>
+                    <div class="alert-login">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Login untuk membeli</span>
+                    </div>
+                `;
+            } else {
+                // User sudah login: tombol normal (SAMA SEPERTI PROMO)
+                buttonHtml = `
+                    <div class="button-group">
+                        <button class="cart-btn" onclick="addToCart(${item.id})">
+                            🛒 Keranjang
+                        </button>
+                        <button class="order-btn" onclick="orderNow(${item.id})">
+                            📝 Pesan
+                        </button>
+                    </div>
+                `;
+            }
+            
             menuItem.innerHTML = `
                 <div class="menu-image-container">
                     <img src="${imageUrl}" alt="${item.name}" class="menu-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
@@ -778,27 +857,7 @@
                     <div class="menu-footer">
                         <span class="menu-category">${getCategoryName(item.category)}</span>
                     </div>
-                    ${!isSoldOut ? `
-                        <div class="button-group">
-                            <button class="cart-btn" onclick="addToCart(${item.id})">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                                Keranjang
-                            </button>
-                            <button class="order-btn" onclick="orderNow(${item.id})">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                                </svg>
-                                Pesan
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="button-group">
-                            <button class="cart-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
-                            <button class="order-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
-                        </div>
-                    `}
+                    ${buttonHtml}
                 </div>
             `;
             container.appendChild(menuItem);
@@ -875,6 +934,7 @@
         document.getElementById('juiceDropdown')?.classList.remove('show');
     }
     
+    // Fungsi untuk user yang sudah login (aksi nyata)
     function addToCart(itemId) {
         const item = menuData.find(m => m.id === itemId);
         if (!item) return;
@@ -921,10 +981,6 @@
         if (!e.target.closest('#menuFilters')) closeAllDropdowns();
     });
     
-    document.getElementById('orderModal')?.addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-    
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
@@ -942,9 +998,3 @@
     document.head.appendChild(style);
 </script>
 @endsection
-
-
-
-
-
-

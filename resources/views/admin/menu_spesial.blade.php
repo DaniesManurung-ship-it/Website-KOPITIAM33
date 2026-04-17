@@ -636,22 +636,8 @@
                     <td>#{{ $menu->id }}</td>
                     <td>
                         <div class="menu-image-wrapper">
-                            @php
-                                // Fungsi untuk mendapatkan URL gambar yang benar
-                                $imageUrl = '';
-                                if($menu->image) {
-                                    // Jika image sudah memiliki /storage/ di depan
-                                    if(str_starts_with($menu->image, '/storage/')) {
-                                        $imageUrl = $menu->image;
-                                    }
-                                    // Jika image hanya nama file (path relatif)
-                                    else {
-                                        $imageUrl = '/storage/' . $menu->image;
-                                    }
-                                }
-                            @endphp
                             @if($menu->image)
-                                <img src="{{ $imageUrl }}" class="menu-image" alt="{{ $menu->name }}" onerror="this.src='/storage/default-menu.jpg'">
+                                <img src="{{ asset($menu->image) }}" class="menu-image" alt="{{ $menu->name }}" onerror="this.src='/uploads/default/default-menu.jpg'">
                             @else
                                 <div class="no-image">No Image</div>
                             @endif

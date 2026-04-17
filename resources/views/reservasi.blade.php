@@ -74,14 +74,14 @@
     
     .reservasi-header h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
     
     .reservasi-header p {
-        font-size: 1.25rem;
-        max-width: 768px;
+        font-size: 1rem;
+        max-width: 600px;
         margin: 0 auto;
         opacity: 0.9;
     }
@@ -117,6 +117,7 @@
         display: flex;
         align-items: center;
         gap: 1rem;
+        flex-wrap: wrap;
     }
     
     .status-icon {
@@ -144,6 +145,27 @@
     .status-text {
         font-size: 0.875rem;
         color: #6b7280;
+    }
+    
+    .hours-list {
+        margin-top: 0.5rem;
+    }
+    
+    .hours-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .hours-day {
+        font-weight: 500;
+        color: var(--wood);
+    }
+    
+    .hours-time {
+        color: var(--accent);
+        font-weight: 500;
     }
     
     .badge {
@@ -260,6 +282,11 @@
         box-shadow: 0 0 0 2px rgba(139, 168, 136, 0.2);
     }
     
+    .form-input.error {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+    
     textarea.form-input {
         padding-top: 0.75rem;
     }
@@ -270,6 +297,18 @@
         cursor: pointer;
     }
     
+    /* Error Message */
+    .error-message {
+        color: #ef4444;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    
+    .error-message.show {
+        display: block;
+    }
+    
     /* Alert Success */
     .alert-success {
         background: #d1fae5;
@@ -277,6 +316,21 @@
         padding: 1rem;
         border-radius: 0.5rem;
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Alert Error */
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     /* Info Box */
@@ -341,6 +395,11 @@
         cursor: pointer;
     }
     
+    .checkbox-wrapper input.error {
+        outline: 2px solid #ef4444;
+        outline-offset: 2px;
+    }
+    
     .checkbox-label {
         font-size: 0.875rem;
         color: #374151;
@@ -356,7 +415,7 @@
         text-decoration: underline;
     }
     
-    /* Submit Button */
+    /* Submit Button - SAMA UNTUK SEMUA USER (TIDAK ADA PERBEDAAN) */
     .submit-section {
         display: flex;
         justify-content: space-between;
@@ -366,24 +425,37 @@
     }
     
     .btn-submit {
-        background: linear-gradient(to right, var(--sage), var(--wood));
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
         color: white;
-        padding: 1rem 2rem;
+        padding: 0.9rem 2rem;
         border: none;
         border-radius: 0.5rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
+        gap: 0.6rem;
+        transition: all 0.3s ease;
         font-family: 'Poppins', sans-serif;
         font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(139, 168, 136, 0.3);
     }
     
     .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 16px rgba(139, 168, 136, 0.4);
+    }
+    
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .btn-submit svg {
+        width: 18px;
+        height: 18px;
+        stroke: white;
     }
     
     .required-text {
@@ -393,124 +465,6 @@
     
     .required-text span {
         color: #ef4444;
-    }
-    
-    /* Table Cards */
-    .table-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    @media (max-width: 1024px) {
-        .table-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (max-width: 640px) {
-        .table-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .table-card {
-        background: rgba(245, 239, 230, 0.5);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        transition: all 0.2s;
-    }
-    
-    .table-card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .table-title {
-        font-weight: 600;
-        color: var(--wood);
-    }
-    
-    .table-count {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--sage);
-    }
-    
-    .table-description {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 0.75rem;
-    }
-    
-    .progress-bar {
-        width: 100%;
-        background: #e5e7eb;
-        border-radius: 9999px;
-        height: 8px;
-        margin-bottom: 0.75rem;
-    }
-    
-    .progress-fill {
-        background: var(--sage);
-        height: 8px;
-        border-radius: 9999px;
-    }
-    
-    .table-footer {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-    }
-    
-    .table-capacity {
-        color: #6b7280;
-    }
-    
-    .table-type {
-        color: var(--sage);
-    }
-    
-    /* Legend */
-    .legend {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #f3f4f6;
-    }
-    
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-    }
-    
-    .legend-dot.sage {
-        background: var(--sage);
-    }
-    
-    .legend-dot.yellow {
-        background: #eab308;
-    }
-    
-    .legend-dot.red {
-        background: #ef4444;
     }
     
     /* Contact Section */
@@ -577,11 +531,11 @@
     /* Responsive */
     @media (max-width: 640px) {
         .reservasi-header h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
         }
         
         .reservasi-header p {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .form-body {
@@ -591,6 +545,16 @@
         .form-header {
             padding: 1rem 1.5rem;
         }
+        
+        .hours-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 @endpush
@@ -599,8 +563,16 @@
 <!-- Reservasi Header -->
 <section class="reservasi-header">
     <div class="container">
-        <h1>Reservasi Meja</h1>
+        <h1>📅 Reservasi Meja</h1>
         <p>Pesan meja sekarang dan nikmati pengalaman kuliner Nusantara yang autentik bersama kami</p>
+        @auth
+        <a href="{{ route('reservasi.history') }}" class="history-btn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Riwayat Reservasi
+        </a>
+        @endauth
     </div>
 </section>
 
@@ -613,12 +585,21 @@
                 <div class="status-info">
                     <div class="status-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div>
                         <h3 class="status-title">Jam Operasional</h3>
-                        <p class="status-text">Buka setiap hari: 10.00 - 22.00 WIB</p>
+                        <div class="hours-list">
+                            <div class="hours-row">
+                                <span class="hours-day">Senin - Kamis</span>
+                                <span class="hours-time">07:00 - 21:00 WIB</span>
+                            </div>
+                            <div class="hours-row">
+                                <span class="hours-day">Jumat - Minggu</span>
+                                <span class="hours-time">07:00 - 22:00 WIB</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -628,12 +609,18 @@
 
             @if(session('success'))
             <div class="alert-success">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
                 {{ session('success') }}
             </div>
             @endif
 
             @if($errors->any())
-            <div class="alert-error" style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <div class="alert-error">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
                 {{ $errors->first() }}
             </div>
             @endif
@@ -659,7 +646,7 @@
                                 </div>
                                 <input type="text" name="name" id="nama" class="form-input" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
                             </div>
-                            @error('name') <small style="color: red;">{{ $message }}</small> @enderror
+                            <div class="error-message" id="error-nama">Nama lengkap harus diisi</div>
                         </div>
 
                         <!-- Email -->
@@ -673,7 +660,7 @@
                                 </div>
                                 <input type="email" name="email" id="email" class="form-input" value="{{ old('email') }}" placeholder="email@example.com" required>
                             </div>
-                            @error('email') <small style="color: red;">{{ $message }}</small> @enderror
+                            <div class="error-message" id="error-email">Email harus diisi dengan format yang benar</div>
                         </div>
                     </div>
 
@@ -689,7 +676,7 @@
                                 </div>
                                 <input type="tel" name="phone" id="telepon" class="form-input" value="{{ old('phone') }}" placeholder="Contoh: 081234567890" required>
                             </div>
-                            @error('phone') <small style="color: red;">{{ $message }}</small> @enderror
+                            <div class="error-message" id="error-telepon">Nomor telepon harus diisi (minimal 10 digit)</div>
                         </div>
 
                         <!-- Tanggal Reservasi -->
@@ -703,13 +690,13 @@
                                 </div>
                                 <input type="date" name="date" id="tanggal" class="form-input" value="{{ old('date') }}" required>
                             </div>
+                            <div class="error-message" id="error-tanggal">Tanggal reservasi harus diisi (minimal H-1)</div>
                             <p class="status-text mt-1">Reservasi minimal H-1</p>
-                            @error('date') <small style="color: red;">{{ $message }}</small> @enderror
                         </div>
                     </div>
 
                     <div class="form-grid">
-                        <!-- Jam Reservasi -->
+                        <!-- Jam Reservasi - Menggunakan input type time -->
                         <div class="form-group">
                             <label class="form-label">Jam Reservasi <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -718,23 +705,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
-                                <select name="time" id="jam" class="form-input" required>
-                                    <option value="">Pilih jam kedatangan</option>
-                                    <option value="10:00" {{ old('time') == '10:00' ? 'selected' : '' }}>10:00 WIB</option>
-                                    <option value="11:00" {{ old('time') == '11:00' ? 'selected' : '' }}>11:00 WIB</option>
-                                    <option value="12:00" {{ old('time') == '12:00' ? 'selected' : '' }}>12:00 WIB</option>
-                                    <option value="13:00" {{ old('time') == '13:00' ? 'selected' : '' }}>13:00 WIB</option>
-                                    <option value="14:00" {{ old('time') == '14:00' ? 'selected' : '' }}>14:00 WIB</option>
-                                    <option value="15:00" {{ old('time') == '15:00' ? 'selected' : '' }}>15:00 WIB</option>
-                                    <option value="16:00" {{ old('time') == '16:00' ? 'selected' : '' }}>16:00 WIB</option>
-                                    <option value="17:00" {{ old('time') == '17:00' ? 'selected' : '' }}>17:00 WIB</option>
-                                    <option value="18:00" {{ old('time') == '18:00' ? 'selected' : '' }}>18:00 WIB</option>
-                                    <option value="19:00" {{ old('time') == '19:00' ? 'selected' : '' }}>19:00 WIB</option>
-                                    <option value="20:00" {{ old('time') == '20:00' ? 'selected' : '' }}>20:00 WIB</option>
-                                    <option value="21:00" {{ old('time') == '21:00' ? 'selected' : '' }}>21:00 WIB</option>
-                                </select>
+                                <input type="time" name="time" id="jam" class="form-input" value="{{ old('time') }}" min="07:00" max="22:00" step="60" required>
                             </div>
-                            @error('time') <small style="color: red;">{{ $message }}</small> @enderror
+                            <div class="error-message" id="error-jam">Jam reservasi harus diisi (07:00 - 22:00 WIB)</div>
                         </div>
 
                         <!-- Jumlah Orang -->
@@ -748,7 +721,7 @@
                                 </div>
                                 <input type="number" name="people" id="jumlah" class="form-input" value="{{ old('people') }}" placeholder="Contoh: 4" min="1" max="20" required>
                             </div>
-                            @error('people') <small style="color: red;">{{ $message }}</small> @enderror
+                            <div class="error-message" id="error-jumlah">Jumlah orang harus diisi (minimal 1, maksimal 20)</div>
                         </div>
                     </div>
 
@@ -762,12 +735,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
-                               <select name="table_type" id="tipe_meja" class="form-input">
+                                <select name="table_type" id="tipe_meja" class="form-input">
                                     <option value="">Pilih tipe meja</option>
-                                    <option value="reguler" {{ old('table_type') == 'reguler' ? 'selected' : '' }}>Reguler (2-4 orang)</option>
-                                    <option value="family" {{ old('table_type') == 'family' ? 'selected' : '' }}>Family (4-6 orang)</option>
-                                    <option value="vip" {{ old('table_type') == 'vip' ? 'selected' : '' }}>VIP (6-8 orang)</option>
-                                    <option value="outdoor" {{ old('table_type') == 'outdoor' ? 'selected' : '' }}>Outdoor (2-4 orang)</option>
+                                    <option value="reguler">Reguler (2-4 orang)</option>
+                                    <option value="family">Family (4-6 orang)</option>
+                                    <option value="vip">VIP (6-8 orang)</option>
+                                    <option value="outdoor">Outdoor (2-4 orang)</option>
                                 </select>
                             </div>
                         </div>
@@ -783,13 +756,13 @@
                                 </div>
                                 <select name="floor" id="lantai" class="form-input">
                                     <option value="">Pilih lantai</option>
-                                    <option value="1" {{ old('floor') == '1' ? 'selected' : '' }}>Lantai 1</option>
-                                    <option value="2" {{ old('floor') == '2' ? 'selected' : '' }}>Lantai 2</option>
+                                    <option value="1">Lantai 1</option>
+                                    <option value="2">Lantai 2</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Catatan Khusus - Dipindahkan ke sini agar sejajar -->
+                        <!-- Catatan Khusus -->
                         <div class="form-group">
                             <label class="form-label">Catatan Khusus</label>
                             <div class="input-wrapper">
@@ -798,7 +771,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </div>
-                                <textarea name="notes" id="catatan" rows="2" class="form-input" style="padding-left: 2.5rem;" placeholder="Contoh: Meja dekat jendela, request kursi bayi, alergi makanan, dll.">{{ old('notes') }}</textarea>
+                                <textarea name="notes" id="catatan" rows="2" class="form-input" style="padding-left: 2.5rem;" placeholder="Contoh: Meja dekat jendela, request kursi bayi, alergi makanan, dll."></textarea>
                             </div>
                         </div>
                     </div>
@@ -815,29 +788,29 @@
                                 <h4 class="info-title">Informasi Penting:</h4>
                                 <ul class="info-list">
                                     <li>Reservasi akan hangus jika tidak hadir lebih dari 30 menit dari jam kedatangan</li>
-                                    <li>Konfirmasi akan dikirim via WhatsApp dalam 1x24 jam</li>
+                                    <li>Konfirmasi akan dikirim dalam 1x24 jam</li>
                                     <li>Pembatalan reservasi maksimal H-2 jam sebelum jam kedatangan</li>
-                                    <li>Untuk reservasi rombongan (>10 orang) silakan hubungi kami langsung</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Terms & Conditions -->
+                    <!-- Terms & Conditions - WAJIB DICENTANG -->
                     <div class="checkbox-wrapper">
-                        <input type="checkbox" name="terms" id="terms" value="1" {{ old('terms') ? 'checked' : '' }}>
+                        <input type="checkbox" name="terms" id="terms" value="1">
                         <label for="terms" class="checkbox-label">
-                            Saya menyetujui <a href="#" class="checkbox-link">syarat dan ketentuan</a> yang berlaku
+                            Saya menyetujui <a href="#" class="checkbox-link">syarat dan ketentuan</a> yang berlaku <span class="required">*</span>
                         </label>
                     </div>
+                    <div class="error-message" id="error-terms">Anda harus menyetujui syarat dan ketentuan</div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit Button - SAMA UNTUK SEMUA USER (TIDAK ADA PERBEDAAN) -->
                     <div class="submit-section">
-                        <button type="submit" class="btn-submit">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            <span>Kirim Reservasi</span>
+                            Kirim Reservasi
                         </button>
                         <p class="required-text"><span>*</span> Wajib diisi</p>
                     </div>
@@ -855,8 +828,6 @@
             <p class="status-text" style="margin-bottom: 2rem;">Jika Anda mengalami kesulitan dalam melakukan reservasi online, silakan hubungi kami melalui:</p>
             
             <div class="contact-grid">
-                
-                
                 <a href="https://wa.me/6282160095549" class="contact-card">
                     <div class="contact-icon whatsapp">
                         <svg fill="currentColor" viewBox="0 0 24 24">
@@ -873,14 +844,94 @@
 
 @push('scripts')
 <script>
-    // Set minimum date for reservation
     document.addEventListener('DOMContentLoaded', function() {
+        // Set minimum date for reservation (H-1)
         const dateInput = document.getElementById('tanggal');
         if (dateInput) {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const formattedDate = tomorrow.toISOString().split('T')[0];
             dateInput.min = formattedDate;
+        }
+        
+        // Validasi form sebelum submit
+        const form = document.getElementById('reservationForm');
+        
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+                
+                // Reset error styles
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.classList.remove('error');
+                });
+                document.querySelectorAll('.error-message').forEach(msg => {
+                    msg.classList.remove('show');
+                });
+                document.getElementById('terms')?.classList.remove('error');
+                
+                // Validasi Nama
+                const nama = document.getElementById('nama');
+                if (!nama.value.trim()) {
+                    nama.classList.add('error');
+                    document.getElementById('error-nama').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Email
+                const email = document.getElementById('email');
+                const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+                if (!email.value.trim() || !emailRegex.test(email.value)) {
+                    email.classList.add('error');
+                    document.getElementById('error-email').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Telepon
+                const telepon = document.getElementById('telepon');
+                if (!telepon.value.trim() || telepon.value.length < 10) {
+                    telepon.classList.add('error');
+                    document.getElementById('error-telepon').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Tanggal
+                const tanggal = document.getElementById('tanggal');
+                if (!tanggal.value) {
+                    tanggal.classList.add('error');
+                    document.getElementById('error-tanggal').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Jam
+                const jam = document.getElementById('jam');
+                if (!jam.value) {
+                    jam.classList.add('error');
+                    document.getElementById('error-jam').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Jumlah Orang
+                const jumlah = document.getElementById('jumlah');
+                if (!jumlah.value || jumlah.value < 1 || jumlah.value > 20) {
+                    jumlah.classList.add('error');
+                    document.getElementById('error-jumlah').classList.add('show');
+                    isValid = false;
+                }
+                
+                // Validasi Terms & Conditions
+                const terms = document.getElementById('terms');
+                if (!terms.checked) {
+                    terms.classList.add('error');
+                    document.getElementById('error-terms').classList.add('show');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                    document.querySelector('.form-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         }
     });
 </script>

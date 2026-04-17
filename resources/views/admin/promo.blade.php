@@ -640,7 +640,7 @@
                     <td>
                         <div class="promo-image-wrapper">
                             @if($promo->image)
-                                <img src="{{ asset('storage/' . str_replace('/storage/', '', $promo->image)) }}" class="promo-image" alt="{{ $promo->name }}">
+                                <img src="{{ asset($promo->image) }}" class="promo-image" alt="{{ $promo->name }}" onerror="this.src='/uploads/default/default-promo.jpg'">
                             @else
                                 <div class="no-image">No Image</div>
                             @endif

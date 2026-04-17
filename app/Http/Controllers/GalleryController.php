@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/GalleryController.php
 
 namespace App\Http\Controllers;
 

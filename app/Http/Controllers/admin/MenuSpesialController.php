@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\MenuSpesial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class MenuSpesialController extends Controller
 {
@@ -33,13 +32,20 @@ class MenuSpesialController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('menu-spesial', $filename, 'public');
+            
+            // Simpan ke public/uploads/menu-spesial
+            $destinationPath = public_path('uploads/menu-spesial');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = 'uploads/menu-spesial/' . $filename;
             
             MenuSpesial::create([
                 'name' => $request->name,
                 'description' => $request->description,
                 'price' => $request->price,
-                'image' => '/storage/' . $path, // PERBAIKAN: Tambahkan /storage/ di depan
+                'image' => $imagePath,
                 'badge' => $request->badge,
                 'is_featured' => $request->is_featured ? true : false,
                 'is_active' => true,
@@ -85,8 +91,9 @@ class MenuSpesialController extends Controller
             
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('menu-spesial', $filename, 'public');
-            $data['image'] = '/storage/' . $path; // PERBAIKAN: Tambahkan /storage/ di depan
+            $destinationPath = public_path('uploads/menu-spesial');
+            $file->move($destinationPath, $filename);
+            $data['image'] = 'uploads/menu-spesial/' . $filename;
         }
         
         $menu->update($data);
@@ -99,7 +106,7 @@ class MenuSpesialController extends Controller
     {
         $menu = MenuSpesial::findOrFail($id);
         
-        // Hapus gambar
+        // Hapus gambar dari public/uploads
         if ($menu->image && file_exists(public_path($menu->image))) {
             unlink(public_path($menu->image));
         }
