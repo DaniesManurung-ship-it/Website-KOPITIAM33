@@ -3,244 +3,706 @@
 @section('title', 'Testimoni Customer - Café Kopitiam33')
 
 @section('content')
-<section class="py-12 bg-gradient-to-r from-sage to-wood text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl font-serif font-bold mb-4">💬 Testimoni Customer</h1>
-        <p class="text-lg max-w-2xl mx-auto opacity-90">
-            Apa kata mereka tentang Café Kopitiam33
-        </p>
+<style>
+    /* ==================== COLOR VARIABLES ==================== */
+    :root {
+        --sage: #8BA888;
+        --sage-dark: #6B8A6B;
+        --sage-light: #E8F0E6;
+        --wood: #A67B5B;
+        --wood-dark: #8B5E3C;
+        --accent: #D97642;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #2C1810;
+        --gray: #6B7280;
+        --light: #F5EFE6;
+        --white: #FFFFFF;
+        --border: #E5E7EB;
+        --yellow: #fbbf24;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--light);
+    }
+    
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    /* ==================== HEADER SECTION ==================== */
+    .testimonial-header {
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+        padding: 3rem 0;
+        text-align: center;
+        color: white;
+    }
+    
+    .testimonial-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .testimonial-header p {
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+    
+    /* ==================== ALERT ==================== */
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-left: 4px solid var(--success);
+    }
+    
+    .alert-error {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-left: 4px solid var(--danger);
+    }
+    
+    /* ==================== TESTIMONI GRID ==================== */
+    .testimoni-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .testimoni-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border);
+    }
+    
+    .testimoni-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border-color: var(--sage);
+    }
+    
+    /* Rating Bar */
+    .rating-bar {
+        height: 4px;
+        background: linear-gradient(90deg, var(--yellow), var(--yellow) var(--rating), #e5e7eb var(--rating));
+        border-radius: 2px;
+        margin-bottom: 1rem;
+    }
+    
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .user-avatar {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .user-details h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 0.25rem;
+    }
+    
+    .user-date {
+        font-size: 0.7rem;
+        color: var(--gray);
+    }
+    
+    /* Rating Stars */
+    .rating-stars {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .star {
+        font-size: 1rem;
+        color: #d1d5db;
+    }
+    
+    .star.active {
+        color: var(--yellow);
+    }
+    
+    /* Message */
+    .testimoni-message {
+        color: var(--gray);
+        line-height: 1.6;
+        font-size: 0.85rem;
+        font-style: italic;
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    /* ==================== PAGINATION ==================== */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: var(--wood);
+        background: white;
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+        font-size: 0.85rem;
+    }
+    
+    .pagination a:hover {
+        background: var(--sage);
+        color: white;
+        border-color: var(--sage);
+    }
+    
+    .pagination .active span {
+        background: var(--sage);
+        color: white;
+        border-color: var(--sage);
+    }
+    
+    /* ==================== EMPTY STATE ==================== */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-top: 2rem;
+    }
+    
+    .empty-state svg {
+        width: 80px;
+        height: 80px;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.25rem;
+        color: var(--wood);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+        background: var(--sage);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        background: var(--wood);
+        transform: translateY(-2px);
+    }
+    
+    /* ==================== MODAL ==================== */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-overlay.show {
+        display: flex;
+    }
+    
+    .modal-container {
+        background: white;
+        border-radius: 1rem;
+        max-width: 450px;
+        width: 90%;
+        padding: 1.5rem;
+        animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .modal-header h3 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--wood);
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--gray);
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--gray);
+        margin-bottom: 0.25rem;
+    }
+    
+    .rating-input {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    
+    .rating-input span {
+        color: #d1d5db;
+        transition: all 0.2s;
+    }
+    
+    .rating-input span.active {
+        color: var(--yellow);
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+        resize: vertical;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--sage);
+    }
+    
+    .char-count {
+        text-align: right;
+        font-size: 0.7rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+    
+    .modal-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .modal-buttons button {
+        flex: 1;
+        padding: 0.6rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .btn-submit {
+        background: var(--sage);
+        color: white;
+    }
+    
+    .btn-submit:hover {
+        background: var(--wood);
+    }
+    
+    .btn-cancel {
+        background: #e5e7eb;
+        color: var(--gray);
+    }
+    
+    .btn-cancel:hover {
+        background: #d1d5db;
+    }
+    
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+        .testimonial-header h1 {
+            font-size: 1.75rem;
+        }
+        
+        .testimoni-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Header Section -->
+<section class="testimonial-header">
+    <div class="container">
+        <h1>💬 Testimoni Customer</h1>
+        <p>Apa kata mereka tentang Café Kopitiam33</p>
     </div>
 </section>
 
-<div class="container mx-auto px-4 py-12">
-    {{-- Debug: Tampilkan jumlah testimoni --}}
-    @php
-        \Log::info('Total testimoni di view: ' . $testimonials->total());
-    @endphp
-    
+<div class="container">
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border border-green-200 text-green-700 rounded-xl">
-            {{ session('success') }}
-        </div>
+    <div class="alert-success">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ session('success') }}
+    </div>
     @endif
     
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border border-red-200 text-red-700 rounded-xl">
-            {{ session('error') }}
-        </div>
+    <div class="alert-error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ session('error') }}
+    </div>
     @endif
     
     @if($testimonials->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach($testimonials as $testimonial)
-            <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-sage to-wood flex items-center justify-center text-white font-bold text-lg">
-                        {{ strtoupper(substr($testimonial->name, 0, 1)) }}
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-wood">{{ $testimonial->name }}</h4>
-                        <p class="text-xs text-gray-400">{{ $testimonial->created_at->diffForHumans() }}</p>
+    <div class="testimoni-grid">
+        @foreach($testimonials as $testimonial)
+        @php
+            $createdAt = \Carbon\Carbon::parse($testimonial->created_at)->setTimezone('Asia/Jakarta');
+            $ratingPercent = ($testimonial->rating / 5) * 100;
+        @endphp
+        <div class="testimoni-card">
+            <div class="rating-bar" style="--rating: {{ $ratingPercent }}%"></div>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ strtoupper(substr($testimonial->name, 0, 1)) }}
+                </div>
+                <div class="user-details">
+                    <h4>{{ $testimonial->name }}</h4>
+                    <div class="user-date">
+                        {{ $createdAt->translatedFormat('d F Y') }} • {{ $createdAt->format('H:i') }} WIB
                     </div>
                 </div>
-                <div class="flex gap-1 mb-3">
-                    @for($i = 1; $i <= 5; $i++)
-                        <span class="text-lg {{ $i <= $testimonial->rating ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
-                    @endfor
-                </div>
-                <p class="text-gray-600 leading-relaxed">{{ $testimonial->message }}</p>
             </div>
-            @endforeach
+            
+            <div class="rating-stars">
+                @for($i = 1; $i <= 5; $i++)
+                    <span class="star {{ $i <= $testimonial->rating ? 'active' : '' }}">★</span>
+                @endfor
+            </div>
+            
+            <p class="testimoni-message">"{{ $testimonial->message }}"</p>
         </div>
-        
-        <div class="mt-8">
-            {{ $testimonials->links() }}
-        </div>
+        @endforeach
+    </div>
+    
+    <div class="pagination">
+        {{ $testimonials->links() }}
+    </div>
     @else
-        <div class="text-center py-12 bg-white rounded-xl">
-            <svg class="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-            <p class="text-gray-500 text-lg mb-2">Belum ada testimoni</p>
-            <p class="text-gray-400 text-sm mb-4">Jadilah yang pertama memberikan testimoni!</p>
-            @auth
-                <button onclick="openTestimonialModal()" class="bg-sage text-white px-6 py-2 rounded-lg hover:bg-wood transition">
-                    ✍️ Beri Testimoni
-                </button>
-            @else
-                <a href="{{ route('login') }}" class="inline-block bg-sage text-white px-6 py-2 rounded-lg hover:bg-wood transition">
-                    🔒 Login untuk memberi testimoni
-                </a>
-            @endauth
-        </div>
+    <div class="empty-state">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        <h3>Belum Ada Testimoni</h3>
+        <p>Jadilah yang pertama memberikan testimoni untuk Café Kopitiam33!</p>
+        @auth
+            <button class="btn-primary" id="openModalBtn">✍️ Beri Testimoni</button>
+        @else
+            <a href="{{ route('login') }}" class="btn-primary">🔒 Login untuk Memberi Testimoni</a>
+        @endauth
+    </div>
     @endif
 </div>
 
 <!-- Modal Testimoni -->
-<div id="testimonialModal" class="fixed inset-0 bg-black/50 z-[1000] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-wood">✍️ Beri Testimoni</h3>
-            <button onclick="closeTestimonialModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+<div class="modal-overlay" id="testimonialModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>✍️ Beri Testimoni</h3>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
         </div>
         
-        <form action="{{ route('testimonials.store') }}" method="POST" id="testimonialForm">
+        <form id="testimonialForm">
             @csrf
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Rating Anda</label>
-                <div class="flex gap-2 text-3xl" id="ratingStars">
-                    <span class="star-rating cursor-pointer text-gray-300 hover:text-yellow-400 transition" data-rating="1">★</span>
-                    <span class="star-rating cursor-pointer text-gray-300 hover:text-yellow-400 transition" data-rating="2">★</span>
-                    <span class="star-rating cursor-pointer text-gray-300 hover:text-yellow-400 transition" data-rating="3">★</span>
-                    <span class="star-rating cursor-pointer text-gray-300 hover:text-yellow-400 transition" data-rating="4">★</span>
-                    <span class="star-rating cursor-pointer text-gray-300 hover:text-yellow-400 transition" data-rating="5">★</span>
+            <div class="form-group">
+                <label class="form-label">Rating Anda</label>
+                <div class="rating-input" id="ratingStars">
+                    <span data-rating="1">★</span>
+                    <span data-rating="2">★</span>
+                    <span data-rating="3">★</span>
+                    <span data-rating="4">★</span>
+                    <span data-rating="5">★</span>
                 </div>
                 <input type="hidden" name="rating" id="rating" value="5">
             </div>
             
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Testimoni</label>
-                <textarea name="message" id="message" rows="4" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-transparent"
-                    placeholder="Bagikan pengalaman Anda di Café Kopitiam33..." required></textarea>
+            <div class="form-group">
+                <label class="form-label">Testimoni</label>
+                <textarea name="message" id="message" class="form-textarea" rows="4" placeholder="Bagikan pengalaman Anda di Café Kopitiam33..." required></textarea>
+                <div class="char-count"><span id="charCount">0</span>/500 karakter</div>
             </div>
             
-            <div class="flex gap-3">
-                <button type="submit" class="flex-1 bg-sage text-white py-2 rounded-lg font-medium hover:bg-wood transition">
-                    Kirim Testimoni
-                </button>
-                <button type="button" onclick="closeTestimonialModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-200 transition">
-                    Batal
-                </button>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-submit" id="submitBtn">✉️ Kirim Testimoni</button>
+                <button type="button" class="btn-cancel" id="cancelModalBtn">Batal</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    function openTestimonialModal() {
-        document.getElementById('testimonialModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+    // DOM Elements
+    const modal = document.getElementById('testimonialModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const form = document.getElementById('testimonialForm');
+    const messageInput = document.getElementById('message');
+    const charCountSpan = document.getElementById('charCount');
+    const ratingInput = document.getElementById('rating');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Open modal
+    function openModal() {
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
     }
     
-    function closeTestimonialModal() {
-        document.getElementById('testimonialModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-        document.getElementById('testimonialForm').reset();
-        // Reset rating ke 5
-        document.getElementById('rating').value = 5;
-        const stars = document.querySelectorAll('.star-rating');
+    // Close modal
+    function closeModal() {
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            if (form) form.reset();
+            ratingInput.value = '5';
+            if (charCountSpan) charCountSpan.innerText = '0';
+            resetStars();
+        }
+    }
+    
+    // Reset stars to default (rating 5)
+    function resetStars() {
+        const stars = document.querySelectorAll('#ratingStars span');
         stars.forEach((star, index) => {
+            if (index < 5) {
+                star.classList.add('active');
+                star.style.color = '#fbbf24';
+            } else {
+                star.classList.remove('active');
+                star.style.color = '#d1d5db';
+            }
+        });
+    }
+    
+    // Character counter
+    if (messageInput && charCountSpan) {
+        messageInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCountSpan.innerText = length;
+            if (length > 500) {
+                this.value = this.value.substring(0, 500);
+                charCountSpan.innerText = 500;
+            }
+        });
+    }
+    
+    // Star rating
+    const starsContainer = document.getElementById('ratingStars');
+    if (starsContainer && ratingInput) {
+        // Set default active stars (rating 5)
+        const defaultStars = starsContainer.querySelectorAll('span');
+        defaultStars.forEach((star, index) => {
             if (index < 5) {
                 star.classList.add('active');
                 star.style.color = '#fbbf24';
             }
         });
+        
+        starsContainer.addEventListener('click', function(e) {
+            const star = e.target.closest('span');
+            if (star && star.dataset.rating) {
+                const rating = parseInt(star.dataset.rating);
+                ratingInput.value = rating;
+                
+                const allStars = starsContainer.querySelectorAll('span');
+                allStars.forEach((s, idx) => {
+                    if (idx < rating) {
+                        s.classList.add('active');
+                        s.style.color = '#fbbf24';
+                    } else {
+                        s.classList.remove('active');
+                        s.style.color = '#d1d5db';
+                    }
+                });
+            }
+        });
+        
+        starsContainer.addEventListener('mouseover', function(e) {
+            const star = e.target.closest('span');
+            if (star && star.dataset.rating) {
+                const rating = parseInt(star.dataset.rating);
+                const allStars = starsContainer.querySelectorAll('span');
+                allStars.forEach((s, idx) => {
+                    s.style.color = idx < rating ? '#fbbf24' : '#d1d5db';
+                });
+            }
+        });
+        
+        starsContainer.addEventListener('mouseout', function() {
+            const currentRating = parseInt(ratingInput.value);
+            const allStars = starsContainer.querySelectorAll('span');
+            allStars.forEach((s, idx) => {
+                s.style.color = idx < currentRating ? '#fbbf24' : '#d1d5db';
+            });
+        });
     }
     
-    // Star rating functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const stars = document.querySelectorAll('.star-rating');
-        const ratingInput = document.getElementById('rating');
-        
-        if (stars.length > 0 && ratingInput) {
-            // Set default active stars (rating 5)
-            stars.forEach((star, index) => {
-                if (index < 5) {
-                    star.classList.add('active');
-                    star.style.color = '#fbbf24';
-                }
-            });
+    // Form submission
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const rating = parseInt(this.dataset.rating);
-                    ratingInput.value = rating;
-                    
-                    stars.forEach((s, idx) => {
-                        if (idx < rating) {
-                            s.classList.add('active');
-                            s.style.color = '#fbbf24';
-                        } else {
-                            s.classList.remove('active');
-                            s.style.color = '#d1d5db';
-                        }
-                    });
-                });
-                
-                star.addEventListener('mouseenter', function() {
-                    const rating = parseInt(this.dataset.rating);
-                    stars.forEach((s, idx) => {
-                        s.style.color = idx < rating ? '#fbbf24' : '#d1d5db';
-                    });
-                });
-                
-                star.addEventListener('mouseleave', function() {
-                    const currentRating = parseInt(ratingInput.value);
-                    stars.forEach((s, idx) => {
-                        s.style.color = idx < currentRating ? '#fbbf24' : '#d1d5db';
-                    });
-                });
-            });
-        }
-        
-        // Handle form submission with AJAX to avoid page reload
-        const form = document.getElementById('testimonialForm');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const rating = document.getElementById('rating').value;
-                const message = document.getElementById('message').value;
-                
-                if (!message || message.length < 10) {
-                    alert('Testimoni minimal 10 karakter');
-                    return;
-                }
-                
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        rating: rating,
-                        message: message
-                    })
+            const rating = ratingInput.value;
+            const message = messageInput ? messageInput.value : '';
+            
+            if (message.length < 10) {
+                alert('Testimoni minimal 10 karakter');
+                messageInput.focus();
+                return;
+            }
+            
+            if (message.length > 500) {
+                alert('Testimoni maksimal 500 karakter');
+                return;
+            }
+            
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Mengirim...';
+            
+            fetch('{{ route("testimonials.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    rating: rating,
+                    message: message
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        closeTestimonialModal();
-                        // Reload page to show new testimonial
-                        window.location.reload();
-                    } else {
-                        alert(data.message || 'Gagal mengirim testimoni');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan, silakan coba lagi');
-                });
-            });
-        }
-        
-        // Close modal when clicking outside
-        const modal = document.getElementById('testimonialModal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeTestimonialModal();
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ ' + data.message);
+                    closeModal();
+                    window.location.reload();
+                } else {
+                    alert('✗ ' + (data.message || 'Gagal mengirim testimoni'));
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             });
-        }
-    });
+        });
+    }
+    
+    // Modal close handlers
+    if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+    if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+    
+    // Close modal on outside click
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
 </script>
-
-<style>
-    .star-rating.active { color: #fbbf24; }
-</style>
 @endsection
