@@ -323,6 +323,11 @@
     
     @if($testimonials->count() > 0)
         @foreach($testimonials as $testimonial)
+        @php
+            // ========== PERBAIKAN JAM - REAL TIME WIB ==========
+            // Menggunakan timezone Asia/Jakarta untuk waktu real
+            $createdAt = \Carbon\Carbon::parse($testimonial->created_at)->setTimezone('Asia/Jakarta');
+        @endphp
         <div class="testimonial-card" data-id="{{ $testimonial->id }}">
             <div class="testimonial-header-card">
                 <div>
@@ -332,7 +337,7 @@
                         @endfor
                     </div>
                     <div class="testimonial-date">
-                        {{ $testimonial->created_at->translatedFormat('d F Y H:i') }}
+                        {{ $createdAt->translatedFormat('d F Y') }} • {{ $createdAt->format('H:i') }} WIB
                     </div>
                 </div>
             </div>

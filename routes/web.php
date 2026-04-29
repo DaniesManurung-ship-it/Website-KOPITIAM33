@@ -66,7 +66,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::get('/order/history', [OrderController::class, 'history'])->name('orders.history');
     Route::patch('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+    
+    // Testimonial Routes untuk user yang login
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+    Route::delete('/testimonials/{id}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
 });
+
+// ========== TESTIMONIAL PUBLIC ROUTES (Bisa diakses semua orang) ==========
+// Halaman testimonial untuk public (guest dan customer bisa lihat)
+Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+
+// API endpoint untuk mengambil testimonial terbaru (tanpa auth, untuk dropdown widget)
+Route::get('/testimonials/latest', function() {
+    return App\Models\Testimonial::where('is_approved', true)
+        ->where('is_archived', false)
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+})->name('testimonials.latest');
 
 // ========== ADMIN ROUTES (Protected - Hanya admin yang login) ==========
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
@@ -117,7 +134,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Pesanan Reservasi
     Route::get('/pesanan-reservasi', [PesananReservasiController::class, 'index'])->name('pesanan-reservasi');
     
-    // Testimonial Management
+    // Testimonial Management (Admin)
     Route::get('/testimonial', [AdminTestimonialController::class, 'index'])->name('testimonial');
     Route::patch('/testimonial/{id}/status', [AdminTestimonialController::class, 'updateStatus'])->name('testimonial.status');
     Route::delete('/testimonial/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonial.destroy');

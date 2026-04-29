@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Café Kopitiam33</title>
     
@@ -29,6 +29,12 @@
             --accent: #D97642;
         }
         
+        body {
+            background: var(--cream);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
         /* Navbar Styles */
         .nav-container {
             background: white;
@@ -36,6 +42,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            width: 100%;
         }
         
         .nav-inner {
@@ -57,11 +64,12 @@
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
+            flex-shrink: 0;
         }
         
         .logo-circle {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--sage);
             border-radius: 50%;
             display: flex;
@@ -72,14 +80,27 @@
         .logo-text {
             color: white;
             font-weight: bold;
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
         
         .logo-brand {
             color: var(--wood);
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
+        }
+        
+        @media (min-width: 768px) {
+            .logo-circle {
+                width: 40px;
+                height: 40px;
+            }
+            .logo-text {
+                font-size: 1.25rem;
+            }
+            .logo-brand {
+                font-size: 1.5rem;
+            }
         }
         
         /* Desktop Menu */
@@ -101,6 +122,7 @@
             color: var(--wood);
             transition: color 0.2s;
             padding: 0.5rem 0;
+            font-size: 0.9rem;
         }
         
         .nav-link:hover {
@@ -126,7 +148,7 @@
             align-items: center;
             gap: 0.25rem;
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--wood);
             padding: 0.5rem 0;
             transition: color 0.2s;
@@ -154,7 +176,7 @@
             position: absolute;
             top: calc(100% + 5px);
             left: 0;
-            min-width: 180px;
+            min-width: 160px;
             background: white;
             border-radius: 0.5rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
@@ -172,8 +194,8 @@
         
         .dropdown-item {
             display: block;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
             color: #374151;
             text-decoration: none;
             transition: all 0.2s;
@@ -196,8 +218,8 @@
         }
         
         .cart-icon {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
         }
         
         .cart-badge {
@@ -206,138 +228,14 @@
             right: -5px;
             background: var(--accent);
             color: white;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: bold;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .cart-dropdown {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 5px);
-            width: 320px;
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            border: 1px solid #f3f4f6;
-        }
-        
-        .cart-header {
-            padding: 0.75rem 1rem;
-            background: rgba(139, 168, 136, 0.1);
-            border-bottom: 1px solid rgba(139, 168, 136, 0.2);
-        }
-        
-        .cart-title {
-            font-weight: 600;
-            color: var(--wood);
-        }
-        
-        .cart-items {
-            max-height: 350px;
-            overflow-y: auto;
-            padding: 0.75rem;
-        }
-        
-        .cart-empty {
-            text-align: center;
-            padding: 1.5rem;
-            color: #6b7280;
-        }
-        
-        .cart-item {
-            display: flex;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-        
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-        
-        .cart-item-info {
-            flex: 1;
-        }
-        
-        .cart-item-name {
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: #1f2937;
-        }
-        
-        .cart-item-price {
-            color: var(--accent);
-            font-size: 0.75rem;
-        }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.25rem;
-        }
-        
-        .quantity-btn {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #f3f4f6;
-            border: none;
-            cursor: pointer;
-            font-size: 0.75rem;
-        }
-        
-        .quantity-value {
-            font-size: 0.75rem;
-            font-weight: 500;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .remove-item {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #9ca3af;
-        }
-        
-        .cart-footer {
-            padding: 0.75rem 1rem;
-            background: #f9fafb;
-            border-top: 1px solid #f3f4f6;
-        }
-        
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        
-        .total-price {
-            color: var(--wood);
-            font-weight: bold;
-        }
-        
-        .checkout-btn {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .checkout-btn:hover {
-            background: #c0392b;
         }
         
         /* Profile Dropdown */
@@ -348,12 +246,13 @@
         .profile-button {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
             background: none;
             border: none;
             cursor: pointer;
             color: var(--wood);
             padding: 0.5rem;
+            font-size: 0.85rem;
         }
         
         .profile-icon {
@@ -377,13 +276,13 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 1rem;
             color: #374151;
             text-decoration: none;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             transition: background 0.2s;
         }
         
@@ -396,7 +295,7 @@
         .mobile-buttons {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
         
         @media (min-width: 769px) {
@@ -410,12 +309,16 @@
             border: none;
             color: var(--wood);
             cursor: pointer;
+            padding: 0.5rem;
         }
         
         .mobile-menu {
             display: none;
-            padding: 1rem 0;
+            padding: 1rem;
             border-top: 1px solid #e5e7eb;
+            background: white;
+            max-height: calc(100vh - 64px);
+            overflow-y: auto;
         }
         
         .mobile-menu.open {
@@ -425,12 +328,15 @@
         .mobile-menu-links {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
         }
         
         .mobile-link {
             text-decoration: none;
             color: var(--wood);
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            display: block;
         }
         
         .mobile-link-active {
@@ -448,7 +354,8 @@
             border: none;
             cursor: pointer;
             color: var(--wood);
-            font-size: 1rem;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
         }
         
         .mobile-submenu {
@@ -462,28 +369,82 @@
         .mobile-submenu-link {
             text-decoration: none;
             color: var(--wood);
-            font-size: 0.875rem;
+            font-size: 0.85rem;
+            padding: 0.2rem 0;
+            display: block;
         }
         
         .mobile-auth-section {
-            padding-top: 0.5rem;
+            padding-top: 0.8rem;
+            margin-top: 0.5rem;
             border-top: 1px solid #e5e7eb;
         }
         
-        /* Notification Styles */
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-login {
+            background: transparent;
+            border: 1px solid var(--sage);
+            color: var(--sage);
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-login:hover {
+            background: var(--sage);
+            color: white;
+        }
+        
+        .btn-register {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-register:hover {
+            background: #c0392b;
+        }
+        
+        /* Notification */
         .cart-notification {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background: var(--sage);
             color: white;
-            padding: 12px 20px;
+            padding: 10px 16px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             z-index: 9999;
             animation: slideIn 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-family: 'Poppins', sans-serif;
+            max-width: calc(100vw - 40px);
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 480px) {
+            .cart-notification {
+                white-space: normal;
+                font-size: 12px;
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                text-align: center;
+            }
         }
         
         @keyframes slideIn {
@@ -512,54 +473,10 @@
             display: none !important;
         }
         
-        /* Login/Register Buttons */
-        .auth-buttons {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .btn-login {
-            background: transparent;
-            border: 1px solid var(--sage);
-            color: var(--sage);
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-login:hover {
-            background: var(--sage);
-            color: white;
-        }
-        
-        .btn-register {
-            background: var(--accent);
-            color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-register:hover {
-            background: #c0392b;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .auth-buttons {
-                gap: 0.5rem;
-            }
-            
-            .btn-login, .btn-register {
-                padding: 0.3rem 0.75rem;
-                font-size: 0.75rem;
+        /* Responsive Logo */
+        @media (max-width: 480px) {
+            .logo-brand {
+                display: none;
             }
         }
     </style>
@@ -606,7 +523,6 @@
                 <a href="{{ route('about') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'about' }">About</a>
                 <a href="{{ route('contact') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'contact' }">Contact</a>
 
-                
                 <!-- Profile Dropdown / Auth Buttons -->
                 @auth
                 <div class="profile-dropdown" x-data="{ open: false }">
@@ -614,8 +530,8 @@
                         <svg class="profile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        <span>{{ Auth::user()->name }}</span>
-                        <svg class="dropdown-icon" :class="{ 'rotate': open }" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
+                        <svg class="dropdown-icon" :class="{ 'rotate': open }" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
@@ -645,7 +561,7 @@
                 @endauth
             </div>
 
-            <!-- Mobile Menu Button -->
+            <!-- Mobile Buttons -->
             <div class="mobile-buttons">
                 <button class="cart-button" @click="cartOpenMobile = !cartOpenMobile">
                     <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -654,7 +570,7 @@
                     <span x-show="cartTotal > 0" x-cloak class="cart-badge" x-text="cartTotal"></span>
                 </button>
                 <button class="mobile-menu-btn" @click="toggleMobileMenu">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
@@ -664,59 +580,54 @@
         <!-- Mobile Menu -->
         <div class="mobile-menu" :class="{ 'open': mobileMenuOpen }">
             <div class="mobile-menu-links">
-                <a href="{{ route('home') }}" class="mobile-link" :class="{ 'mobile-link-active': activeMenu === 'home' }">Beranda</a>
+                <a href="{{ route('home') }}" class="mobile-link" :class="{ 'mobile-link-active': activeMenu === 'home' }" @click="toggleMobileMenu">🏠 Beranda</a>
                 
                 <div x-data="{ menuOpenMobile: false }">
                     <button @click="menuOpenMobile = !menuOpenMobile" class="mobile-dropdown-btn">
-                        <span>Menu</span>
+                        <span>🍽️ Menu</span>
                         <svg class="dropdown-icon" :class="{ 'rotate': menuOpenMobile }" width="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
                     <div x-show="menuOpenMobile" x-cloak class="mobile-submenu">
-                        <a href="{{ route('menu') }}" class="mobile-submenu-link">Semua Menu</a>
-                        <a href="{{ route('promo') }}" class="mobile-submenu-link">Promo</a>
-                        <a href="{{ route('menu-spesial') }}" class="mobile-submenu-link">Menu Spesial</a>
+                        <a href="{{ route('menu') }}" class="mobile-submenu-link" @click="toggleMobileMenu">📋 Semua Menu</a>
+                        <a href="{{ route('promo') }}" class="mobile-submenu-link" @click="toggleMobileMenu">🔥 Promo</a>
+                        <a href="{{ route('menu-spesial') }}" class="mobile-submenu-link" @click="toggleMobileMenu">⭐ Menu Spesial</a>
                     </div>
                 </div>
                 
-                <a href="{{ route('reservasi') }}" class="mobile-link">Reservasi</a>
-                <a href="{{ route('gallery') }}" class="mobile-link">Gallery</a>
-                <a href="{{ route('about') }}" class="mobile-link">About</a>
-                <a href="{{ route('contact') }}" class="mobile-link">Contact</a>
+                <a href="{{ route('reservasi') }}" class="mobile-link" @click="toggleMobileMenu">📅 Reservasi</a>
+                <a href="{{ route('gallery') }}" class="mobile-link" @click="toggleMobileMenu">🖼️ Gallery</a>
+                <a href="{{ route('about') }}" class="mobile-link" @click="toggleMobileMenu">ℹ️ About</a>
+                <a href="{{ route('contact') }}" class="mobile-link" @click="toggleMobileMenu">📞 Contact</a>
 
-                <!-- 🔥 RIWAYAT PESANAN, RESERVASI, DAN TESTIMONI DI MOBILE 🔥 -->
                 @auth
                     @if(Auth::user()->role === 'customer')
-                        <a href="{{ route('orders.history') }}" class="mobile-link">📋 Riwayat Pesanan</a>
-                        <a href="{{ route('reservasi.history') }}" class="mobile-link">📅 Riwayat Reservasi</a>
-                        <a href="{{ route('testimonial.my') }}" class="mobile-link">💬 Riwayat Testimoni</a>
+                        <a href="{{ route('cart') }}" class="mobile-link" @click="toggleMobileMenu">🛒 Keranjang Saya</a>
+                        <a href="{{ route('orders.history') }}" class="mobile-link" @click="toggleMobileMenu">📋 Riwayat Pesanan</a>
+                        <a href="{{ route('reservasi.history') }}" class="mobile-link" @click="toggleMobileMenu">📅 Riwayat Reservasi</a>
+                        <a href="{{ route('testimonial.my') }}" class="mobile-link" @click="toggleMobileMenu">💬 Riwayat Testimoni</a>
                     @endif
                 @endauth
                 
                 <div class="mobile-auth-section">
                     @auth
-                        <div style="padding: 0.5rem 0; font-weight: 600; color: var(--wood);">
+                        <div style="padding: 0.3rem 0; font-weight: 600; color: var(--wood);">
                             👤 {{ Auth::user()->name }}
                         </div>
                         @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="mobile-link">📊 Dashboard Admin</a>
-                            <a href="{{ route('admin.menu.index') }}" class="mobile-link">📋 Kelola Menu</a>
-                            <a href="{{ route('admin.reservasi') }}" class="mobile-link">📅 Kelola Reservasi</a>
-                            <a href="{{ route('admin.pesanan') }}" class="mobile-link">📦 Kelola Pesanan</a>
-                        @else
-                            <a href="{{ route('cart') }}" class="mobile-link">🛒 Keranjang Saya</a>
-                            <a href="{{ route('orders.history') }}" class="mobile-link">📋 Riwayat Pesanan</a>
-                            <a href="{{ route('reservasi.history') }}" class="mobile-link">📅 Riwayat Reservasi</a>
-                            <a href="{{ route('testimonial.my') }}" class="mobile-link">💬 Riwayat Testimoni</a>
+                            <a href="{{ route('admin.dashboard') }}" class="mobile-link" @click="toggleMobileMenu">📊 Dashboard Admin</a>
+                            <a href="{{ route('admin.menu.index') }}" class="mobile-link" @click="toggleMobileMenu">📋 Kelola Menu</a>
+                            <a href="{{ route('admin.reservasi') }}" class="mobile-link" @click="toggleMobileMenu">📅 Kelola Reservasi</a>
+                            <a href="{{ route('admin.pesanan') }}" class="mobile-link" @click="toggleMobileMenu">📦 Kelola Pesanan</a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="mobile-link" style="background: none; border: none; cursor: pointer; text-align: left;">🚪 Logout</button>
+                            <button type="submit" class="mobile-link" style="background: none; border: none; cursor: pointer; text-align: left; width: 100%;">🚪 Logout</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="mobile-link">Login</a>
-                        <a href="{{ route('register') }}" class="mobile-link">Daftar</a>
+                        <a href="{{ route('login') }}" class="mobile-link" @click="toggleMobileMenu">🔐 Login</a>
+                        <a href="{{ route('register') }}" class="mobile-link" @click="toggleMobileMenu">📝 Daftar</a>
                     @endauth
                 </div>
             </div>
@@ -763,6 +674,12 @@
             
             toggleMobileMenu() {
                 this.mobileMenuOpen = !this.mobileMenuOpen;
+                // Prevent body scroll when menu is open
+                if (this.mobileMenuOpen) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
             },
             
             loadCart() {
@@ -868,265 +785,6 @@
         Alpine.data('navigationData', navigationData);
     });
 </script>
-
-<!-- Floating Testimoni Button -->
-@auth
-<div x-data="testimonialWidget()" x-init="init" class="testimonial-floating">
-    <button @click="openModal = true" class="testimonial-btn">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-        </svg>
-        <span>Testimoni</span>
-    </button>
-    
-    <div x-show="openModal" x-cloak class="testimonial-modal" @click.away="openModal = false">
-        <div class="testimonial-modal-content">
-            <div class="testimonial-modal-header">
-                <h3>💬 Berikan Testimoni</h3>
-                <button @click="openModal = false" class="close-btn">&times;</button>
-            </div>
-            <div class="testimonial-modal-body">
-                <div class="rating-input">
-                    <label>Rating Anda</label>
-                    <div class="stars">
-                        <template x-for="star in 5" :key="star">
-                            <span @click="rating = star" class="star" :class="{ 'active': star <= rating }">★</span>
-                        </template>
-                    </div>
-                </div>
-                <div class="message-input">
-                    <label>Testimoni Anda</label>
-                    <textarea x-model="message" rows="4" placeholder="Tulis pengalaman Anda di Café Kopitiam33..."></textarea>
-                </div>
-                <div class="char-count" x-text="message.length + '/500 karakter'"></div>
-                <div class="testimonial-actions">
-                    <button @click="submitTestimonial" :disabled="loading" class="btn-submit">
-                        <span x-show="loading">⏳ Mengirim...</span>
-                        <span x-show="!loading">✉️ Kirim Testimoni</span>
-                    </button>
-                    <button @click="openModal = false" class="btn-cancel">Batal</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .testimonial-floating {
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        z-index: 999;
-    }
-    .testimonial-btn {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        font-size: 14px;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        transition: all 0.3s ease;
-    }
-    .testimonial-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    }
-    .testimonial-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-    .testimonial-modal-content {
-        background: white;
-        border-radius: 1rem;
-        max-width: 450px;
-        width: 90%;
-        animation: modalPop 0.3s ease;
-    }
-    @keyframes modalPop {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    .testimonial-modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #f3f4f6;
-    }
-    .testimonial-modal-header h3 {
-        font-family: 'Playfair Display', serif;
-        color: var(--wood);
-        margin: 0;
-    }
-    .close-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #6b7280;
-    }
-    .testimonial-modal-body {
-        padding: 1.5rem;
-    }
-    .rating-input {
-        margin-bottom: 1rem;
-    }
-    .rating-input label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--wood);
-        margin-bottom: 0.5rem;
-    }
-    .stars {
-        display: flex;
-        gap: 0.25rem;
-    }
-    .star {
-        font-size: 1.5rem;
-        color: #d1d5db;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-    .star.active {
-        color: #fbbf24;
-    }
-    .star:hover {
-        transform: scale(1.1);
-    }
-    .message-input {
-        margin-bottom: 0.5rem;
-    }
-    .message-input label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--wood);
-        margin-bottom: 0.5rem;
-    }
-    .message-input textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        font-family: 'Poppins', sans-serif;
-        resize: vertical;
-    }
-    .message-input textarea:focus {
-        outline: none;
-        border-color: #10b981;
-    }
-    .char-count {
-        text-align: right;
-        font-size: 0.7rem;
-        color: #6b7280;
-        margin-bottom: 1rem;
-    }
-    .testimonial-actions {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 1rem;
-    }
-    .btn-submit {
-        flex: 1;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        font-weight: 500;
-    }
-    .btn-submit:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-    .btn-cancel {
-        flex: 1;
-        background: #e5e7eb;
-        color: #374151;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        font-weight: 500;
-    }
-</style>
-
-<script>
-    function testimonialWidget() {
-        return {
-            openModal: false,
-            rating: 5,
-            message: '',
-            loading: false,
-            
-            init() {},
-            
-            submitTestimonial() {
-                if (this.message.trim().length < 10) {
-                    alert('Testimoni minimal 10 karakter');
-                    return;
-                }
-                if (this.message.length > 500) {
-                    alert('Testimoni maksimal 500 karakter');
-                    return;
-                }
-                
-                this.loading = true;
-                
-                fetch('/testimonial/store', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        rating: this.rating,
-                        message: this.message
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    this.loading = false;
-                    if (data.success) {
-                        alert('Terima kasih! Testimoni Anda telah terkirim.');
-                        this.openModal = false;
-                        this.message = '';
-                        this.rating = 5;
-                    } else {
-                        alert(data.message || 'Gagal mengirim testimoni');
-                    }
-                })
-                .catch(error => {
-                    this.loading = false;
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan. Silakan coba lagi.');
-                });
-            }
-        }
-    }
-    
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('testimonialWidget', testimonialWidget);
-    });
-</script>
-@endauth
 
 </body>
 </html>

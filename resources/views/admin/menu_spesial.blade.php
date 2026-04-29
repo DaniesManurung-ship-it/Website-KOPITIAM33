@@ -1,5 +1,5 @@
 {{-- resources/views/admin/menu_spesial.blade.php --}}
-@extends('layouts.admin')
+@extends('admin.layouts.sidebar')
 
 @section('title', 'Menu Spesial')
 

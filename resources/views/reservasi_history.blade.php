@@ -4,7 +4,7 @@
 
 @push('styles')
 <style>
-    /* RESET & OVERRIDE - Sama seperti halaman cart */
+    /* RESET & OVERRIDE */
     .reservasi-header {
         background: #8BA888 !important;
         background-color: #8BA888 !important;
@@ -29,7 +29,6 @@
         color: white !important;
     }
     
-    /* Pastikan tidak ada gradient atau background lain yang mengganggu */
     .reservasi-header::before,
     .reservasi-header::after {
         display: none !important;
@@ -55,7 +54,6 @@
         padding: 0 1rem;
     }
     
-    /* Alert Success */
     .alert-success {
         background: #d1fae5;
         color: #065f46;
@@ -75,7 +73,6 @@
         flex-shrink: 0;
     }
     
-    /* Filter Section */
     .filter-section {
         margin-bottom: 2rem;
         display: flex;
@@ -121,7 +118,6 @@
         border-radius: 2rem;
     }
     
-    /* Reservasi Card */
     .reservasi-card {
         background: white;
         border-radius: 1rem;
@@ -195,7 +191,6 @@
         color: #3730A3;
     }
     
-    /* Info Grid */
     .reservasi-info {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -225,7 +220,6 @@
         margin-right: 0.25rem;
     }
     
-    /* Notes Section */
     .notes-section {
         background: #FFFBEB;
         padding: 0.75rem 1rem;
@@ -247,7 +241,6 @@
         margin-top: 0.125rem;
     }
     
-    /* Action Buttons */
     .action-buttons {
         display: flex;
         gap: 0.75rem;
@@ -291,7 +284,6 @@
         transform: translateY(-1px);
     }
     
-    /* Status Message */
     .status-message {
         font-size: 0.8rem;
         padding: 0.5rem 0;
@@ -312,7 +304,6 @@
         color: #f59e0b;
     }
     
-    /* New Reservation Button */
     .btn-new-reservasi {
         background: linear-gradient(135deg, var(--accent) 0%, #c0392b 100%);
         color: white;
@@ -338,7 +329,6 @@
         text-align: center;
     }
     
-    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
@@ -366,7 +356,6 @@
         margin-bottom: 1.5rem;
     }
     
-    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -398,7 +387,6 @@
         border-color: var(--sage);
     }
     
-    /* Responsive */
     @media (max-width: 768px) {
         .reservasi-header h1 {
             font-size: 1.75rem !important;
@@ -442,8 +430,7 @@
 @endpush
 
 @section('content')
-<!-- Header - SAMA SEPERTI HEADER CART -->
-<section class="reservasi-header" style="background: #8BA888 !important; background-color: #8BA888 !important;">
+<section class="reservasi-header">
     <div class="container">
         <h1>📅 Riwayat Reservasi</h1>
         <p>Lihat, edit, atau batalkan reservasi meja Anda</p>
@@ -461,7 +448,6 @@
     @endif
     
     @if($reservations->count() > 0)
-        <!-- Filter Section -->
         <div class="filter-section">
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">Semua</button>
@@ -477,11 +463,17 @@
         
         <div id="reservationsList">
             @foreach($reservations as $reservasi)
+            @php
+                // ========== PERBAIKAN JAM - REAL TIME WIB ==========
+                // Menggunakan timezone Asia/Jakarta untuk waktu real
+                $createdAt = \Carbon\Carbon::parse($reservasi->created_at)->setTimezone('Asia/Jakarta');
+                $reservasiDate = \Carbon\Carbon::parse($reservasi->date)->setTimezone('Asia/Jakarta');
+            @endphp
             <div class="reservasi-card" data-status="{{ $reservasi->status }}">
                 <div class="reservasi-header-card">
                     <div>
                         <span class="reservasi-id">#{{ $reservasi->id }}</span>
-                        <span class="reservasi-date">{{ \Carbon\Carbon::parse($reservasi->created_at)->translatedFormat('d F Y H:i') }}</span>
+                        <span class="reservasi-date">{{ $createdAt->translatedFormat('d F Y') }} • {{ $createdAt->format('H:i') }} WIB</span>
                     </div>
                     <span class="status-{{ $reservasi->status }}">
                         @if($reservasi->status == 'pending') 
@@ -513,7 +505,7 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span><span class="info-label">Tanggal:</span> {{ \Carbon\Carbon::parse($reservasi->date)->translatedFormat('d F Y') }} - {{ $reservasi->time }} WIB</span>
+                        <span><span class="info-label">Tanggal:</span> {{ $reservasiDate->translatedFormat('d F Y') }} - {{ $reservasi->time }} WIB</span>
                     </div>
                     <div class="info-item">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -562,7 +554,6 @@
             @endforeach
         </div>
         
-        <!-- Pagination -->
         @if(method_exists($reservations, 'links'))
             <div class="pagination">
                 {{ $reservations->links() }}
@@ -606,16 +597,11 @@
         }
     }
     
-    // Filter functionality
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const filter = this.dataset.filter;
-            
-            // Update active button
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
-            // Filter cards
             const cards = document.querySelectorAll('.reservasi-card');
             cards.forEach(card => {
                 if (filter === 'all' || card.dataset.status === filter) {

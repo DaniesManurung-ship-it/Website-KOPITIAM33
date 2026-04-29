@@ -1,5 +1,5 @@
 {{-- resources/views/admin/reservasi.blade.php --}}
-@extends('layouts.admin')
+@extends('admin.layouts.sidebar')
 
 @section('title', 'Kelola Reservasi')
 

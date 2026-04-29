@@ -5,7 +5,7 @@
 
 @push('styles')
 <style>
-    /* RESET & OVERRIDE - Sama seperti halaman cart */
+    /* RESET & OVERRIDE */
     .order-header-section {
         background: #8BA888 !important;
         background-color: #8BA888 !important;
@@ -30,7 +30,6 @@
         color: white !important;
     }
     
-    /* Pastikan tidak ada gradient atau background lain yang mengganggu */
     .order-header-section::before,
     .order-header-section::after {
         display: none !important;
@@ -56,7 +55,6 @@
         padding: 0 1rem;
     }
     
-    /* Alert Success */
     .alert-success {
         background: #d1fae5;
         color: #065f46;
@@ -76,7 +74,6 @@
         flex-shrink: 0;
     }
     
-    /* Filter Section */
     .filter-section {
         margin-bottom: 2rem;
         display: flex;
@@ -122,7 +119,6 @@
         border-radius: 2rem;
     }
     
-    /* Order Card */
     .order-card {
         background: white;
         border-radius: 1rem;
@@ -166,7 +162,13 @@
         margin-left: 0.5rem;
     }
     
-    /* Status Badges */
+    .order-date-full {
+        font-size: 0.7rem;
+        color: #6b7280;
+        display: block;
+        margin-top: 0.25rem;
+    }
+    
     .status-pending, .status-processed, .status-completed, .status-cancelled {
         padding: 0.3rem 0.9rem;
         border-radius: 2rem;
@@ -197,7 +199,6 @@
         color: #991B1B;
     }
     
-    /* Order Items */
     .order-items {
         margin-bottom: 1rem;
     }
@@ -232,7 +233,6 @@
         font-size: 0.875rem;
     }
     
-    /* Order Footer */
     .order-footer {
         display: flex;
         justify-content: space-between;
@@ -256,7 +256,6 @@
         font-weight: 800;
     }
     
-    /* Cancel Button */
     .btn-cancel {
         background: #ef4444;
         color: white;
@@ -284,28 +283,6 @@
         transform: none;
     }
     
-    /* Delete Button - Baru untuk hapus pesanan */
-    .btn-delete-order {
-        background: #6b7280;
-        color: white;
-        padding: 0.5rem 1.25rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-size: 0.8rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-delete-order:hover {
-        background: #4b5563;
-        transform: translateY(-1px);
-    }
-    
-    /* Status Message */
     .status-message {
         font-size: 0.8rem;
         padding: 0.5rem 0;
@@ -330,7 +307,6 @@
         color: #3b82f6;
     }
     
-    /* Order Again Button */
     .btn-order-again {
         background: linear-gradient(135deg, var(--accent) 0%, #c0392b 100%);
         color: white;
@@ -354,7 +330,6 @@
         text-align: center;
     }
     
-    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
@@ -382,7 +357,6 @@
         margin-bottom: 1.5rem;
     }
     
-    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -414,7 +388,6 @@
         border-color: var(--sage);
     }
     
-    /* Action Buttons Group */
     .action-buttons-group {
         display: flex;
         gap: 0.75rem;
@@ -422,7 +395,30 @@
         flex-wrap: wrap;
     }
     
-    /* Responsive */
+    /* Detail Waktu */
+    .time-detail {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .time-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        color: #6b7280;
+        background: #f9fafb;
+        padding: 0.25rem 0.6rem;
+        border-radius: 1rem;
+    }
+    
+    .time-item svg {
+        width: 12px;
+        height: 12px;
+    }
+    
     @media (max-width: 768px) {
         .order-header-section h1 {
             font-size: 1.75rem !important;
@@ -459,13 +455,18 @@
             width: 100%;
             justify-content: flex-start;
         }
+        
+        .time-detail {
+            flex-direction: column;
+            gap: 0.4rem;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<!-- Header Section - SAMA SEPERTI HEADER CART -->
-<section class="order-header-section" style="background: #8BA888 !important; background-color: #8BA888 !important;">
+<!-- Header Section -->
+<section class="order-header-section">
     <div class="container">
         <h1>📦 Riwayat Pesanan</h1>
         <p>Lihat status dan riwayat pemesanan Anda</p>
@@ -499,11 +500,33 @@
         
         <div id="ordersList">
             @foreach($orders as $order)
+            @php
+                // Format tanggal dengan jam yang benar sesuai waktu pemesanan
+                $createdAt = \Carbon\Carbon::parse($order->created_at);
+                $updatedAt = \Carbon\Carbon::parse($order->updated_at);
+                
+                // Set timezone ke Asia/Jakarta (WIB)
+                $createdAt->setTimezone('Asia/Jakarta');
+                $updatedAt->setTimezone('Asia/Jakarta');
+            @endphp
             <div class="order-card" data-status="{{ $order->status }}" data-id="{{ $order->id }}">
                 <div class="order-header">
                     <div>
                         <span class="order-number">{{ $order->order_number }}</span>
-                        <span class="order-date">{{ \Carbon\Carbon::parse($order->created_at)->translatedFormat('d F Y H:i') }}</span>
+                        <div class="time-detail">
+                            <span class="time-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                {{ $createdAt->translatedFormat('d F Y') }}
+                            </span>
+                            <span class="time-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                {{ $createdAt->format('H:i') }} WIB
+                            </span>
+                        </div>
                     </div>
                     <span class="status-{{ $order->status }}">
                         @if($order->status == 'pending') 
@@ -555,24 +578,20 @@
                             <div class="status-message confirmed">
                                 ✅ Pesanan telah selesai. Terima kasih!
                             </div>
-                            <!-- TAMBAHAN: Tombol Hapus untuk pesanan selesai -->
-                            <button class="btn-delete-order" onclick="deleteOrder({{ $order->id }})">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                Hapus Pesanan
-                            </button>
+                            @if($updatedAt->diffInDays($createdAt) > 0)
+                            <div class="status-message confirmed" style="font-size:0.7rem;">
+                                Selesai pada: {{ $updatedAt->translatedFormat('d F Y H:i') }} WIB
+                            </div>
+                            @endif
                         @elseif($order->status == 'cancelled')
                             <div class="status-message cancelled">
                                 ❌ Pesanan telah dibatalkan
                             </div>
-                            <!-- TAMBAHAN: Tombol Hapus untuk pesanan dibatalkan -->
-                            <button class="btn-delete-order" onclick="deleteOrder({{ $order->id }})">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                Hapus Pesanan
-                            </button>
+                            @if($updatedAt->diffInDays($createdAt) > 0)
+                            <div class="status-message cancelled" style="font-size:0.7rem;">
+                                Dibatalkan pada: {{ $updatedAt->translatedFormat('d F Y H:i') }} WIB
+                            </div>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -612,52 +631,43 @@
 <script>
     function cancelOrder(id) {
         if(confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
+            const cancelBtn = event.target;
+            const originalText = cancelBtn.innerHTML;
+            
+            cancelBtn.disabled = true;
+            cancelBtn.innerHTML = '⏳ Memproses...';
+            
             fetch(`/order/${id}/cancel`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if(data.success) {
+                    alert('✅ Pesanan berhasil dibatalkan!');
                     location.reload();
                 } else {
-                    alert(data.message || 'Gagal membatalkan pesanan');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
-            });
-        }
-    }
-    
-    // FUNGSI HAPUS PESANAN - BARU DITAMBAHKAN
-    function deleteOrder(id) {
-        if(confirm('⚠️ Apakah Anda yakin ingin menghapus pesanan ini? Pesanan yang dihapus tidak dapat dikembalikan!')) {
-            fetch(`/order/${id}/delete`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    alert('✅ Pesanan berhasil dihapus!');
-                    location.reload();
-                } else {
-                    alert(data.message || '❌ Gagal menghapus pesanan');
+                    alert(data.message || '❌ Gagal membatalkan pesanan');
+                    cancelBtn.disabled = false;
+                    cancelBtn.innerHTML = originalText;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('⚠️ Terjadi kesalahan. Silakan coba lagi.');
+                cancelBtn.disabled = false;
+                cancelBtn.innerHTML = originalText;
             });
         }
     }
@@ -667,11 +677,9 @@
         btn.addEventListener('click', function() {
             const filter = this.dataset.filter;
             
-            // Update active button
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
-            // Filter cards
             const cards = document.querySelectorAll('.order-card');
             cards.forEach(card => {
                 if (filter === 'all' || card.dataset.status === filter) {

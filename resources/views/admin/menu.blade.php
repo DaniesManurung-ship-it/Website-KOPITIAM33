@@ -1,5 +1,5 @@
 {{-- resources/views/admin/menu.blade.php --}}
-@extends('layouts.admin')
+@extends('admin.layouts.sidebar')
 
 @section('title', 'Kelola Menu')
 

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.sidebar')
 
 @section('title', 'Kelola Pesanan')
 
@@ -179,16 +179,29 @@
         background: var(--sage-light);
     }
     
-    .order-number {
-        font-weight: 700;
-        color: var(--dark);
-        font-size: 0.85rem;
-        margin-bottom: 0.25rem;
+    /* ORDER ID - UKURAN KECIL & WARNA HITAM PUDAR */
+    .order-id-small {
+        font-family: 'Courier New', monospace;
+        font-size: 0.65rem;
+        font-weight: 500;
+        color: #4a4a4a;
+        background: #f5f5f5;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        display: inline-block;
+        letter-spacing: 0.3px;
     }
     
     .order-date {
         font-size: 0.65rem;
         color: var(--gray);
+    }
+    
+    .order-time {
+        font-size: 0.65rem;
+        color: var(--sage);
+        font-weight: 500;
+        margin-top: 0.2rem;
     }
     
     .customer-name {
@@ -225,7 +238,8 @@
         color: var(--accent);
         font-size: 0.9rem;
     }
-    
+
+    /* ========== STATUS BADGE ========== */
     .status-badge {
         display: inline-flex;
         align-items: center;
@@ -234,6 +248,7 @@
         border-radius: 20px;
         font-size: 0.7rem;
         font-weight: 600;
+        white-space: nowrap;
     }
     
     .status-pending { background: #FEF3C7; color: #D97706; }
@@ -242,10 +257,25 @@
     .status-cancelled { background: #FEE2E2; color: #DC2626; }
     .status-archived { background: #E5E7EB; color: #6B7280; }
     
+    /* ========== ACTION BUTTONS - DIPISAHKAN ========== */
     .action-buttons {
         display: flex;
+        flex-direction: column;
         gap: 0.5rem;
+    }
+    
+    .status-action-group {
+        display: flex;
+        gap: 0.3rem;
         flex-wrap: wrap;
+    }
+    
+    .archive-action-group {
+        display: flex;
+        gap: 0.3rem;
+        margin-top: 0.25rem;
+        padding-top: 0.25rem;
+        border-top: 1px dashed var(--border);
     }
     
     .btn-process, .btn-complete, .btn-cancel, .btn-delete, .btn-restore {
@@ -259,16 +289,21 @@
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
+        white-space: nowrap;
     }
     
     .btn-process { background: #DBEAFE; color: #2563EB; }
     .btn-process:hover { background: #2563EB; color: white; transform: translateY(-2px); }
+    
     .btn-complete { background: #D1FAE5; color: #059669; }
     .btn-complete:hover { background: #059669; color: white; transform: translateY(-2px); }
+    
     .btn-cancel { background: #FEF3C7; color: #D97706; }
     .btn-cancel:hover { background: #D97706; color: white; transform: translateY(-2px); }
+    
     .btn-delete { background: #FEE2E2; color: #DC2626; }
     .btn-delete:hover { background: #DC2626; color: white; transform: translateY(-2px); }
+    
     .btn-restore { background: #E5E7EB; color: #6B7280; }
     .btn-restore:hover { background: #6B7280; color: white; transform: translateY(-2px); }
     
@@ -309,12 +344,32 @@
         opacity: 0.5;
     }
     
+    .time-detail {
+        margin-top: 0.3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+    
+    .time-info {
+        font-size: 0.6rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    .time-info svg {
+        width: 10px;
+        height: 10px;
+    }
+    
     @media (max-width: 768px) {
         .stats-grid { grid-template-columns: repeat(2, 1fr); }
         .filter-bar { flex-direction: column; align-items: stretch; }
         .filter-group { justify-content: center; }
         .action-buttons { flex-direction: column; }
-        .btn-process, .btn-complete, .btn-cancel, .btn-delete, .btn-restore { width: 100%; justify-content: center; }
+        .status-action-group { flex-wrap: wrap; }
     }
 </style>
 @endpush
@@ -397,21 +452,38 @@
             <thead>
                 <tr>
                     <th width="5%">ID</th>
-                    <th width="15%">No. Order</th>
+                    <th width="15%">No. Order & Waktu</th>
                     <th width="15%">Customer</th>
                     <th width="25%">Pesanan</th>
                     <th width="10%">Total</th>
-                    <th width="10%">Status</th>
-                    <th width="20%">Aksi</th>
+                    <th width="15%">Status</th>
+                    <th width="15%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($pesanans as $pesanan)
+                @php
+                    $createdAt = \Carbon\Carbon::parse($pesanan->created_at)->setTimezone('Asia/Jakarta');
+                    $updatedAt = \Carbon\Carbon::parse($pesanan->updated_at)->setTimezone('Asia/Jakarta');
+                @endphp
                 <tr data-status="{{ $pesanan->status }}" id="order-row-{{ $pesanan->id }}">
-                    <td>#{{ $pesanan->id }}</td>
+                    <td><span style="font-size: 0.6rem; color: #6b7280;">#{{ $pesanan->id }}</span></td>
                     <td>
-                        <div class="order-number">{{ $pesanan->order_number }}</div>
-                        <div class="order-date">{{ $pesanan->created_at->format('d/m/Y H:i') }}</div>
+                        <span class="order-id-small">{{ $pesanan->order_number }}</span>
+                        <div class="time-detail">
+                            <div class="time-info">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                {{ $createdAt->translatedFormat('d M Y') }}
+                            </div>
+                            <div class="time-info">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                {{ $createdAt->format('H:i') }} WIB
+                            </div>
+                        </div>
                     </td>
                     <td>
                         <div class="customer-name">{{ $pesanan->customer_name }}</div>
@@ -434,6 +506,8 @@
                         </div>
                     </td>
                     <td class="price-total">Rp {{ number_format($pesanan->subtotal, 0, ',', '.') }}</td>
+                    
+                    <!-- STATUS COLUMN -->
                     <td>
                         <span class="status-badge status-{{ $pesanan->status }}">
                             @if($pesanan->status == 'pending') ⏳ Menunggu
@@ -443,31 +517,51 @@
                             @elseif($pesanan->status == 'archived') 📦 Diarsipkan
                             @endif
                         </span>
+                        @if($pesanan->status == 'completed' || $pesanan->status == 'cancelled')
+                            <div class="time-info" style="margin-top: 0.3rem;">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="10" height="10">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                {{ $updatedAt->format('H:i') }} WIB
+                            </div>
+                        @endif
                     </td>
+                    
+                    <!-- ACTION COLUMN - DIPISAHKAN STATUS DENGAN ARSIP -->
                     <td class="action-buttons">
                         @if($pesanan->status != 'archived')
-                            @if($pesanan->status == 'pending')
-                                <button class="btn-process" onclick="updateStatus({{ $pesanan->id }}, 'processed', this)">
-                                    🔄 Proses
+                            <!-- GROUP UNTUK UBAH STATUS -->
+                            <div class="status-action-group">
+                                @if($pesanan->status == 'pending')
+                                    <button class="btn-process" onclick="updateStatus({{ $pesanan->id }}, 'processed', this)">
+                                        🔄 Proses
+                                    </button>
+                                    <button class="btn-cancel" onclick="updateStatus({{ $pesanan->id }}, 'cancelled', this)">
+                                        ❌ Batal
+                                    </button>
+                                @elseif($pesanan->status == 'processed')
+                                    <button class="btn-complete" onclick="updateStatus({{ $pesanan->id }}, 'completed', this)">
+                                        ✅ Selesai
+                                    </button>
+                                    <button class="btn-cancel" onclick="updateStatus({{ $pesanan->id }}, 'cancelled', this)">
+                                        ❌ Batal
+                                    </button>
+                                @endif
+                            </div>
+                            
+                            <!-- GROUP UNTUK ARSIP - DIPISAHKAN -->
+                            <div class="archive-action-group">
+                                <button class="btn-delete" onclick="archiveOrder({{ $pesanan->id }}, this)">
+                                    🗑️ Arsipkan
                                 </button>
-                                <button class="btn-cancel" onclick="updateStatus({{ $pesanan->id }}, 'cancelled', this)">
-                                    ❌ Batal
-                                </button>
-                            @elseif($pesanan->status == 'processed')
-                                <button class="btn-complete" onclick="updateStatus({{ $pesanan->id }}, 'completed', this)">
-                                    ✅ Selesai
-                                </button>
-                                <button class="btn-cancel" onclick="updateStatus({{ $pesanan->id }}, 'cancelled', this)">
-                                    ❌ Batal
-                                </button>
-                            @endif
-                            <button class="btn-delete" onclick="archiveOrder({{ $pesanan->id }}, this)">
-                                🗑️ Arsipkan
-                            </button>
+                            </div>
                         @else
-                            <button class="btn-restore" onclick="restoreOrder({{ $pesanan->id }}, this)">
-                                🔄 Pulihkan
-                            </button>
+                            <!-- GROUP UNTUK PULIHKAN - KHUSUS ARCHIVED -->
+                            <div class="archive-action-group">
+                                <button class="btn-restore" onclick="restoreOrder({{ $pesanan->id }}, this)">
+                                    🔄 Pulihkan
+                                </button>
+                            </div>
                         @endif
                     </td>
                 </tr>

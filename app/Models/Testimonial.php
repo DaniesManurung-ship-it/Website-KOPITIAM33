@@ -1,5 +1,4 @@
 <?php
-// app/Models/Testimonial.php
 
 namespace App\Models;
 
@@ -11,12 +10,14 @@ class Testimonial extends Model
     use HasFactory;
     
     protected $fillable = [
-        'user_id', 'name', 'email', 'rating', 'message', 'is_archived'
+        'user_id', 'name', 'email', 'rating', 'message'
     ];
     
     protected $casts = [
-        'is_archived' => 'boolean',
+        'rating' => 'integer',
     ];
+    
+    protected $table = 'testimonials';
     
     public function user()
     {
