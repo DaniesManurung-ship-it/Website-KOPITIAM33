@@ -202,16 +202,20 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
     
+    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
     .menu-image-container {
         position: relative;
-        height: 160px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
         overflow: hidden;
+        background-color: #f3f4f6;
     }
     
     .menu-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
         transition: transform 0.5s;
     }
     
@@ -633,16 +637,16 @@
         return '/storage/' + image;
     }
     
-    // Ambil semua menu (tanpa featured menu untuk grid, karena featured sudah ditampilkan terpisah)
+    // Ambil semua menu (tanpa featured menu untuk grid)
     function getRegularMenus() {
         let filtered = [...menuSpesialData];
-        // Jika ada featured menu, exclude dari grid
         if (featuredMenuData) {
             filtered = filtered.filter(item => item.id !== featuredMenuData.id);
         }
         return filtered;
     }
     
+    // PERBAIKAN: RENDER MENU DISATUKAN MENJADI STRING
     function renderMenu() {
         const regularMenus = getRegularMenus();
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -650,7 +654,6 @@
         const container = document.getElementById('menuGrid');
         
         if (!container) return;
-        container.innerHTML = '';
         
         if (regularMenus.length === 0 && !featuredMenuData) {
             container.innerHTML = `<div class="empty-state"><p>✨ Belum ada menu spesial saat ini</p><p style="font-size: 0.8rem; margin-top: 0.5rem;">Kunjungi lagi nanti untuk menu menarik</p></div>`;
@@ -664,10 +667,10 @@
             return;
         }
         
+        // Wadah HTML kosong
+        let htmlContent = '';
+        
         paginatedItems.forEach(item => {
-            const menuItem = document.createElement('div');
-            menuItem.className = 'menu-card';
-            
             let badgeHtml = '';
             if (item.badge === 'best-seller') {
                 badgeHtml = '<span class="badge badge-accent">⭐ BEST SELLER</span>';
@@ -677,7 +680,6 @@
             
             const imageUrl = getImageUrl(item.image);
             
-            // Tampilan SAMA SEPERTI MENU
             let buttonHtml = '';
             if (!isLoggedIn) {
                 buttonHtml = `
@@ -701,25 +703,29 @@
                 `;
             }
             
-            menuItem.innerHTML = `
-                <div class="menu-image-container">
-                    <img src="${imageUrl}" alt="${item.name}" class="menu-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
-                    ${badgeHtml}
-                </div>
-                <div class="menu-info">
-                    <div class="menu-header-row">
-                        <h3 class="menu-title">${item.name}</h3>
-                        <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+            htmlContent += `
+                <div class="menu-card">
+                    <div class="menu-image-container">
+                        <img src="${imageUrl}" alt="${item.name}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
+                        ${badgeHtml}
                     </div>
-                    <p class="menu-description">${item.description || 'Nikmati kelezatan menu spesial kami'}</p>
-                    <div class="menu-footer">
-                        <span class="menu-category">Menu Spesial</span>
+                    <div class="menu-info">
+                        <div class="menu-header-row">
+                            <h3 class="menu-title">${item.name}</h3>
+                            <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                        </div>
+                        <p class="menu-description">${item.description || 'Nikmati kelezatan menu spesial kami'}</p>
+                        <div class="menu-footer">
+                            <span class="menu-category">Menu Spesial</span>
+                        </div>
+                        ${buttonHtml}
                     </div>
-                    ${buttonHtml}
                 </div>
             `;
-            container.appendChild(menuItem);
         });
+        
+        // Memasukkan HTML ke DOM sekaligus
+        container.innerHTML = htmlContent;
         
         renderPagination(regularMenus.length);
     }
@@ -749,7 +755,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // Fungsi add to cart - SAMA SEPERTI MENU
     function addToCart(itemId) {
         const item = menuSpesialData.find(m => m.id === itemId);
         if (!item) return;
@@ -773,7 +778,6 @@
         window.dispatchEvent(new CustomEvent('cart-updated'));
     }
     
-    // Fungsi order now - SAMA SEPERTI MENU
     function orderNow(itemId) {
         const item = menuSpesialData.find(m => m.id === itemId);
         if (!item) return;
@@ -864,12 +868,11 @@
         setTimeout(() => notif.remove(), 2000);
     }
     
-    document.addEventListener('DOMContentLoaded', function() {
-        renderMenu();
-    });
-    
     const style = document.createElement('style');
     style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}`;
     document.head.appendChild(style);
+    
+    // PERBAIKAN: EKSEKUSI LANGSUNG RENDER MENU
+    renderMenu();
 </script>
 @endsection

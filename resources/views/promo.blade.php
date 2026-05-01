@@ -201,16 +201,20 @@
         z-index: 10;
     }
     
+    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
     .promo-image-container {
         position: relative;
-        height: 160px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
         overflow: hidden;
+        background-color: #f3f4f6;
     }
     
     .promo-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
         transition: transform 0.5s;
     }
     
@@ -692,6 +696,7 @@
         return filtered;
     }
     
+    // PERBAIKAN RENDER PROMO (HTML DISATUKAN, LOADING LAZY DIHAPUS)
     function renderPromo() {
         const filteredItems = getFilteredItems();
         const container = document.getElementById('promoGrid');
@@ -707,14 +712,14 @@
         const startIndex = (currentPage - 1) * itemsPerPage;
         const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
         
-        container.innerHTML = '';
+        // Wadah kosong untuk HTML promo card
+        let htmlContent = '';
         
         paginatedItems.forEach(promo => {
             const originalPrice = promo.original_price || 0;
             const finalPrice = Math.floor(originalPrice - (originalPrice * promo.discount / 100));
             const imageUrl = getImageUrl(promo.image);
             
-            // Tampilan untuk guest (belum login) vs user (sudah login)
             let buttonHtml = '';
             if (!isLoggedIn) {
                 buttonHtml = `
@@ -746,32 +751,35 @@
                 `;
             }
             
-            const card = document.createElement('div');
-            card.className = 'promo-card';
-            card.innerHTML = `
-                <div class="promo-badge">⚡ ${promo.discount}% OFF</div>
-                <div class="promo-image-container">
-                    <img src="${imageUrl}" alt="${promo.name}" class="promo-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
-                </div>
-                <div class="promo-content">
-                    <h3 class="promo-title">${escapeHtml(promo.name)}</h3>
-                    <p class="promo-description">${escapeHtml(promo.description || 'Nikmati promo menarik ini')}</p>
-                    <div class="price-section">
-                        <span class="old-price">Rp ${formatPrice(originalPrice)}</span>
-                        <span class="new-price">Rp ${formatPrice(finalPrice)}</span>
-                        <span class="discount-text">-${promo.discount}%</span>
+            // Merakit HTML promo card sekaligus
+            htmlContent += `
+                <div class="promo-card">
+                    <div class="promo-badge">⚡ ${promo.discount}% OFF</div>
+                    <div class="promo-image-container">
+                        <img src="${imageUrl}" alt="${escapeHtml(promo.name)}" class="promo-image" onerror="this.src='/storage/default-menu.jpg'">
                     </div>
-                    <div class="promo-period">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <span>${formatDate(promo.start_date)} - ${formatDate(promo.end_date)}</span>
+                    <div class="promo-content">
+                        <h3 class="promo-title">${escapeHtml(promo.name)}</h3>
+                        <p class="promo-description">${escapeHtml(promo.description || 'Nikmati promo menarik ini')}</p>
+                        <div class="price-section">
+                            <span class="old-price">Rp ${formatPrice(originalPrice)}</span>
+                            <span class="new-price">Rp ${formatPrice(finalPrice)}</span>
+                            <span class="discount-text">-${promo.discount}%</span>
+                        </div>
+                        <div class="promo-period">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>${formatDate(promo.start_date)} - ${formatDate(promo.end_date)}</span>
+                        </div>
+                        ${buttonHtml}
                     </div>
-                    ${buttonHtml}
                 </div>
             `;
-            container.appendChild(card);
         });
+        
+        // Memasukkan HTML ke browser HANYA 1x
+        container.innerHTML = htmlContent;
         
         renderPagination(filteredItems.length);
     }
@@ -811,7 +819,6 @@
         renderPromo();
     }
     
-    // Fungsi untuk user yang sudah login (aksi nyata)
     function addToCart(promoId, price, originalPrice, discount) {
         const promo = promoData.find(p => p.id === promoId);
         if (!promo) return;
@@ -955,9 +962,8 @@
     `;
     document.head.appendChild(style);
     
+    // PERBAIKAN: EKSEKUSI LANGSUNG RENDER PROMO DI LUAR DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
-        renderPromo();
-        
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
@@ -967,5 +973,8 @@
             });
         }
     });
+    
+    // Panggil langsung agar instan tanpa jeda blank
+    renderPromo();
 </script>
 @endsection

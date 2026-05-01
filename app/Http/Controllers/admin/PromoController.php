@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/PromoController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -13,6 +12,7 @@ class PromoController extends Controller
 {
     public function index()
     {
+        // Admin melihat SEMUA promo (termasuk yang expired)
         $promos = Promo::orderBy('created_at', 'desc')->get();
         return view('admin.promo', compact('promos'));
     }
@@ -33,7 +33,6 @@ class PromoController extends Controller
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
             
-            // Simpan ke public/uploads/promos
             $destinationPath = public_path('uploads/promos');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
@@ -86,7 +85,6 @@ class PromoController extends Controller
         ];
         
         if ($request->hasFile('image')) {
-            // Hapus gambar lama
             if ($promo->image && file_exists(public_path($promo->image))) {
                 unlink(public_path($promo->image));
             }
@@ -100,6 +98,9 @@ class PromoController extends Controller
         
         $promo->update($data);
         
+        // Update is_active berdasarkan tanggal setelah update
+        $this->updateActiveStatus($promo);
+        
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil diupdate!');
     }
     
@@ -107,7 +108,6 @@ class PromoController extends Controller
     {
         $promo = Promo::findOrFail($id);
         
-        // Hapus gambar dari public/uploads
         if ($promo->image && file_exists(public_path($promo->image))) {
             unlink(public_path($promo->image));
         }
@@ -124,5 +124,20 @@ class PromoController extends Controller
         $promo->save();
         
         return response()->json(['success' => true]);
+    }
+    
+    // Method untuk update status aktif berdasarkan tanggal
+    private function updateActiveStatus($promo)
+    {
+        $now = Carbon::now();
+        $startDate = Carbon::parse($promo->start_date);
+        $endDate = Carbon::parse($promo->end_date);
+        
+        $shouldBeActive = $promo->is_active && $now >= $startDate && $now <= $endDate;
+        
+        if ($promo->is_active != $shouldBeActive) {
+            $promo->is_active = $shouldBeActive;
+            $promo->save();
+        }
     }
 }

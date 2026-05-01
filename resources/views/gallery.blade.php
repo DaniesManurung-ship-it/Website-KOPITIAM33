@@ -1,3 +1,4 @@
+{{-- resources/views/galeri.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Galeri - Café Kopitiam33')
@@ -125,16 +126,20 @@
         box-shadow: 0 20px 40px rgba(139, 168, 136, 0.15);
     }
     
+    /* PERBAIKAN CSS GAMBAR GALERI (ASPECT RATIO 16:9) */
     .gallery-image-container {
         position: relative;
-        height: 200px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
         overflow: hidden;
+        background-color: #f3f4f6;
     }
     
     .gallery-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
         transition: transform 0.5s ease;
     }
     
@@ -429,10 +434,10 @@
         return categories[category] || 'Lainnya';
     }
     
+    // PERBAIKAN: RENDER GALLERY DISATUKAN MENJADI STRING & HAPUS LAZY
     function renderGallery() {
         const container = document.getElementById('galleryContainer');
         if (!container) return;
-        container.innerHTML = '';
         
         filteredItems = galleryItems.filter(item => 
             currentFilter === 'all' || item.category === currentFilter
@@ -440,24 +445,28 @@
         
         const itemsToShow = filteredItems.slice(0, displayedItems);
         
+        // Wadah HTML kosong
+        let htmlContent = '';
+        
         itemsToShow.forEach((item, index) => {
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item';
-            galleryItem.innerHTML = `
-                <div class="gallery-card">
-                    <div class="gallery-image-container">
-                        <img src="${item.image}" alt="${item.title}" class="gallery-image" loading="lazy">
-                        <div class="category-badge">${getCategoryName(item.category)}</div>
-                    </div>
-                    <div class="gallery-info">
-                        <h3 class="gallery-title">${item.title}</h3>
-                        <p class="gallery-description">${item.description || ''}</p>
+            htmlContent += `
+                <div class="gallery-item" onclick="openLightbox(${index})">
+                    <div class="gallery-card">
+                        <div class="gallery-image-container">
+                            <img src="${item.image}" alt="${item.title}" class="gallery-image" onerror="this.src='/storage/default-menu.jpg'">
+                            <div class="category-badge">${getCategoryName(item.category)}</div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3 class="gallery-title">${item.title}</h3>
+                            <p class="gallery-description">${item.description || ''}</p>
+                        </div>
                     </div>
                 </div>
             `;
-            galleryItem.addEventListener('click', () => openLightbox(index));
-            container.appendChild(galleryItem);
         });
+        
+        // Masukkan ke DOM sekaligus
+        container.innerHTML = htmlContent;
         
         const loadMoreBtn = document.getElementById('loadMoreBtn');
         if (loadMoreBtn) {
@@ -465,24 +474,28 @@
         }
     }
     
+    // PERBAIKAN: RENDER INSTAGRAM DISATUKAN MENJADI STRING & HAPUS LAZY
     function renderInstagram() {
         const container = document.getElementById('instagramGrid');
         if (!container) return;
-        container.innerHTML = '';
+        
+        let htmlContent = '';
+        
         instagramFeed.forEach((image, index) => {
-            const instaItem = document.createElement('a');
-            instaItem.href = '#';
-            instaItem.className = 'instagram-item';
-            instaItem.innerHTML = `
-                <img src="${image}" alt="Instagram ${index + 1}" class="instagram-image">
-                <div class="instagram-overlay">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
-                    </svg>
-                </div>
+            htmlContent += `
+                <a href="#" class="instagram-item">
+                    <img src="${image}" alt="Instagram ${index + 1}" class="instagram-image" onerror="this.src='/storage/default-menu.jpg'">
+                    <div class="instagram-overlay">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
+                        </svg>
+                    </div>
+                </a>
             `;
-            container.appendChild(instaItem);
         });
+        
+        // Masukkan ke DOM sekaligus
+        container.innerHTML = htmlContent;
     }
     
     function openLightbox(index) {
@@ -510,10 +523,11 @@
         openLightbox(currentLightboxIndex);
     }
     
+    // PERBAIKAN: EKSEKUSI LANGSUNG FUNGSI RENDER DI LUAR EVENT LISTENER
+    renderGallery();
+    renderInstagram();
+    
     document.addEventListener('DOMContentLoaded', function() {
-        renderGallery();
-        renderInstagram();
-        
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));

@@ -243,16 +243,20 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
     
+    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
     .menu-image-container {
         position: relative;
-        height: 160px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
         overflow: hidden;
+        background-color: #f3f4f6; /* Warna placeholder ringan selagi gambar diload */
     }
     
     .menu-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
         transition: transform 0.5s;
     }
     
@@ -711,6 +715,7 @@
         return filtered;
     }
     
+    // PERBAIKAN RENDER MENU (HTML DISATUKAN, LOADING LAZY DIHAPUS)
     function renderMenu() {
         const filteredItems = getFilteredItems();
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -718,12 +723,11 @@
         const container = document.getElementById('menuGrid');
         
         if (!container) return;
-        container.innerHTML = '';
+        
+        // Wadah kosong untuk menampung seluruh HTML card
+        let htmlContent = '';
         
         paginatedItems.forEach(item => {
-            const menuItem = document.createElement('div');
-            menuItem.className = 'menu-item';
-            
             let badgeHtml = '';
             if (!item.is_available) {
                 badgeHtml = '<span class="badge badge-red">HABIS</span>';
@@ -736,7 +740,6 @@
             const isSoldOut = !item.is_available;
             const imageUrl = getImageUrl(item.image);
             
-            // Tampilan SAMA SEPERTI HALAMAN PROMO
             let buttonHtml = '';
             if (isSoldOut) {
                 buttonHtml = `
@@ -775,25 +778,30 @@
                 `;
             }
             
-            menuItem.innerHTML = `
-                <div class="menu-image-container">
-                    <img src="${imageUrl}" alt="${item.name}" class="menu-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
-                    ${badgeHtml}
-                </div>
-                <div class="menu-info">
-                    <div class="menu-header-row">
-                        <h3 class="menu-title">${item.name}</h3>
-                        <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+            // htmlContent dirakit sekaligus
+            htmlContent += `
+                <div class="menu-item">
+                    <div class="menu-image-container">
+                        <img src="${imageUrl}" alt="${item.name}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
+                        ${badgeHtml}
                     </div>
-                    <p class="menu-description">${item.description}</p>
-                    <div class="menu-footer">
-                        <span class="menu-category">${getCategoryName(item.category)}</span>
+                    <div class="menu-info">
+                        <div class="menu-header-row">
+                            <h3 class="menu-title">${item.name}</h3>
+                            <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                        </div>
+                        <p class="menu-description">${item.description}</p>
+                        <div class="menu-footer">
+                            <span class="menu-category">${getCategoryName(item.category)}</span>
+                        </div>
+                        ${buttonHtml}
                     </div>
-                    ${buttonHtml}
                 </div>
             `;
-            container.appendChild(menuItem);
         });
+        
+        // Memasukkan HTML ke browser HANYA 1x setelah loop selesai
+        container.innerHTML = htmlContent;
         
         renderPagination(filteredItems.length);
     }
@@ -866,7 +874,6 @@
         document.getElementById('juiceDropdown')?.classList.remove('show');
     }
     
-    // Fungsi untuk user yang sudah login (aksi nyata) - SAMA SEPERTI PROMO
     function addToCart(itemId) {
         const item = menuData.find(m => m.id === itemId);
         if (!item) return;
@@ -979,6 +986,7 @@
         if (!e.target.closest('#menuFilters')) closeAllDropdowns();
     });
     
+    // 1. Biarkan fungsi search tetap menunggu DOMContentLoaded
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
@@ -988,8 +996,11 @@
                 renderMenu();
             });
         }
-        renderMenu();
     });
+    
+    // 2. PANGGIL RENDER MENU LANGSUNG DI LUAR, JANGAN DI DALAM DOMContentLoaded
+    // Ini akan membuat menu langsung dirender sedetik setelah struktur HTML dibuat
+    renderMenu();
     
     const style = document.createElement('style');
     style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}`;

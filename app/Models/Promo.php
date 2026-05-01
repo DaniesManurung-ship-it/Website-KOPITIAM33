@@ -1,10 +1,10 @@
 <?php
-// app/Models/Promo.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Promo extends Model
 {
@@ -22,6 +22,40 @@ class Promo extends Model
         'end_date' => 'date',
     ];
     
+    // ========== PERBAIKAN: Cek apakah promo masih aktif berdasarkan tanggal ==========
+    public function getIsStillActiveAttribute()
+    {
+        $now = Carbon::now();
+        $startDate = Carbon::parse($this->start_date);
+        $endDate = Carbon::parse($this->end_date);
+        
+        // Jika tanggal sudah melewati end_date -> TIDAK AKTIF
+        if ($now > $endDate) {
+            return false;
+        }
+        
+        // Jika tanggal belum mencapai start_date -> TIDAK AKTIF
+        if ($now < $startDate) {
+            return false;
+        }
+        
+        // Jika manual di-set false -> TIDAK AKTIF
+        if (!$this->is_active) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Scope untuk mengambil promo yang masih aktif (untuk query)
+    public function scopeActive($query)
+    {
+        $now = Carbon::now();
+        return $query->where('is_active', true)
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now);
+    }
+    
     // Accessor untuk URL gambar
     public function getImageUrlAttribute()
     {
@@ -29,22 +63,18 @@ class Promo extends Model
             return asset('uploads/default/default-promo.jpg');
         }
         
-        // Jika sudah URL lengkap
         if (filter_var($this->image, FILTER_VALIDATE_URL)) {
             return $this->image;
         }
         
-        // Jika sudah ada /storage/ di depan (data lama)
         if (str_starts_with($this->image, '/storage/')) {
             return asset($this->image);
         }
         
-        // Jika sudah ada uploads/ di depan (data baru)
         if (str_starts_with($this->image, 'uploads/')) {
             return asset($this->image);
         }
         
-        // Default
         return asset('storage/' . $this->image);
     }
     
@@ -65,5 +95,16 @@ class Promo extends Model
     public function getFormattedFinalPriceAttribute()
     {
         return 'Rp ' . number_format($this->final_price, 0, ',', '.');
+    }
+    
+    // Format tanggal untuk ditampilkan
+    public function getFormattedStartDateAttribute()
+    {
+        return Carbon::parse($this->start_date)->translatedFormat('d M Y');
+    }
+    
+    public function getFormattedEndDateAttribute()
+    {
+        return Carbon::parse($this->end_date)->translatedFormat('d M Y');
     }
 }
