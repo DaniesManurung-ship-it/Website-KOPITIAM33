@@ -720,9 +720,6 @@
                     </div>
                 </template>
             </div>
-            <div x-show="testimonials.length === 0" class="empty-state" style="padding: 2rem; text-align: center; color: #9ca3af;">
-                Belum ada testimoni
-            </div>
         </div>
         
         <div class="testimoni-dropdown-footer">

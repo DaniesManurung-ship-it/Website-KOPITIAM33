@@ -739,7 +739,6 @@
                                     <option value="">Pilih tipe meja</option>
                                     <option value="reguler">Reguler (2-4 orang)</option>
                                     <option value="family">Family (4-6 orang)</option>
-                                    <option value="vip">VIP (6-8 orang)</option>
                                     <option value="outdoor">Outdoor (2-4 orang)</option>
                                 </select>
                             </div>

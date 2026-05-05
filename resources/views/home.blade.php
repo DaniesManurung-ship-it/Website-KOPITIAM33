@@ -253,7 +253,7 @@
             <!-- Slide 1: Gambar pertama prioritas tinggi -->
             <div class="swiper-slide">
                 <div class="slide-overlay"></div>
-                <img src="{{ asset('images/makanan.jpeg') }}" alt="Kopi Nusantara" class="slide-image" fetchpriority="high">
+                <img src="{{ asset('images/menu kita.jpeg') }}" alt="Kopi Nusantara" class="slide-image" fetchpriority="high">
                 <div class="slide-content">
                     <div class="slide-text">
                         <h1 class="hero-title">Cita Rasa <span>Kopitiam33</span></h1>

@@ -246,13 +246,19 @@
         .profile-button {
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
             background: none;
             border: none;
             cursor: pointer;
             color: var(--wood);
             padding: 0.5rem;
             font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .profile-button:hover {
+            color: var(--sage);
         }
         
         .profile-icon {
@@ -260,11 +266,24 @@
             height: 18px;
         }
         
+        .profile-name {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 1024px) {
+            .profile-name {
+                display: none;
+            }
+        }
+        
         .profile-menu {
             position: absolute;
             right: 0;
             top: calc(100% + 5px);
-            min-width: 200px;
+            min-width: 220px;
             background: white;
             border-radius: 0.5rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -479,6 +498,12 @@
                 display: none;
             }
         }
+        
+        /* User avatar icon tweaks */
+        .profile-greeting {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -530,7 +555,7 @@
                         <svg class="profile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
+                        <span class="profile-name">{{ Auth::user()->name }}</span>
                         <svg class="dropdown-icon" :class="{ 'rotate': open }" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -612,8 +637,11 @@
                 
                 <div class="mobile-auth-section">
                     @auth
-                        <div style="padding: 0.3rem 0; font-weight: 600; color: var(--wood);">
-                            👤 {{ Auth::user()->name }}
+                        <div style="padding: 0.3rem 0; font-weight: 600; color: var(--wood); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <span>{{ Auth::user()->name }}</span>
                         </div>
                         @if(Auth::user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="mobile-link" @click="toggleMobileMenu">📊 Dashboard Admin</a>
@@ -650,6 +678,14 @@
                 this.loadCart();
                 window.addEventListener('cart-updated', () => this.loadCart());
                 window.addEventListener('add-to-cart', (e) => this.addToCart(e.detail));
+                
+                // Close mobile menu when window resizes to desktop
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768 && this.mobileMenuOpen) {
+                        this.mobileMenuOpen = false;
+                        document.body.style.overflow = '';
+                    }
+                });
             },
             
             setActiveFromURL() {
@@ -674,7 +710,6 @@
             
             toggleMobileMenu() {
                 this.mobileMenuOpen = !this.mobileMenuOpen;
-                // Prevent body scroll when menu is open
                 if (this.mobileMenuOpen) {
                     document.body.style.overflow = 'hidden';
                 } else {
@@ -779,7 +814,7 @@
                 }).format(price);
             }
         }
-    }
+    }ac
     
     document.addEventListener('alpine:init', () => {
         Alpine.data('navigationData', navigationData);
