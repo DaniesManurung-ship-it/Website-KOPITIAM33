@@ -57,7 +57,6 @@
                     <input type="checkbox" name="remember" id="remember">
                     <label for="remember" class="checkbox-label">Ingat saya</label>
                 </div>
-                <a href="#" class="forgot-link">Lupa password?</a>
             </div>
             
             <button type="submit" class="login-btn">Login</button>
