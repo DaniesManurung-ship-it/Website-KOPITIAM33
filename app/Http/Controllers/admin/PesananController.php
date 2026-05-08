@@ -11,7 +11,6 @@ class PesananController extends Controller
 {
     public function index(Request $request)
     {
-        // Admin TIDAK melihat pesanan yang status 'archived'
         $query = Order::where('status', '!=', 'archived');
         
         if($request->search) {
@@ -32,7 +31,15 @@ class PesananController extends Controller
         
         $pesanans = $query->orderBy('created_at', 'desc')->paginate(10);
         
-        return view('admin.pesanan', compact('pesanans'));
+        $statusCount = [
+            'total' => Order::where('status', '!=', 'archived')->count(),
+            'pending' => Order::where('status', 'pending')->count(),
+            'processed' => Order::where('status', 'processed')->count(),
+            'completed' => Order::where('status', 'completed')->count(),
+            'cancelled' => Order::where('status', 'cancelled')->count(),
+        ];
+        
+        return view('admin.pesanan', compact('pesanans', 'statusCount'));
     }
     
     public function updateStatus(Request $request, $id)
@@ -40,7 +47,15 @@ class PesananController extends Controller
         try {
             $order = Order::findOrFail($id);
             $order->status = $request->status;
+            
+            // Update can_cancel based on status
+            if ($request->status != 'pending') {
+                $order->can_cancel = false;
+            }
+            
             $order->save();
+            
+            // Notifikasi sudah dihandle oleh Model Order via boot method
             
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -48,14 +63,12 @@ class PesananController extends Controller
         }
     }
     
-    // ADMIN "MENGHAPUS" = MENGUBAH STATUS MENJADI 'archived'
     public function destroy($id)
     {
         try {
             $order = Order::findOrFail($id);
-            
-            // TIDAK menghapus data! Hanya mengubah status
             $order->status = 'archived';
+            $order->can_cancel = false;
             $order->save();
             
             return response()->json(['success' => true, 'message' => 'Pesanan telah diarsipkan']);
@@ -64,12 +77,12 @@ class PesananController extends Controller
         }
     }
     
-    // MEMULIHKAN pesanan yang diarsipkan
     public function restore($id)
     {
         try {
             $order = Order::findOrFail($id);
             $order->status = 'pending';
+            $order->can_cancel = true;
             $order->save();
             
             return response()->json(['success' => true, 'message' => 'Pesanan berhasil dipulihkan']);

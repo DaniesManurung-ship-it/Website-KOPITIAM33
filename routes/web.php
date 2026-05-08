@@ -19,7 +19,6 @@ use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
 use App\Http\Controllers\Admin\PesananController;
-use App\Http\Controllers\Admin\PesananReservasiController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 
 // ========== GUEST ROUTES (Customer Frontend - Bisa dilihat semua) ==========
@@ -49,6 +48,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ========== ROUTES YANG MEMERLUKAN LOGIN (Customer yang sudah login) ==========
 Route::middleware(['auth'])->group(function () {
+    // ========== NOTIFICATION ROUTES ==========
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::get('/notifications/unread-count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/latest', [App\Http\Controllers\NotificationController::class, 'getLatest'])->name('notifications.latest');
+    Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
     
     // Customer Reservasi (Aksi yang memerlukan login)
     Route::post('/reservasi', [ReservasiController::class, 'store'])->name('reservasi.store');
@@ -89,6 +95,7 @@ Route::get('/testimonials/latest', function() {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/notifications/counts', [App\Http\Controllers\Admin\AdminNotificationController::class, 'getCounts'])->name('admin.notifications.counts');
     
     // Menu Management
     Route::resource('menu', AdminMenuController::class);
@@ -130,9 +137,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.status');
     Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::patch('/pesanan/{id}/restore', [PesananController::class, 'restore'])->name('pesanan.restore');
-    
-    // Pesanan Reservasi
-    Route::get('/pesanan-reservasi', [PesananReservasiController::class, 'index'])->name('pesanan-reservasi');
     
     // Testimonial Management (Admin)
     Route::get('/testimonial', [AdminTestimonialController::class, 'index'])->name('testimonial');

@@ -12,7 +12,6 @@ class ReservasiController extends Controller
 {
     public function index(Request $request)
     {
-        // Admin TIDAK melihat reservasi yang status 'archived'
         $query = Reservation::where('status', '!=', 'archived')->orderBy('created_at', 'desc');
         
         if ($request->has('status') && $request->status != '') {
@@ -65,6 +64,8 @@ class ReservasiController extends Controller
             
             $reservasi->save();
             
+            // Notifikasi sudah dihandle oleh Model Reservation via boot method
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Status berhasil diubah',
@@ -78,13 +79,10 @@ class ReservasiController extends Controller
         }
     }
     
-    // ADMIN "MENGHAPUS" = MENGUBAH STATUS MENJADI 'archived'
     public function destroy($id)
     {
         try {
             $reservasi = Reservation::findOrFail($id);
-            
-            // TIDAK menghapus data! Hanya mengubah status menjadi archived
             $reservasi->status = 'archived';
             $reservasi->can_edit = false;
             $reservasi->save();
@@ -95,7 +93,6 @@ class ReservasiController extends Controller
         }
     }
     
-    // MEMULIHKAN reservasi yang diarsipkan
     public function restore($id)
     {
         try {
@@ -134,7 +131,6 @@ class ReservasiController extends Controller
         $ids = explode(',', $request->ids);
         
         if ($request->action == 'delete') {
-            // Archive instead of delete
             Reservation::whereIn('id', $ids)->update(['status' => 'archived', 'can_edit' => false]);
             $message = count($ids) . ' reservasi berhasil diarsipkan!';
         } elseif ($request->action == 'confirm') {

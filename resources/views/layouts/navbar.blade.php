@@ -238,6 +238,227 @@
             justify-content: center;
         }
         
+        /* ==================== NOTIFICATION BELL STYLES - COMPACT ==================== */
+        .notification-bell {
+            position: relative;
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(139, 168, 136, 0.1);
+        }
+        
+        .notification-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--wood);
+            transition: color 0.2s ease;
+        }
+        
+        .notification-btn:hover svg {
+            color: var(--accent);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 600;
+            border-radius: 50%;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .notification-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            width: 310px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            overflow: hidden;
+            border: 1px solid rgba(139, 168, 136, 0.15);
+            animation: dropdownFade 0.2s ease;
+        }
+        
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .notification-header {
+            padding: 0.7rem 1rem;
+            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+            color: white;
+        }
+        
+        .notification-header h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .notification-header p {
+            font-size: 0.6rem;
+            opacity: 0.85;
+            margin-top: 0.2rem;
+            margin-bottom: 0;
+        }
+        
+        .notification-list {
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        
+        .notification-item {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .notification-item:hover {
+            background: var(--cream);
+        }
+        
+        .notification-item.unread {
+            background: #FFF8F0;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .notification-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        
+        .notification-icon.order {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        
+        .notification-icon.reservation {
+            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+        }
+        
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .notification-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.15rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .notification-message {
+            font-size: 0.68rem;
+            color: #6b7280;
+            line-height: 1.4;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .notification-time {
+            font-size: 0.58rem;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        
+        .notification-time::before {
+            content: '🕐';
+            font-size: 0.55rem;
+        }
+        
+        .notification-footer {
+            padding: 0.55rem 1rem;
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        
+        .notification-footer a {
+            color: var(--sage);
+            text-decoration: none;
+            font-size: 0.68rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .notification-footer a:hover {
+            color: var(--accent);
+        }
+        
+        .empty-notification {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .empty-notification svg {
+            width: 38px;
+            height: 38px;
+            margin-bottom: 0.5rem;
+            opacity: 0.4;
+        }
+        
+        .empty-notification p {
+            font-size: 0.7rem;
+            color: #9ca3af;
+        }
+        
+        .flex-start {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+        
         /* Profile Dropdown */
         .profile-dropdown {
             position: relative;
@@ -438,7 +659,7 @@
             background: #c0392b;
         }
         
-        /* Notification */
+        /* Toast Notification */
         .cart-notification {
             position: fixed;
             bottom: 20px;
@@ -498,12 +719,6 @@
                 display: none;
             }
         }
-        
-        /* User avatar icon tweaks */
-        .profile-greeting {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
@@ -547,6 +762,57 @@
                 <a href="{{ route('gallery') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'gallery' }">Gallery</a>
                 <a href="{{ route('about') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'about' }">About</a>
                 <a href="{{ route('contact') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'contact' }">Contact</a>
+
+                <!-- Notification Bell - Compact & Clean -->
+                @auth
+                <div class="notification-bell" x-data="notificationData()" x-init="initNotification()">
+                    <button @click="toggleDropdown" class="notification-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span x-show="unreadCount > 0" x-text="unreadCount" class="notification-badge"></span>
+                    </button>
+                    
+                    <div x-show="dropdownOpen" @click.away="dropdownOpen = false" x-cloak class="notification-dropdown">
+                        <div class="notification-header">
+                            <h3>
+                                <span>🔔</span> Notifikasi
+                            </h3>
+                            <p>Pemberitahuan pesanan dan reservasi</p>
+                        </div>
+                        
+                        <div class="notification-list">
+                            <template x-for="notif in notifications" :key="notif.id">
+                                <div class="notification-item" :class="{ 'unread': !notif.is_read }" @click="markAsRead(notif.id)">
+                                    <div class="flex-start">
+                                        <div class="notification-icon" :class="notif.type">
+                                            <span x-text="notif.type === 'order' ? '📦' : '📅'"></span>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title" x-text="notif.title"></div>
+                                            <div class="notification-message" x-text="notif.message.length > 45 ? notif.message.substring(0, 45) + '...' : notif.message"></div>
+                                            <div class="notification-time" x-text="formatTime(notif.created_at)"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <div x-show="notifications.length === 0" class="empty-notification">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                <p>Belum ada notifikasi</p>
+                            </div>
+                        </div>
+                        
+                        <div class="notification-footer">
+                            <a href="{{ route('notifications.index') }}">
+                                📬 Lihat semua notifikasi →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endauth
 
                 <!-- Profile Dropdown / Auth Buttons -->
                 @auth
@@ -679,7 +945,6 @@
                 window.addEventListener('cart-updated', () => this.loadCart());
                 window.addEventListener('add-to-cart', (e) => this.addToCart(e.detail));
                 
-                // Close mobile menu when window resizes to desktop
                 window.addEventListener('resize', () => {
                     if (window.innerWidth > 768 && this.mobileMenuOpen) {
                         this.mobileMenuOpen = false;
@@ -787,9 +1052,7 @@
             
             showNotification(message) {
                 const existingNotif = document.querySelector('.cart-notification');
-                if (existingNotif) {
-                    existingNotif.remove();
-                }
+                if (existingNotif) existingNotif.remove();
                 
                 const notification = document.createElement('div');
                 notification.className = 'cart-notification';
@@ -799,9 +1062,7 @@
                 setTimeout(() => {
                     notification.style.animation = 'slideOut 0.3s ease';
                     setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
+                        if (notification.parentNode) notification.remove();
                     }, 300);
                 }, 2500);
             },
@@ -814,10 +1075,88 @@
                 }).format(price);
             }
         }
-    }ac
+    }
+    
+    // Notification Data Function - Compact Version
+    function notificationData() {
+        return {
+            dropdownOpen: false,
+            unreadCount: 0,
+            notifications: [],
+            intervalId: null,
+            
+            initNotification() {
+                this.fetchUnreadCount();
+                this.fetchLatestNotifications();
+                this.intervalId = setInterval(() => {
+                    this.fetchUnreadCount();
+                    this.fetchLatestNotifications();
+                }, 30000);
+            },
+            
+            toggleDropdown() {
+                this.dropdownOpen = !this.dropdownOpen;
+                if (this.dropdownOpen) {
+                    this.fetchLatestNotifications();
+                }
+            },
+            
+            fetchUnreadCount() {
+                fetch('{{ route("notifications.unread-count") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        this.unreadCount = data.count;
+                    })
+                    .catch(err => console.error('Error fetching unread count:', err));
+            },
+            
+            fetchLatestNotifications() {
+                fetch('{{ route("notifications.latest") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        this.notifications = data.notifications || [];
+                        this.unreadCount = data.unread_count || 0;
+                    })
+                    .catch(err => console.error('Error fetching notifications:', err));
+            },
+            
+            markAsRead(id) {
+                fetch(`/notifications/${id}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(res => res.json())
+                .then(() => {
+                    this.fetchLatestNotifications();
+                    this.fetchUnreadCount();
+                })
+                .catch(err => console.error('Error marking as read:', err));
+            },
+            
+            formatTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                if (diffMins < 1) return 'Baru saja';
+                if (diffMins < 60) return `${diffMins} menit lalu`;
+                if (diffHours < 24) return `${diffHours} jam lalu`;
+                if (diffDays === 1) return 'Kemarin';
+                if (diffDays < 7) return `${diffDays} hari lalu`;
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            }
+        }
+    }
     
     document.addEventListener('alpine:init', () => {
         Alpine.data('navigationData', navigationData);
+        Alpine.data('notificationData', notificationData);
     });
 </script>
 
