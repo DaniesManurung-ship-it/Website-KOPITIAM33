@@ -754,7 +754,6 @@
                         <option value="">Tidak Ada</option>
                         <option value="Signature">✨ Signature</option>
                         <option value="Premium">⭐ Premium</option>
-                        <option value="Best Seller">🏆 Best Seller</option>
                         <option value="Limited">🔥 Limited Edition</option>
                         <option value="Chef Recomendation">👨‍🍳 Chef Recomendation</option>
                     </select>

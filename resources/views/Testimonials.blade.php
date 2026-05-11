@@ -2,6 +2,41 @@
 
 @section('title', 'Testimoni Customer - Café Kopitiam33')
 
+@push('styles')
+<style>
+    /* RESET & OVERRIDE - SAMA PERSIS DENGAN CART */
+    .testimonial-header {
+        background: #8BA888 !important;
+        background-color: #8BA888 !important;
+        color: white !important;
+        padding: 3rem 0 !important;
+        text-align: center !important;
+    }
+    
+    .testimonial-header h1 {
+        font-family: 'Playfair Display', serif !important;
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.5rem !important;
+        color: white !important;
+    }
+    
+    .testimonial-header p {
+        font-size: 1rem !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        opacity: 0.9 !important;
+        color: white !important;
+    }
+    
+    /* Pastikan tidak ada gradient atau background lain yang mengganggu */
+    .testimonial-header::before,
+    .testimonial-header::after {
+        display: none !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <style>
     /* ==================== COLOR VARIABLES ==================== */
@@ -40,26 +75,9 @@
         padding: 0 1rem;
     }
     
-    /* ==================== HEADER SECTION ==================== */
-    .testimonial-header {
-        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+    /* ==================== SECTION ==================== */
+    .testimonial-section {
         padding: 3rem 0;
-        text-align: center;
-        color: white;
-    }
-    
-    .testimonial-header h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    
-    .testimonial-header p {
-        font-size: 1rem;
-        max-width: 600px;
-        margin: 0 auto;
-        opacity: 0.9;
     }
     
     /* ==================== ALERT ==================== */
@@ -90,9 +108,20 @@
     /* ==================== TESTIMONI GRID ==================== */
     .testimoni-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        grid-template-columns: 1fr;
         gap: 1.5rem;
-        margin-top: 2rem;
+    }
+    
+    @media (min-width: 640px) {
+        .testimoni-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .testimoni-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
     }
     
     .testimoni-card {
@@ -182,32 +211,38 @@
     .pagination {
         display: flex;
         justify-content: center;
-        gap: 0.5rem;
         margin-top: 2rem;
-        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+    
+    .pagination nav {
+        display: flex;
+        gap: 0.5rem;
     }
     
     .pagination a, .pagination span {
-        padding: 0.5rem 1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 0.5rem;
-        text-decoration: none;
+        background: var(--cream);
         color: var(--wood);
-        background: white;
-        border: 1px solid var(--border);
+        text-decoration: none;
         transition: all 0.2s;
-        font-size: 0.85rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
     }
     
     .pagination a:hover {
         background: var(--sage);
         color: white;
-        border-color: var(--sage);
     }
     
     .pagination .active span {
         background: var(--sage);
         color: white;
-        border-color: var(--sage);
     }
     
     /* ==================== EMPTY STATE ==================== */
@@ -217,7 +252,6 @@
         background: white;
         border-radius: 1rem;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        margin-top: 2rem;
     }
     
     .empty-state svg {
@@ -239,36 +273,23 @@
         margin-bottom: 1rem;
     }
     
-    .btn-primary {
-        background: var(--sage);
-        color: white;
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s;
-        border: none;
-        cursor: pointer;
-    }
-    
-    .btn-primary:hover {
-        background: var(--wood);
-        transform: translateY(-2px);
-    }
-    
     /* ==================== RESPONSIVE ==================== */
     @media (max-width: 768px) {
         .testimonial-header h1 {
-            font-size: 1.75rem;
+            font-size: 1.75rem !important;
         }
         
-        .testimoni-grid {
-            grid-template-columns: 1fr;
+        .testimonial-header p {
+            font-size: 0.875rem !important;
+        }
+        
+        .testimonial-section {
+            padding: 2rem 0;
         }
     }
 </style>
 
-<!-- Header Section -->
+<!-- HEADER - SAMA PERSIS DENGAN CART (background solid #8BA888 dengan !important) -->
 <section class="testimonial-header">
     <div class="container">
         <h1>💬 Testimoni Customer</h1>
@@ -276,69 +297,72 @@
     </div>
 </section>
 
-<div class="container">
-    @if(session('success'))
-    <div class="alert-success">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        {{ session('success') }}
-    </div>
-    @endif
-    
-    @if(session('error'))
-    <div class="alert-error">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        {{ session('error') }}
-    </div>
-    @endif
-    
-    @if($testimonials->count() > 0)
-    <div class="testimoni-grid">
-        @foreach($testimonials as $testimonial)
-        @php
-            $createdAt = \Carbon\Carbon::parse($testimonial->created_at)->setTimezone('Asia/Jakarta');
-            $ratingPercent = ($testimonial->rating / 5) * 100;
-        @endphp
-        <div class="testimoni-card">
-            <div class="rating-bar" style="--rating: {{ $ratingPercent }}%"></div>
-            
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{ strtoupper(substr($testimonial->name, 0, 1)) }}
-                </div>
-                <div class="user-details">
-                    <h4>{{ $testimonial->name }}</h4>
-                    <div class="user-date">
-                        {{ $createdAt->translatedFormat('d F Y') }} • {{ $createdAt->format('H:i') }} WIB
+<!-- SECTION CONTENT -->
+<section class="testimonial-section">
+    <div class="container">
+        @if(session('success'))
+        <div class="alert-success">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ session('success') }}
+        </div>
+        @endif
+        
+        @if(session('error'))
+        <div class="alert-error">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ session('error') }}
+        </div>
+        @endif
+        
+        @if($testimonials->count() > 0)
+        <div class="testimoni-grid">
+            @foreach($testimonials as $testimonial)
+            @php
+                $createdAt = \Carbon\Carbon::parse($testimonial->created_at)->setTimezone('Asia/Jakarta');
+                $ratingPercent = ($testimonial->rating / 5) * 100;
+            @endphp
+            <div class="testimoni-card">
+                <div class="rating-bar" style="--rating: {{ $ratingPercent }}%"></div>
+                
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ strtoupper(substr($testimonial->name, 0, 1)) }}
+                    </div>
+                    <div class="user-details">
+                        <h4>{{ $testimonial->name }}</h4>
+                        <div class="user-date">
+                            {{ $createdAt->translatedFormat('d F Y') }} • {{ $createdAt->format('H:i') }} WIB
+                        </div>
                     </div>
                 </div>
+                
+                <div class="rating-stars">
+                    @for($i = 1; $i <= 5; $i++)
+                        <span class="star {{ $i <= $testimonial->rating ? 'active' : '' }}">★</span>
+                    @endfor
+                </div>
+                
+                <p class="testimoni-message">"{{ $testimonial->message }}"</p>
             </div>
-            
-            <div class="rating-stars">
-                @for($i = 1; $i <= 5; $i++)
-                    <span class="star {{ $i <= $testimonial->rating ? 'active' : '' }}">★</span>
-                @endfor
-            </div>
-            
-            <p class="testimoni-message">"{{ $testimonial->message }}"</p>
+            @endforeach
         </div>
-        @endforeach
+        
+        <div class="pagination">
+            {{ $testimonials->links() }}
+        </div>
+        @else
+        <div class="empty-state">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <h3>Belum Ada Testimoni</h3>
+            <p>Saat ini belum ada testimoni dari customer. Kunjungi Café Kopitiam33 dan bagikan pengalaman Anda!</p>
+        </div>
+        @endif
     </div>
-    
-    <div class="pagination">
-        {{ $testimonials->links() }}
-    </div>
-    @else
-    <div class="empty-state">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-        </svg>
-        <h3>Belum Ada Testimoni</h3>
-        <p>Saat ini belum ada testimoni dari customer. Kunjungi Café Kopitiam33 dan bagikan pengalaman Anda!</p>
-    </div>
-    @endif
-</div>
+</section>
 @endsection

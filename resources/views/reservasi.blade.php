@@ -738,7 +738,7 @@
                                 <select name="table_type" id="tipe_meja" class="form-input">
                                     <option value="">Pilih tipe meja</option>
                                     <option value="reguler">Reguler (2-4 orang)</option>
-                                    <option value="family">Family (4-6 orang)</option>
+                                    <option value="family">Family (4-10 orang)</option>
                                     <option value="outdoor">Outdoor (2-4 orang)</option>
                                 </select>
                             </div>
