@@ -240,7 +240,7 @@
         display: inline-block;
     }
     
-    /* Price Style */
+    /* Price Style - SAMA DENGAN MENU */
     .price {
         font-weight: 700;
         color: var(--accent);
@@ -652,6 +652,7 @@
                         @endif
                     </td>
                     <td class="desc-text" title="{{ $menu->description }}">{{ Str::limit($menu->description, 60) ?? '-' }}</td>
+                    <!-- PERBAIKAN: Format harga menggunakan titik sebagai pemisah ribuan (sama dengan menu) -->
                     <td class="price">Rp {{ number_format($menu->price, 0, ',', '.') }}</td>
                     <td>
                         @if($menu->badge)
@@ -693,7 +694,7 @@
                             Hapus
                         </button>
                     </td>
-                </tr>
+                <tr>
                 @empty
                 <tr>
                     <td colspan="8">
