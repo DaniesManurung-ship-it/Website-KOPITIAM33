@@ -5,6 +5,7 @@
 
 @push('styles')
 <style>
+    /* ... semua style tetap sama seperti kode Anda ... */
     * {
         margin: 0;
         padding: 0;
@@ -32,7 +33,7 @@
         padding: 0 1rem;
     }
     
-    /* Menu Header - SAMA DENGAN MENU */
+    /* Menu Header */
     .menu-header {
         background: var(--sage);
         color: white;
@@ -88,6 +89,7 @@
         background-size: cover;
         background-position: center;
         position: relative;
+        cursor: pointer;
     }
     
     .featured-badge {
@@ -100,6 +102,34 @@
         border-radius: 20px;
         font-size: 0.7rem;
         font-weight: 700;
+        z-index: 5;
+    }
+    
+    .featured-zoom {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 5;
+        pointer-events: none;
+    }
+    
+    .featured-image:hover .featured-zoom {
+        opacity: 1;
+    }
+    
+    .featured-zoom svg {
+        width: 18px;
+        height: 18px;
+        color: white;
     }
     
     .featured-content {
@@ -162,7 +192,7 @@
         border-radius: 2px;
     }
     
-    /* Menu Grid - SAMA DENGAN MENU */
+    /* Menu Grid */
     .menu-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -188,7 +218,7 @@
         }
     }
     
-    /* Menu Card - SAMA DENGAN MENU */
+    /* Menu Card */
     .menu-card {
         background: white;
         border-radius: 0.75rem;
@@ -202,13 +232,14 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
     
-    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
+    /* Menu Image Container - CLICKABLE */
     .menu-image-container {
         position: relative;
         aspect-ratio: 16 / 9;
         width: 100%;
         overflow: hidden;
         background-color: #f3f4f6;
+        cursor: pointer;
     }
     
     .menu-image {
@@ -223,6 +254,34 @@
         transform: scale(1.05);
     }
     
+    /* Zoom Icon */
+    .zoom-icon {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        pointer-events: none;
+    }
+    
+    .menu-image-container:hover .zoom-icon {
+        opacity: 1;
+    }
+    
+    .zoom-icon svg {
+        width: 18px;
+        height: 18px;
+        color: white;
+    }
+    
     .badge {
         position: absolute;
         top: 0.75rem;
@@ -231,6 +290,7 @@
         border-radius: 0.25rem;
         font-size: 0.7rem;
         font-weight: 500;
+        z-index: 10;
     }
     
     .badge-accent {
@@ -294,7 +354,7 @@
         font-weight: 500;
     }
     
-    /* Button Group - SAMA DENGAN MENU */
+    /* Button Group */
     .button-group {
         display: flex;
         gap: 0.5rem;
@@ -345,7 +405,7 @@
         background: #c0392b;
     }
     
-    /* Alert Login - SAMA DENGAN MENU */
+    /* Alert Login */
     .alert-login {
         background: #FEF3C7;
         color: #D97706;
@@ -365,7 +425,7 @@
         height: 14px;
     }
     
-    /* Pagination - SAMA DENGAN MENU */
+    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -404,7 +464,7 @@
         color: white;
     }
     
-    /* Modal - SAMA DENGAN MENU */
+    /* Modal Quantity */
     .quantity-modal {
         display: none;
         position: fixed;
@@ -494,6 +554,7 @@
         cursor: pointer;
     }
     
+    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 3rem;
@@ -502,7 +563,98 @@
         grid-column: 1/-1;
     }
     
-    /* Responsive - SAMA DENGAN MENU */
+    /* ==================== LIGHTBOX STYLES ==================== */
+    .menu-lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .menu-lightbox.show {
+        display: flex;
+    }
+    
+    .menu-lightbox-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 85vh;
+    }
+    
+    .menu-lightbox-image {
+        max-width: 100%;
+        max-height: 75vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0.5rem;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    .menu-lightbox-caption {
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: white;
+        text-align: center;
+    }
+    
+    .menu-lightbox-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .menu-lightbox-price {
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+    
+    .menu-lightbox-category {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+    }
+    
+    .menu-lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .menu-lightbox-close:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.05);
+    }
+    
+    /* Responsive */
     @media (max-width: 640px) {
         .menu-header h1 {
             font-size: 1.75rem;
@@ -523,12 +675,24 @@
         .section-title {
             font-size: 1.5rem;
         }
+        
+        .menu-lightbox-close {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .menu-lightbox-caption {
+            bottom: -60px;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<!-- Menu Header - SAMA DENGAN MENU -->
+<!-- Menu Header -->
 <section class="menu-header">
     <div class="container">
         <h1>✨ Menu Spesial</h1>
@@ -536,14 +700,30 @@
     </div>
 </section>
 
-<!-- Featured Menu - MENU UNGGULAN DI ATAS -->
+<!-- Featured Menu -->
 @if(isset($featuredMenu) && $featuredMenu)
+@php
+    $featuredData = [
+        'id' => $featuredMenu->id,
+        'name' => $featuredMenu->name,
+        'price' => $featuredMenu->price,
+        'image' => $featuredMenu->image_url ?? $featuredMenu->image,
+        'category' => 'menu_spesial',
+        'description' => $featuredMenu->description ?? ''
+    ];
+    $featuredJson = json_encode($featuredData);
+@endphp
 <section class="featured-section">
     <div class="container">
         <div class="featured-card">
             <div class="featured-grid">
-                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? asset('storage/default-menu.jpg') }}');">
+                <div class="featured-image" style="background-image: url('{{ $featuredMenu->image_url ?? ($featuredMenu->image ? asset($featuredMenu->image) : asset('storage/default-menu.jpg')) }}');" onclick='openLightbox(@json($featuredData))'>
                     <div class="featured-badge">⭐ {{ $featuredMenu->badge ?? 'Signature' }}</div>
+                    <div class="featured-zoom">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                        </svg>
+                    </div>
                 </div>
                 <div class="featured-content">
                     <span class="featured-category">👨‍🍳 Chef's Signature</span>
@@ -589,7 +769,20 @@
     </div>
 </section>
 
-<!-- Modal - SAMA DENGAN MENU -->
+<!-- Lightbox Menu -->
+<div id="menuLightbox" class="menu-lightbox">
+    <button class="menu-lightbox-close" id="closeMenuLightbox">✕</button>
+    <div class="menu-lightbox-content">
+        <img id="menuLightboxImage" class="menu-lightbox-image" src="" alt="">
+        <div class="menu-lightbox-caption">
+            <h3 id="menuLightboxTitle" class="menu-lightbox-title"></h3>
+            <p id="menuLightboxPrice" class="menu-lightbox-price"></p>
+            <span id="menuLightboxCategory" class="menu-lightbox-category"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Quantity -->
 <div id="quantityModal" class="quantity-modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modalTitle">Pilih Jumlah Pesanan</h3>
@@ -619,6 +812,11 @@
     // Cek apakah user sudah login
     const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
+    // Format harga tanpa .00
+    function formatPrice(price) {
+        return new Intl.NumberFormat('id-ID').format(price);
+    }
+    
     function requireLogin() {
         if (!isLoggedIn) {
             if(confirm('🔒 Anda harus login terlebih dahulu. Buka halaman login?')) {
@@ -637,7 +835,48 @@
         return '/storage/' + image;
     }
     
-    // Ambil semua menu (tanpa featured menu untuk grid)
+    // ==================== FUNGSI UNTUK MENDAPATKAN MENU BERDASARKAN ID ====================
+    function getMenuItemById(itemId) {
+        // Cari di menuSpesialData
+        let item = menuSpesialData.find(m => m.id === itemId);
+        if (item) return item;
+        
+        // Cari di featuredMenuData
+        if (featuredMenuData && featuredMenuData.id === itemId) {
+            return featuredMenuData;
+        }
+        
+        return null;
+    }
+    
+    // ==================== LIGHTBOX FUNCTIONS ====================
+    function openLightbox(item) {
+        const lightbox = document.getElementById('menuLightbox');
+        const lightboxImage = document.getElementById('menuLightboxImage');
+        const lightboxTitle = document.getElementById('menuLightboxTitle');
+        const lightboxPrice = document.getElementById('menuLightboxPrice');
+        const lightboxCategory = document.getElementById('menuLightboxCategory');
+        
+        if (lightboxImage) lightboxImage.src = getImageUrl(item.image);
+        if (lightboxTitle) lightboxTitle.textContent = item.name;
+        if (lightboxPrice) lightboxPrice.textContent = `Rp ${formatPrice(item.price)}`;
+        if (lightboxCategory) lightboxCategory.textContent = '⭐ Menu Spesial';
+        
+        if (lightbox) {
+            lightbox.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    function closeLightbox() {
+        const lightbox = document.getElementById('menuLightbox');
+        if (lightbox) {
+            lightbox.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+    }
+    
+    // ==================== AMBIL MENU (TANPA FEATURED) ====================
     function getRegularMenus() {
         let filtered = [...menuSpesialData];
         if (featuredMenuData) {
@@ -646,7 +885,17 @@
         return filtered;
     }
     
-    // PERBAIKAN: RENDER MENU DISATUKAN MENJADI STRING
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // ==================== RENDER MENU ====================
     function renderMenu() {
         const regularMenus = getRegularMenus();
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -667,7 +916,6 @@
             return;
         }
         
-        // Wadah HTML kosong
         let htmlContent = '';
         
         paginatedItems.forEach(item => {
@@ -679,6 +927,18 @@
             }
             
             const imageUrl = getImageUrl(item.image);
+            const formattedPrice = formatPrice(item.price);
+            
+            // Data untuk lightbox
+            const itemData = {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                image: item.image,
+                category: 'menu_spesial',
+                description: item.description || ''
+            };
+            const itemJson = JSON.stringify(itemData).replace(/"/g, '&quot;');
             
             let buttonHtml = '';
             if (!isLoggedIn) {
@@ -705,18 +965,23 @@
             
             htmlContent += `
                 <div class="menu-card">
-                    <div class="menu-image-container">
-                        <img src="${imageUrl}" alt="${item.name}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
+                    <div class="menu-image-container" onclick='openLightbox(${itemJson})'>
+                        <img src="${imageUrl}" alt="${escapeHtml(item.name)}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
+                        <div class="zoom-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                            </svg>
+                        </div>
                         ${badgeHtml}
                     </div>
                     <div class="menu-info">
                         <div class="menu-header-row">
-                            <h3 class="menu-title">${item.name}</h3>
-                            <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                            <h3 class="menu-title">${escapeHtml(item.name)}</h3>
+                            <span class="menu-price">Rp ${formattedPrice}</span>
                         </div>
-                        <p class="menu-description">${item.description || 'Nikmati kelezatan menu spesial kami'}</p>
+                        <p class="menu-description">${escapeHtml(item.description || 'Nikmati kelezatan menu spesial kami')}</p>
                         <div class="menu-footer">
-                            <span class="menu-category">Menu Spesial</span>
+                            <span class="menu-category">⭐ Menu Spesial</span>
                         </div>
                         ${buttonHtml}
                     </div>
@@ -724,9 +989,7 @@
             `;
         });
         
-        // Memasukkan HTML ke DOM sekaligus
         container.innerHTML = htmlContent;
-        
         renderPagination(regularMenus.length);
     }
     
@@ -755,49 +1018,71 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
+    // ==================== PERBAIKAN ADD TO CART ====================
     function addToCart(itemId) {
-        const item = menuSpesialData.find(m => m.id === itemId);
-        if (!item) return;
+        if (!requireLogin()) return;
         
-        const existing = cart.find(c => c.id === itemId);
+        // Gunakan fungsi getMenuItemById untuk mencari menu
+        const item = getMenuItemById(itemId);
+        if (!item) {
+            showNotification('Error: Menu tidak ditemukan');
+            return;
+        }
+        
+        // Cek apakah item sudah ada di keranjang (berdasarkan ID dan is_menu_spesial)
+        const existing = cart.find(c => c.id === itemId && c.is_menu_spesial === true);
+        
         if (existing) {
             existing.quantity += 1;
+            showNotification(`Jumlah ${item.name} diperbarui! 🛒`);
         } else {
             cart.push({ 
                 id: item.id, 
                 name: item.name, 
-                price: item.price, 
+                price: parseInt(item.price), // Pastikan price adalah integer
                 image: item.image, 
                 quantity: 1,
                 is_menu_spesial: true
             });
+            showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
         }
         
         localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
-        showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
         window.dispatchEvent(new CustomEvent('cart-updated'));
     }
     
+    // ==================== PERBAIKAN ORDER NOW ====================
     function orderNow(itemId) {
-        const item = menuSpesialData.find(m => m.id === itemId);
-        if (!item) return;
+        if (!requireLogin()) return;
+        
+        // Gunakan fungsi getMenuItemById untuk mencari menu
+        const item = getMenuItemById(itemId);
+        if (!item) {
+            showNotification('Error: Menu tidak ditemukan');
+            return;
+        }
         
         selectedItem = item;
         selectedQty = 1;
-        document.getElementById('qtyValue').textContent = selectedQty;
-        document.getElementById('modalTitle').textContent = selectedItem.name;
-        document.getElementById('quantityModal').classList.add('show');
+        const qtySpan = document.getElementById('qtyValue');
+        if (qtySpan) qtySpan.textContent = selectedQty;
+        const modalTitle = document.getElementById('modalTitle');
+        if (modalTitle) modalTitle.textContent = selectedItem.name;
+        const modal = document.getElementById('quantityModal');
+        if (modal) modal.classList.add('show');
     }
     
     function incrementQty() { 
         selectedQty++; 
-        document.getElementById('qtyValue').textContent = selectedQty; 
+        const qtySpan = document.getElementById('qtyValue');
+        if (qtySpan) qtySpan.textContent = selectedQty; 
     }
     
     function decrementQty() { 
         if (selectedQty > 1) { 
             selectedQty--; 
-            document.getElementById('qtyValue').textContent = selectedQty; 
+            const qtySpan = document.getElementById('qtyValue');
+            if (qtySpan) qtySpan.textContent = selectedQty; 
         } 
     }
     
@@ -809,14 +1094,16 @@
         }
         
         const confirmBtn = document.querySelector('.modal-confirm');
-        const originalText = confirmBtn.textContent;
-        confirmBtn.textContent = '⏳ Memproses...';
-        confirmBtn.disabled = true;
+        const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm';
+        if (confirmBtn) {
+            confirmBtn.textContent = '⏳ Memproses...';
+            confirmBtn.disabled = true;
+        }
         
         const orderItem = {
             id: selectedItem.id,
             name: selectedItem.name,
-            price: parseInt(selectedItem.price),
+            price: parseInt(selectedItem.price), // Pastikan price adalah integer
             quantity: parseInt(selectedQty),
             image: selectedItem.image || '',
             is_menu_spesial: true
@@ -840,22 +1127,27 @@
                 }, 1500);
             } else {
                 showNotification('❌ Gagal: ' + (data.message || 'Error'));
-                confirmBtn.textContent = originalText;
-                confirmBtn.disabled = false;
+                if (confirmBtn) {
+                    confirmBtn.textContent = originalText;
+                    confirmBtn.disabled = false;
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showNotification('⚠️ Terjadi kesalahan');
-            confirmBtn.textContent = originalText;
-            confirmBtn.disabled = false;
+            if (confirmBtn) {
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+            }
         });
         
         closeModal();
     }
     
     function closeModal() {
-        document.getElementById('quantityModal').classList.remove('show');
+        const modal = document.getElementById('quantityModal');
+        if (modal) modal.classList.remove('show');
         selectedItem = null;
         selectedQty = 1;
     }
@@ -868,11 +1160,38 @@
         setTimeout(() => notif.remove(), 2000);
     }
     
+    // Add animation style
     const style = document.createElement('style');
     style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}`;
     document.head.appendChild(style);
     
-    // PERBAIKAN: EKSEKUSI LANGSUNG RENDER MENU
-    renderMenu();
+    // ==================== EVENT LISTENERS ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lightbox close button
+        const closeBtn = document.getElementById('closeMenuLightbox');
+        const lightboxModal = document.getElementById('menuLightbox');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeLightbox);
+        }
+        
+        if (lightboxModal) {
+            lightboxModal.addEventListener('click', function(e) {
+                if (e.target === this) closeLightbox();
+            });
+        }
+        
+        // Keyboard ESC for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (lightboxModal && lightboxModal.classList.contains('show')) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            }
+        });
+        
+        // Initial render
+        renderMenu();
+    });
 </script>
 @endsection

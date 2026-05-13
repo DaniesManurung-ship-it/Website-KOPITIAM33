@@ -201,13 +201,14 @@
         z-index: 10;
     }
     
-    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
+    /* Promo Image Container - CLICKABLE */
     .promo-image-container {
         position: relative;
         aspect-ratio: 16 / 9;
         width: 100%;
         overflow: hidden;
         background-color: #f3f4f6;
+        cursor: pointer;
     }
     
     .promo-image {
@@ -220,6 +221,34 @@
     
     .promo-card:hover .promo-image {
         transform: scale(1.05);
+    }
+    
+    /* Zoom Icon */
+    .zoom-icon {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        pointer-events: none;
+    }
+    
+    .promo-image-container:hover .zoom-icon {
+        opacity: 1;
+    }
+    
+    .zoom-icon svg {
+        width: 18px;
+        height: 18px;
+        color: white;
     }
     
     .promo-content {
@@ -414,6 +443,97 @@
         color: white;
     }
     
+    /* Lightbox Styles */
+    .promo-lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .promo-lightbox.show {
+        display: flex;
+    }
+    
+    .promo-lightbox-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 85vh;
+    }
+    
+    .promo-lightbox-image {
+        max-width: 100%;
+        max-height: 75vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0.5rem;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    .promo-lightbox-caption {
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: white;
+        text-align: center;
+    }
+    
+    .promo-lightbox-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .promo-lightbox-price {
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+    
+    .promo-lightbox-discount {
+        display: inline-block;
+        background: #ef4444;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+    }
+    
+    .promo-lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .promo-lightbox-close:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.05);
+    }
+    
     /* Info Promo */
     .info-promo {
         background: var(--cream);
@@ -570,12 +690,24 @@
             flex-direction: column;
             align-items: flex-start;
         }
+        
+        .promo-lightbox-close {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .promo-lightbox-caption {
+            bottom: -60px;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<!-- Promo Header - SAME AS MENU HEADER -->
+<!-- Promo Header -->
 <section class="promo-header">
     <div class="container">
         <h1>🎁 Promo Spesial</h1>
@@ -583,7 +715,7 @@
     </div>
 </section>
 
-<!-- Filter Section - SAME AS MENU -->
+<!-- Filter Section -->
 <section class="filter-section">
     <div class="container">
         <div class="filter-wrapper">
@@ -609,21 +741,20 @@
     </div>
 </section>
 
-<!-- Info Promo -->
-<section class="info-promo">
-    <div class="container">
-        <h2>📋 Syarat & Ketentuan</h2>
-        <ul class="info-list">
-            <li><span></span> Promo berlaku selama periode yang telah ditentukan</li>
-            <li><span></span> Tidak dapat digabungkan dengan promo lainnya</li>
-            <li><span></span> Berlaku untuk pembelian di tempat (dine in) dan take away</li>
-            <li><span></span> Stok terbatas, first come first served</li>
-            <li><span></span> Keputusan pihak café bersifat mutlak</li>
-        </ul>
+<!-- Lightbox Promo -->
+<div id="promoLightbox" class="promo-lightbox">
+    <button class="promo-lightbox-close" id="closePromoLightbox">✕</button>
+    <div class="promo-lightbox-content">
+        <img id="promoLightboxImage" class="promo-lightbox-image" src="" alt="">
+        <div class="promo-lightbox-caption">
+            <h3 id="promoLightboxTitle" class="promo-lightbox-title"></h3>
+            <p id="promoLightboxPrice" class="promo-lightbox-price"></p>
+            <span id="promoLightboxDiscount" class="promo-lightbox-discount"></span>
+        </div>
     </div>
-</section>
+</div>
 
-<!-- Quantity Modal - SAME AS MENU -->
+<!-- Quantity Modal -->
 <div id="quantityModal" class="quantity-modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modalTitle">Pilih Jumlah Pesanan</h3>
@@ -685,6 +816,36 @@
         return '/storage/' + image;
     }
     
+    // ==================== LIGHTBOX FUNCTIONS ====================
+    function openLightbox(promo) {
+        const lightbox = document.getElementById('promoLightbox');
+        const lightboxImage = document.getElementById('promoLightboxImage');
+        const lightboxTitle = document.getElementById('promoLightboxTitle');
+        const lightboxPrice = document.getElementById('promoLightboxPrice');
+        const lightboxDiscount = document.getElementById('promoLightboxDiscount');
+        
+        const originalPrice = promo.original_price || 0;
+        const finalPrice = Math.floor(originalPrice - (originalPrice * promo.discount / 100));
+        
+        if (lightboxImage) lightboxImage.src = getImageUrl(promo.image);
+        if (lightboxTitle) lightboxTitle.textContent = promo.name;
+        if (lightboxPrice) lightboxPrice.innerHTML = `Rp ${formatPrice(finalPrice)} <span style="text-decoration: line-through; font-size:0.7rem; opacity:0.7;">Rp ${formatPrice(originalPrice)}</span>`;
+        if (lightboxDiscount) lightboxDiscount.textContent = `⚡ Diskon ${promo.discount}%`;
+        
+        if (lightbox) {
+            lightbox.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    function closeLightbox() {
+        const lightbox = document.getElementById('promoLightbox');
+        if (lightbox) {
+            lightbox.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+    }
+    
     function getFilteredItems() {
         let filtered = [...promoData];
         if (currentSearch) {
@@ -696,7 +857,6 @@
         return filtered;
     }
     
-    // PERBAIKAN RENDER PROMO (HTML DISATUKAN, LOADING LAZY DIHAPUS)
     function renderPromo() {
         const filteredItems = getFilteredItems();
         const container = document.getElementById('promoGrid');
@@ -712,7 +872,6 @@
         const startIndex = (currentPage - 1) * itemsPerPage;
         const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
         
-        // Wadah kosong untuk HTML promo card
         let htmlContent = '';
         
         paginatedItems.forEach(promo => {
@@ -720,16 +879,22 @@
             const finalPrice = Math.floor(originalPrice - (originalPrice * promo.discount / 100));
             const imageUrl = getImageUrl(promo.image);
             
+            // Data untuk lightbox
+            const promoDataLightbox = {
+                id: promo.id,
+                name: promo.name,
+                original_price: originalPrice,
+                discount: promo.discount,
+                image: promo.image
+            };
+            const promoJson = JSON.stringify(promoDataLightbox).replace(/"/g, '&quot;');
+            
             let buttonHtml = '';
             if (!isLoggedIn) {
                 buttonHtml = `
                     <div class="button-group">
-                        <button class="cart-btn" onclick="requireLogin()">
-                            🛒 Keranjang
-                        </button>
-                        <button class="order-now-btn" onclick="requireLogin()">
-                            📝 Pesan
-                        </button>
+                        <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
+                        <button class="order-now-btn" onclick="requireLogin()">📝 Pesan</button>
                     </div>
                     <div class="alert-login">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -741,22 +906,22 @@
             } else {
                 buttonHtml = `
                     <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
-                            🛒 Keranjang
-                        </button>
-                        <button class="order-now-btn" onclick="orderNow(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">
-                            📝 Pesan
-                        </button>
+                        <button class="cart-btn" onclick="addToCart(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">🛒 Keranjang</button>
+                        <button class="order-now-btn" onclick="orderNow(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">📝 Pesan</button>
                     </div>
                 `;
             }
             
-            // Merakit HTML promo card sekaligus
             htmlContent += `
                 <div class="promo-card">
                     <div class="promo-badge">⚡ ${promo.discount}% OFF</div>
-                    <div class="promo-image-container">
+                    <div class="promo-image-container" onclick='openLightbox(${promoJson})'>
                         <img src="${imageUrl}" alt="${escapeHtml(promo.name)}" class="promo-image" onerror="this.src='/storage/default-menu.jpg'">
+                        <div class="zoom-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                            </svg>
+                        </div>
                     </div>
                     <div class="promo-content">
                         <h3 class="promo-title">${escapeHtml(promo.name)}</h3>
@@ -778,9 +943,7 @@
             `;
         });
         
-        // Memasukkan HTML ke browser HANYA 1x
         container.innerHTML = htmlContent;
-        
         renderPagination(filteredItems.length);
     }
     
@@ -806,6 +969,7 @@
         if (page < 1 || page > totalPages) return;
         currentPage = page;
         renderPromo();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
     function handleFilter(btn, category) {
@@ -962,7 +1126,7 @@
     `;
     document.head.appendChild(style);
     
-    // PERBAIKAN: EKSEKUSI LANGSUNG RENDER PROMO DI LUAR DOMContentLoaded
+    // ==================== EVENT LISTENERS ====================
     document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
@@ -972,9 +1136,32 @@
                 renderPromo();
             });
         }
+        
+        // Lightbox close button
+        const closeBtn = document.getElementById('closePromoLightbox');
+        const lightboxModal = document.getElementById('promoLightbox');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeLightbox);
+        }
+        
+        if (lightboxModal) {
+            lightboxModal.addEventListener('click', function(e) {
+                if (e.target === this) closeLightbox();
+            });
+        }
+        
+        // Keyboard ESC for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (lightboxModal && lightboxModal.classList.contains('show')) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            }
+        });
     });
     
-    // Panggil langsung agar instan tanpa jeda blank
+    // Panggil langsung agar instan tanpa jeda
     renderPromo();
 </script>
 @endsection

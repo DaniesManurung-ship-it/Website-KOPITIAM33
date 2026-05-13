@@ -40,6 +40,10 @@
         --wood: #A67B5B;
         --accent: #D97642;
         --dark: #4A3728;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
     }
     
     .container {
@@ -67,54 +71,7 @@
         border-left: 4px solid #10b981;
     }
     
-    .alert-success svg {
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
-    }
-    
-    /* Stats Cards - Same style as order history stats */
-    .stats-wrapper {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-    }
-    
-    .stat-card {
-        background: white;
-        border-radius: 1rem;
-        padding: 1rem 1.5rem;
-        flex: 1;
-        min-width: 130px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        border: 1px solid #f3f4f6;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        border-color: var(--sage);
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--wood);
-        font-family: 'Playfair Display', serif;
-        line-height: 1.2;
-    }
-    
-    .stat-label {
-        font-size: 0.75rem;
-        color: #6b7280;
-        margin-top: 0.25rem;
-        letter-spacing: 0.3px;
-    }
-    
-    /* Filter Section - Same as order history */
+    /* Filter Section */
     .filter-section {
         margin-bottom: 2rem;
         display: flex;
@@ -160,7 +117,7 @@
         border-radius: 2rem;
     }
     
-    /* Notification Cards - Same style as order cards */
+    /* Notification Cards */
     .notif-card {
         background: white;
         border-radius: 1rem;
@@ -181,7 +138,7 @@
         border-left: 4px solid var(--accent);
     }
     
-    /* Notification Header - Like order header */
+    /* Notification Header */
     .notif-header-card {
         display: flex;
         justify-content: space-between;
@@ -227,7 +184,7 @@
         gap: 0.25rem;
     }
     
-    /* Time detail - Same as order history */
+    /* Time detail */
     .time-detail {
         display: flex;
         gap: 1rem;
@@ -268,6 +225,29 @@
         color: #6b7280;
         line-height: 1.5;
     }
+    
+    /* ==================== WARNA BERBEDA UNTUK STATUS ==================== */
+    .status-highlight {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .status-highlight.proses {
+        color: var(--warning);
+    }
+    
+    .status-highlight.selesai {
+        color: var(--success);
+    }
+    
+    .status-highlight.dibatalkan {
+        color: var(--danger);
+    }
+    
+    .status-highlight.dikonfirmasi {
+        color: var(--info);
+    }
+    /* ================================================================ */
 
     .notif-menu-images {
         margin-top: 1rem;
@@ -299,7 +279,7 @@
         text-overflow: ellipsis;
     }
     
-    /* Footer Actions - Like order footer */
+    /* Footer Actions */
     .notif-footer {
         display: flex;
         justify-content: space-between;
@@ -367,7 +347,7 @@
         color: #10b981;
     }
     
-    /* Empty State - Same as order history */
+    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
@@ -413,7 +393,7 @@
         box-shadow: 0 6px 16px rgba(217, 118, 66, 0.35);
     }
     
-    /* Pagination - Same as order history */
+    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -445,7 +425,7 @@
         border-color: var(--sage);
     }
     
-    /* Responsive Mobile - Same as order history */
+    /* Responsive */
     @media (max-width: 768px) {
         .notif-header-section h1 {
             font-size: 1.75rem !important;
@@ -487,30 +467,9 @@
             flex-direction: column;
             gap: 0.4rem;
         }
-        
-        .stats-wrapper {
-            gap: 0.75rem;
-        }
-        
-        .stat-card {
-            padding: 0.75rem 1rem;
-            min-width: calc(33% - 0.5rem);
-        }
-        
-        .stat-number {
-            font-size: 1.5rem;
-        }
-        
-        .stat-label {
-            font-size: 0.65rem;
-        }
     }
     
     @media (max-width: 480px) {
-        .stat-card {
-            min-width: calc(50% - 0.375rem);
-        }
-        
         .notif-card {
             padding: 1rem;
         }
@@ -524,7 +483,7 @@
 @endpush
 
 @section('content')
-<!-- Header Section - Same as order history -->
+<!-- Header Section -->
 <section class="notif-header-section">
     <div class="container">
         <h1>🔔 Notifikasi</h1>
@@ -543,7 +502,7 @@
     @endif
     
     @if($notifications->count() > 0)
-        <!-- Filter Section - Same as order history -->
+        <!-- Filter Section -->
         <div class="filter-section">
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">Semua</button>
@@ -561,6 +520,30 @@
             @php
                 $createdAt = \Carbon\Carbon::parse($notif->created_at);
                 $createdAt->setTimezone('Asia/Jakarta');
+                
+                // Memproses message untuk menambahkan warna pada status
+                $message = $notif->message;
+                
+                // Cek dan beri warna pada "sedang diproses"
+                if(strpos($message, 'sedang diproses') !== false) {
+                    $message = str_replace('sedang diproses', '<span class="status-highlight proses">sedang diproses</span>', $message);
+                }
+                // Cek dan beri warna pada "telah selesai"
+                elseif(strpos($message, 'telah selesai') !== false) {
+                    $message = str_replace('telah selesai', '<span class="status-highlight selesai">telah selesai</span>', $message);
+                }
+                // Cek dan beri warna pada "selesai. Terima kasih telah berbelanja!"
+                elseif(strpos($message, 'selesai. Terima kasih telah berbelanja!') !== false) {
+                    $message = str_replace('selesai. Terima kasih telah berbelanja!', '<span class="status-highlight selesai">selesai. Terima kasih telah berbelanja!</span>', $message);
+                }
+                // Cek dan beri warna pada "dibatalkan"
+                elseif(strpos($message, 'dibatalkan') !== false) {
+                    $message = str_replace('dibatalkan', '<span class="status-highlight dibatalkan">dibatalkan</span>', $message);
+                }
+                // Cek dan beri warna pada "dikonfirmasi"
+                elseif(strpos($message, 'dikonfirmasi') !== false) {
+                    $message = str_replace('dikonfirmasi', '<span class="status-highlight dikonfirmasi">dikonfirmasi</span>', $message);
+                }
             @endphp
             <div class="notif-card {{ !$notif->is_read ? 'unread' : '' }}" 
                  data-type="{{ $notif->type }}"
@@ -600,7 +583,7 @@
                 
                 <div class="notif-content">
                     <div class="notif-title">{{ $notif->title }}</div>
-                    <p class="notif-message">{{ $notif->message }}</p>
+                    <p class="notif-message">{!! $message !!}</p>
 
                     @if($notif->type === 'order' && !empty($notif->ordered_items))
                         <div class="notif-menu-images">
@@ -647,7 +630,7 @@
             @endforeach
         </div>
         
-        <!-- Pagination - Same as order history -->
+        <!-- Pagination -->
         @if(method_exists($notifications, 'links'))
             <div class="pagination">
                 {{ $notifications->links() }}
@@ -747,7 +730,7 @@ function deleteNotification(btn, id) {
     }
 }
 
-// Filter functionality - Same as order history
+// Filter functionality
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const filter = this.dataset.filter;

@@ -185,14 +185,6 @@
         text-align: center;
     }
     
-    /* Fungsi untuk mendapatkan URL gambar yang benar */
-    .get-image-url {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
     /* Badge Styles */
     .featured-badge {
         background: linear-gradient(135deg, var(--gold) 0%, var(--wood) 100%);
@@ -240,7 +232,7 @@
         display: inline-block;
     }
     
-    /* Price Style - SAMA DENGAN MENU */
+    /* Price Style */
     .price {
         font-weight: 700;
         color: var(--accent);
@@ -652,7 +644,6 @@
                         @endif
                     </td>
                     <td class="desc-text" title="{{ $menu->description }}">{{ Str::limit($menu->description, 60) ?? '-' }}</td>
-                    <!-- PERBAIKAN: Format harga menggunakan titik sebagai pemisah ribuan (sama dengan menu) -->
                     <td class="price">Rp {{ number_format($menu->price, 0, ',', '.') }}</td>
                     <td>
                         @if($menu->badge)
@@ -694,7 +685,7 @@
                             Hapus
                         </button>
                     </td>
-                <tr>
+                </tr>
                 @empty
                 <tr>
                     <td colspan="8">
@@ -727,7 +718,7 @@
             
             <div class="form-group">
                 <label class="form-label">Nama Menu <span>*</span></label>
-                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Rendang Wagyu Special" required>
+                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Ayam Goreng" required>
             </div>
             
             <div class="form-group">
@@ -807,7 +798,8 @@
                 document.getElementById('menu_id').value = data.id;
                 document.getElementById('name').value = data.name;
                 document.getElementById('description').value = data.description || '';
-                document.getElementById('price').value = data.price;
+                // PERBAIKAN: Hapus .00 dengan mengubah ke integer/parseInt
+                document.getElementById('price').value = parseInt(data.price) || 0;
                 document.getElementById('badge').value = data.badge || '';
                 document.getElementById('is_featured').checked = data.is_featured === 1;
                 document.getElementById('imagePreview').style.display = 'none';

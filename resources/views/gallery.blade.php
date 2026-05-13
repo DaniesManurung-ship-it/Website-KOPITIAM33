@@ -107,7 +107,7 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 1.5rem;
-        padding: 2rem 0 4rem 0;
+        padding: 2rem 0;
     }
     
     @media (min-width: 640px) {
@@ -217,28 +217,43 @@
         overflow: hidden;
     }
     
-    /* LOAD MORE BUTTON */
-    .load-more-wrapper {
-        text-align: center;
-        margin: 0 0 4rem 0;
+    /* PAGINATION - SAMA SEPERTI MENU */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
     }
     
-    .load-more-btn {
+    .pagination-nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        background: var(--cream);
+        color: var(--wood);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+    }
+    
+    .page-btn:hover {
         background: var(--sage);
         color: white;
-        padding: 0.75rem 2rem;
-        border: none;
-        border-radius: 2rem;
-        cursor: pointer;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
     }
     
-    .load-more-btn:hover {
-        background: var(--wood);
-        transform: translateY(-2px);
+    .page-btn.active {
+        background: var(--sage);
+        color: white;
     }
     
     /* LIGHTBOX MODAL */
@@ -404,7 +419,7 @@
         
         .gallery-grid {
             gap: 1rem;
-            padding: 1.5rem 0 3rem 0;
+            padding: 1.5rem 0;
         }
         
         .filter-btn {
@@ -485,9 +500,7 @@
 <section class="section">
     <div class="container">
         <div class="gallery-grid" id="galleryContainer"></div>
-        <div class="load-more-wrapper">
-            <button id="loadMoreBtn" class="load-more-btn">Muat Lebih Banyak</button>
-        </div>
+        <div class="pagination" id="pagination"></div>
     </div>
 </section>
 
@@ -511,7 +524,8 @@
     const galleryItems = @json($galleries);
     
     let currentFilter = 'all';
-    let displayedItems = 12;
+    let currentPage = 1;
+    const itemsPerPage = 12;
     let currentLightboxIndex = 0;
     let filteredItems = [...galleryItems];
     
@@ -550,11 +564,13 @@
             currentFilter === 'all' || item.category === currentFilter
         );
         
-        const itemsToShow = filteredItems.slice(0, displayedItems);
+        // Pagination logic
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
         
         let htmlContent = '';
         
-        if (itemsToShow.length === 0) {
+        if (paginatedItems.length === 0) {
             htmlContent = `
                 <div class="empty-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -565,11 +581,12 @@
                 </div>
             `;
         } else {
-            itemsToShow.forEach((item, idx) => {
+            paginatedItems.forEach((item, idx) => {
                 const imageUrl = getImageUrl(item.image);
+                const globalIndex = filteredItems.findIndex(i => i.id === item.id);
                 
                 htmlContent += `
-                    <div class="gallery-item" data-index="${idx}">
+                    <div class="gallery-item" data-index="${globalIndex}">
                         <div class="gallery-card">
                             <div class="gallery-image-container">
                                 <img src="${imageUrl}" alt="${escapeHtml(item.title)}" class="gallery-image" loading="lazy" onerror="this.src='/storage/default-menu.jpg'">
@@ -590,14 +607,40 @@
         // Tambahkan event listener ke setiap gallery item
         document.querySelectorAll('.gallery-item').forEach((item, index) => {
             item.addEventListener('click', () => {
-                openLightbox(index);
+                const globalIndex = parseInt(item.getAttribute('data-index'));
+                openLightbox(globalIndex);
             });
         });
         
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
-        if (loadMoreBtn) {
-            loadMoreBtn.style.display = displayedItems < filteredItems.length && filteredItems.length > 0 ? 'flex' : 'none';
+        renderPagination(filteredItems.length);
+    }
+    
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer) return;
+        if (totalPages <= 1) { 
+            paginationContainer.innerHTML = ''; 
+            return; 
         }
+        
+        let html = '<div class="pagination-nav">';
+        html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.5;"' : ''}>&laquo;</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.5;"' : ''}>&raquo;</button>`;
+        html += '</div>';
+        paginationContainer.innerHTML = html;
+    }
+    
+    function changePage(page) {
+        const totalItems = filteredItems.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderGallery();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
     function openLightbox(index) {
@@ -652,19 +695,10 @@
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentFilter = this.getAttribute('data-filter');
-                displayedItems = 12;
+                currentPage = 1;
                 renderGallery();
             });
         });
-        
-        // Load more button
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', function() {
-                displayedItems += 8;
-                renderGallery();
-            });
-        }
         
         // Lightbox controls
         const closeBtn = document.getElementById('closeLightbox');

@@ -679,7 +679,7 @@
             
             <div class="form-group">
                 <label class="form-label">Nama Menu <span>*</span></label>
-                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Nasi Goreng Spesial" required>
+                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Nasi Goreng" required>
             </div>
             
             <div class="form-group">

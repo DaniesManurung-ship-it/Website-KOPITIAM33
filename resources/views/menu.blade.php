@@ -128,6 +128,11 @@
         color: white;
     }
     
+    .filter-parent.active {
+        background: var(--sage);
+        color: white;
+    }
+    
     .dropdown {
         position: relative;
     }
@@ -163,6 +168,11 @@
     }
     
     .dropdown-item:hover {
+        background: var(--sage);
+        color: white;
+    }
+    
+    .dropdown-item.active {
         background: var(--sage);
         color: white;
     }
@@ -243,13 +253,14 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
     
-    /* PERBAIKAN CSS GAMBAR (ASPECT RATIO 16:9) */
+    /* Menu Image Container - CLICKABLE */
     .menu-image-container {
         position: relative;
         aspect-ratio: 16 / 9;
         width: 100%;
         overflow: hidden;
-        background-color: #f3f4f6; /* Warna placeholder ringan selagi gambar diload */
+        background-color: #f3f4f6;
+        cursor: pointer;
     }
     
     .menu-image {
@@ -264,6 +275,34 @@
         transform: scale(1.05);
     }
     
+    /* Zoom Icon */
+    .zoom-icon {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        pointer-events: none;
+    }
+    
+    .menu-image-container:hover .zoom-icon {
+        opacity: 1;
+    }
+    
+    .zoom-icon svg {
+        width: 18px;
+        height: 18px;
+        color: white;
+    }
+    
     .badge {
         position: absolute;
         top: 0.75rem;
@@ -272,6 +311,7 @@
         border-radius: 0.25rem;
         font-size: 0.7rem;
         font-weight: 500;
+        z-index: 10;
     }
     
     .badge-red {
@@ -369,17 +409,6 @@
         background: var(--wood);
     }
     
-    .cart-btn svg {
-        width: 12px;
-        height: 12px;
-    }
-    
-    .cart-btn:disabled {
-        background: #e5e7eb;
-        color: #6b7280;
-        cursor: not-allowed;
-    }
-    
     .order-btn {
         flex: 1;
         background: var(--accent);
@@ -402,12 +431,7 @@
         background: #c0392b;
     }
     
-    .order-btn svg {
-        width: 12px;
-        height: 12px;
-    }
-    
-    .order-btn:disabled {
+    .cart-btn:disabled, .order-btn:disabled {
         background: #e5e7eb;
         color: #6b7280;
         cursor: not-allowed;
@@ -472,7 +496,7 @@
         color: white;
     }
     
-    /* Modal */
+    /* Modal Quantity */
     .quantity-modal {
         display: none;
         position: fixed;
@@ -571,6 +595,97 @@
         grid-column: 1/-1;
     }
     
+    /* ==================== LIGHTBOX STYLES ==================== */
+    .menu-lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .menu-lightbox.show {
+        display: flex;
+    }
+    
+    .menu-lightbox-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 85vh;
+    }
+    
+    .menu-lightbox-image {
+        max-width: 100%;
+        max-height: 75vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0.5rem;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    .menu-lightbox-caption {
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: white;
+        text-align: center;
+    }
+    
+    .menu-lightbox-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .menu-lightbox-price {
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+    
+    .menu-lightbox-category {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+    }
+    
+    .menu-lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .menu-lightbox-close:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.05);
+    }
+    
     /* Responsive */
     @media (max-width: 640px) {
         .menu-header h1 {
@@ -583,6 +698,18 @@
         
         .button-group {
             flex-direction: column;
+        }
+        
+        .menu-lightbox-close {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .menu-lightbox-caption {
+            bottom: -60px;
         }
     }
 </style>
@@ -605,18 +732,18 @@
                 <button onclick="handleFilter(this, 'all')" class="filter-btn bg-sage" style="background: var(--sage); color: white;">Semua</button>
                 <button onclick="handleFilter(this, 'makanan')" class="filter-btn bg-cream">Makanan</button>
                 <button onclick="handleFilter(this, 'snacks')" class="filter-btn bg-cream">Snacks</button>
-                <div class="dropdown">
-                    <button onclick="toggleDropdown('drinkDropdown')" data-parent="minuman" class="filter-parent">Minuman ▾</button>
+                <div class="dropdown" data-dropdown="drink">
+                    <button onclick="toggleDropdown('drinkDropdown')" data-parent="minuman" id="drinkParentBtn" class="filter-parent">Minuman ▾</button>
                     <div id="drinkDropdown" class="dropdown-menu">
-                        <button onclick="handleVariant(this, 'minuman-hot', 'minuman')" class="dropdown-item">Hot</button>
-                        <button onclick="handleVariant(this, 'minuman-cold', 'minuman')" class="dropdown-item">Cold</button>
+                        <button onclick="handleVariant(this, 'minuman-hot', 'minuman')" class="dropdown-item" data-category="minuman-hot">Hot</button>
+                        <button onclick="handleVariant(this, 'minuman-cold', 'minuman')" class="dropdown-item" data-category="minuman-cold">Cold</button>
                     </div>
                 </div>
-                <div class="dropdown">
-                    <button onclick="toggleDropdown('juiceDropdown')" data-parent="jus" class="filter-parent">Jus ▾</button>
+                <div class="dropdown" data-dropdown="juice">
+                    <button onclick="toggleDropdown('juiceDropdown')" data-parent="jus" id="juiceParentBtn" class="filter-parent">Jus ▾</button>
                     <div id="juiceDropdown" class="dropdown-menu">
-                        <button onclick="handleVariant(this, 'jus-hot', 'jus')" class="dropdown-item">Hot</button>
-                        <button onclick="handleVariant(this, 'jus-cold', 'jus')" class="dropdown-item">Cold</button>
+                        <button onclick="handleVariant(this, 'jus-hot', 'jus')" class="dropdown-item" data-category="jus-hot">Hot</button>
+                        <button onclick="handleVariant(this, 'jus-cold', 'jus')" class="dropdown-item" data-category="jus-cold">Cold</button>
                     </div>
                 </div>
                 <button onclick="handleFilter(this, 'addon')" class="filter-btn bg-cream">Add On</button>
@@ -640,7 +767,20 @@
     </div>
 </section>
 
-<!-- Modal -->
+<!-- Lightbox Menu -->
+<div id="menuLightbox" class="menu-lightbox">
+    <button class="menu-lightbox-close" id="closeMenuLightbox">✕</button>
+    <div class="menu-lightbox-content">
+        <img id="menuLightboxImage" class="menu-lightbox-image" src="" alt="">
+        <div class="menu-lightbox-caption">
+            <h3 id="menuLightboxTitle" class="menu-lightbox-title"></h3>
+            <p id="menuLightboxPrice" class="menu-lightbox-price"></p>
+            <span id="menuLightboxCategory" class="menu-lightbox-category"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Quantity -->
 <div id="quantityModal" class="quantity-modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modalTitle">Pilih Jumlah Pesanan</h3>
@@ -667,8 +807,12 @@
     let selectedItem = null;
     let selectedQty = 1;
     
-    // Cek apakah user sudah login
     const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    
+    // Format harga tanpa .00
+    function formatPrice(price) {
+        return new Intl.NumberFormat('id-ID').format(price);
+    }
     
     function requireLogin() {
         if (!isLoggedIn) {
@@ -709,155 +853,82 @@
         if (currentSearch) {
             filtered = filtered.filter(item => 
                 item.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                item.description.toLowerCase().includes(currentSearch.toLowerCase())
+                (item.description && item.description.toLowerCase().includes(currentSearch.toLowerCase()))
             );
         }
         return filtered;
     }
     
-    // PERBAIKAN RENDER MENU (HTML DISATUKAN, LOADING LAZY DIHAPUS)
-    function renderMenu() {
-        const filteredItems = getFilteredItems();
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
-        const container = document.getElementById('menuGrid');
+    // ==================== LIGHTBOX FUNCTIONS ====================
+    function openLightbox(item) {
+        const lightbox = document.getElementById('menuLightbox');
+        const lightboxImage = document.getElementById('menuLightboxImage');
+        const lightboxTitle = document.getElementById('menuLightboxTitle');
+        const lightboxPrice = document.getElementById('menuLightboxPrice');
+        const lightboxCategory = document.getElementById('menuLightboxCategory');
         
-        if (!container) return;
+        if (lightboxImage) lightboxImage.src = getImageUrl(item.image);
+        if (lightboxTitle) lightboxTitle.textContent = item.name;
+        if (lightboxPrice) lightboxPrice.textContent = `Rp ${formatPrice(item.price)}`;
+        if (lightboxCategory) lightboxCategory.textContent = getCategoryName(item.category);
         
-        // Wadah kosong untuk menampung seluruh HTML card
-        let htmlContent = '';
-        
-        paginatedItems.forEach(item => {
-            let badgeHtml = '';
-            if (!item.is_available) {
-                badgeHtml = '<span class="badge badge-red">HABIS</span>';
-            } else if (item.badge === 'best-seller') {
-                badgeHtml = '<span class="badge badge-accent">BEST SELLER</span>';
-            } else if (item.badge === 'new') {
-                badgeHtml = '<span class="badge badge-green badge-right">BARU</span>';
-            }
-            
-            const isSoldOut = !item.is_available;
-            const imageUrl = getImageUrl(item.image);
-            
-            let buttonHtml = '';
-            if (isSoldOut) {
-                buttonHtml = `
-                    <div class="button-group">
-                        <button class="cart-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
-                        <button class="order-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
-                    </div>
-                `;
-            } else if (!isLoggedIn) {
-                buttonHtml = `
-                    <div class="button-group">
-                        <button class="cart-btn" onclick="requireLogin()">
-                            🛒 Keranjang
-                        </button>
-                        <button class="order-btn" onclick="requireLogin()">
-                            📝 Pesan
-                        </button>
-                    </div>
-                    <div class="alert-login">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
-                        <span>Login untuk membeli</span>
-                    </div>
-                `;
-            } else {
-                buttonHtml = `
-                    <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart(${item.id})">
-                            🛒 Keranjang
-                        </button>
-                        <button class="order-btn" onclick="orderNow(${item.id})">
-                            📝 Pesan
-                        </button>
-                    </div>
-                `;
-            }
-            
-            // htmlContent dirakit sekaligus
-            htmlContent += `
-                <div class="menu-item">
-                    <div class="menu-image-container">
-                        <img src="${imageUrl}" alt="${item.name}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
-                        ${badgeHtml}
-                    </div>
-                    <div class="menu-info">
-                        <div class="menu-header-row">
-                            <h3 class="menu-title">${item.name}</h3>
-                            <span class="menu-price">Rp ${item.price.toLocaleString('id-ID')}</span>
-                        </div>
-                        <p class="menu-description">${item.description}</p>
-                        <div class="menu-footer">
-                            <span class="menu-category">${getCategoryName(item.category)}</span>
-                        </div>
-                        ${buttonHtml}
-                    </div>
-                </div>
-            `;
-        });
-        
-        // Memasukkan HTML ke browser HANYA 1x setelah loop selesai
-        container.innerHTML = htmlContent;
-        
-        renderPagination(filteredItems.length);
-    }
-    
-    function renderPagination(totalItems) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const paginationContainer = document.getElementById('pagination');
-        if (!paginationContainer) return;
-        if (totalPages <= 1) { paginationContainer.innerHTML = ''; return; }
-        
-        let html = '<div class="pagination-nav">';
-        html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.5;"' : ''}>&laquo;</button>`;
-        for (let i = 1; i <= totalPages; i++) {
-            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        if (lightbox) {
+            lightbox.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
-        html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.5;"' : ''}>&raquo;</button>`;
-        html += '</div>';
-        paginationContainer.innerHTML = html;
     }
     
-    function changePage(page) {
-        const totalItems = getFilteredItems().length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        renderMenu();
+    function closeLightbox() {
+        const lightbox = document.getElementById('menuLightbox');
+        if (lightbox) {
+            lightbox.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
     }
     
-    function handleFilter(el, category) {
-        document.querySelectorAll('.filter-btn, .filter-parent').forEach(btn => {
-            btn.classList.remove('bg-sage');
+    // ==================== FILTER FUNCTIONS ====================
+    function resetAllButtons() {
+        document.querySelectorAll('.filter-btn, .filter-parent, .dropdown-item').forEach(btn => {
+            btn.classList.remove('bg-sage', 'active');
             btn.classList.add('bg-cream');
             btn.style.background = '';
             btn.style.color = '';
         });
-        el.classList.remove('bg-cream');
-        el.classList.add('bg-sage');
-        el.style.background = 'var(--sage)';
-        el.style.color = 'white';
+    }
+    
+    function setActiveButton(element) {
+        if (element) {
+            element.classList.remove('bg-cream', 'active');
+            element.classList.add('bg-sage', 'active');
+            element.style.background = 'var(--sage)';
+            element.style.color = 'white';
+        }
+    }
+    
+    function handleFilter(el, category) {
+        resetAllButtons();
+        setActiveButton(el);
         currentFilter = category;
         currentPage = 1;
         renderMenu();
+        closeAllDropdowns();
     }
     
     function handleVariant(el, category, parent) {
-        document.querySelectorAll('.filter-btn, .filter-parent').forEach(btn => {
-            btn.classList.remove('bg-sage');
-            btn.classList.add('bg-cream');
-        });
-        el.classList.remove('bg-cream');
-        el.classList.add('bg-sage');
-        const parentBtn = document.querySelector(`.filter-parent[data-parent="${parent}"]`);
-        if (parentBtn) {
-            parentBtn.classList.remove('bg-cream');
-            parentBtn.classList.add('bg-sage');
+        resetAllButtons();
+        setActiveButton(el);
+        
+        let parentBtn = null;
+        if (parent === 'minuman') {
+            parentBtn = document.getElementById('drinkParentBtn');
+        } else if (parent === 'jus') {
+            parentBtn = document.getElementById('juiceParentBtn');
         }
+        
+        if (parentBtn) {
+            setActiveButton(parentBtn);
+        }
+        
         currentFilter = category;
         currentPage = 1;
         renderMenu();
@@ -866,15 +937,27 @@
     
     function toggleDropdown(id) {
         const dropdown = document.getElementById(id);
-        if (dropdown) dropdown.classList.toggle('show');
+        if (dropdown) {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu.id !== id) {
+                    menu.classList.remove('show');
+                }
+            });
+            dropdown.classList.toggle('show');
+        }
     }
     
     function closeAllDropdowns() {
-        document.getElementById('drinkDropdown')?.classList.remove('show');
-        document.getElementById('juiceDropdown')?.classList.remove('show');
+        const drinkDropdown = document.getElementById('drinkDropdown');
+        const juiceDropdown = document.getElementById('juiceDropdown');
+        if (drinkDropdown) drinkDropdown.classList.remove('show');
+        if (juiceDropdown) juiceDropdown.classList.remove('show');
     }
     
+    // ==================== CART FUNCTIONS ====================
     function addToCart(itemId) {
+        if (!requireLogin()) return;
+        
         const item = menuData.find(m => m.id === itemId);
         if (!item) return;
         
@@ -897,22 +980,28 @@
     }
     
     function orderNow(itemId) {
+        if (!requireLogin()) return;
+        
         selectedItem = menuData.find(m => m.id === itemId);
-        selectedQty = 1;
-        document.getElementById('qtyValue').textContent = selectedQty;
-        document.getElementById('modalTitle').textContent = selectedItem.name;
-        document.getElementById('quantityModal').classList.add('show');
+        if (selectedItem) {
+            selectedQty = 1;
+            document.getElementById('qtyValue').textContent = selectedQty;
+            document.getElementById('modalTitle').textContent = selectedItem.name;
+            document.getElementById('quantityModal').classList.add('show');
+        }
     }
     
     function incrementQty() { 
         selectedQty++; 
-        document.getElementById('qtyValue').textContent = selectedQty; 
+        const qtySpan = document.getElementById('qtyValue');
+        if (qtySpan) qtySpan.textContent = selectedQty; 
     }
     
     function decrementQty() { 
         if (selectedQty > 1) { 
             selectedQty--; 
-            document.getElementById('qtyValue').textContent = selectedQty; 
+            const qtySpan = document.getElementById('qtyValue');
+            if (qtySpan) qtySpan.textContent = selectedQty; 
         } 
     }
     
@@ -923,9 +1012,11 @@
         }
         
         const confirmBtn = document.querySelector('.modal-confirm');
-        const originalText = confirmBtn.textContent;
-        confirmBtn.textContent = '⏳ Memproses...';
-        confirmBtn.disabled = true;
+        const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm';
+        if (confirmBtn) {
+            confirmBtn.textContent = '⏳ Memproses...';
+            confirmBtn.disabled = true;
+        }
         
         const orderItem = {
             id: selectedItem.id,
@@ -954,22 +1045,27 @@
                 }, 1500);
             } else {
                 showNotification('❌ Gagal: ' + (data.message || 'Error'));
-                confirmBtn.textContent = originalText;
-                confirmBtn.disabled = false;
+                if (confirmBtn) {
+                    confirmBtn.textContent = originalText;
+                    confirmBtn.disabled = false;
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showNotification('⚠️ Terjadi kesalahan');
-            confirmBtn.textContent = originalText;
-            confirmBtn.disabled = false;
+            if (confirmBtn) {
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+            }
         });
         
         closeModal();
     }
     
     function closeModal() {
-        document.getElementById('quantityModal').classList.remove('show');
+        const modal = document.getElementById('quantityModal');
+        if (modal) modal.classList.remove('show');
         selectedItem = null;
         selectedQty = 1;
     }
@@ -982,12 +1078,147 @@
         setTimeout(() => notif.remove(), 2000);
     }
     
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('#menuFilters')) closeAllDropdowns();
-    });
+    // ==================== RENDER FUNCTIONS ====================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
     
-    // 1. Biarkan fungsi search tetap menunggu DOMContentLoaded
+    function renderMenu() {
+        const filteredItems = getFilteredItems();
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
+        const container = document.getElementById('menuGrid');
+        
+        if (!container) return;
+        
+        let htmlContent = '';
+        
+        if (paginatedItems.length === 0) {
+            htmlContent = '<div class="empty-state"><p>Tidak ada menu yang ditemukan</p></div>';
+        } else {
+            paginatedItems.forEach(item => {
+                let badgeHtml = '';
+                if (!item.is_available) {
+                    badgeHtml = '<span class="badge badge-red">HABIS</span>';
+                } else if (item.badge === 'best-seller') {
+                    badgeHtml = '<span class="badge badge-accent">BEST SELLER</span>';
+                } else if (item.badge === 'new') {
+                    badgeHtml = '<span class="badge badge-green badge-right">BARU</span>';
+                }
+                
+                const isSoldOut = !item.is_available;
+                const imageUrl = getImageUrl(item.image);
+                const formattedPrice = formatPrice(item.price);
+                
+                // Escape data untuk lightbox
+                const itemData = {
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                    category: item.category,
+                    description: item.description || ''
+                };
+                const itemJson = JSON.stringify(itemData).replace(/"/g, '&quot;');
+                
+                let buttonHtml = '';
+                if (isSoldOut) {
+                    buttonHtml = `
+                        <div class="button-group">
+                            <button class="cart-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
+                            <button class="order-btn" disabled style="background:#e5e7eb; color:#6b7280;">Stok Habis</button>
+                        </div>
+                    `;
+                } else if (!isLoggedIn) {
+                    buttonHtml = `
+                        <div class="button-group">
+                            <button class="cart-btn" onclick="requireLogin()">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="requireLogin()">📝 Pesan</button>
+                        </div>
+                        <div class="alert-login">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <span>Login untuk membeli</span>
+                        </div>
+                    `;
+                } else {
+                    buttonHtml = `
+                        <div class="button-group">
+                            <button class="cart-btn" onclick="addToCart(${item.id})">🛒 Keranjang</button>
+                            <button class="order-btn" onclick="orderNow(${item.id})">📝 Pesan</button>
+                        </div>
+                    `;
+                }
+                
+                htmlContent += `
+                    <div class="menu-item">
+                        <div class="menu-image-container" onclick='openLightbox(${itemJson})'>
+                            <img src="${imageUrl}" alt="${escapeHtml(item.name)}" class="menu-image" onerror="this.src='/storage/default-menu.jpg'">
+                            <div class="zoom-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                                </svg>
+                            </div>
+                            ${badgeHtml}
+                        </div>
+                        <div class="menu-info">
+                            <div class="menu-header-row">
+                                <h3 class="menu-title">${escapeHtml(item.name)}</h3>
+                                <span class="menu-price">Rp ${formattedPrice}</span>
+                            </div>
+                            <p class="menu-description">${escapeHtml(item.description) || 'Nikmati kelezatan menu kami'}</p>
+                            <div class="menu-footer">
+                                <span class="menu-category">${getCategoryName(item.category)}</span>
+                            </div>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        container.innerHTML = htmlContent;
+        renderPagination(filteredItems.length);
+    }
+    
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer) return;
+        if (totalPages <= 1) { 
+            paginationContainer.innerHTML = ''; 
+            return; 
+        }
+        
+        let html = '<div class="pagination-nav">';
+        html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.5;"' : ''}>&laquo;</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.5;"' : ''}>&raquo;</button>`;
+        html += '</div>';
+        paginationContainer.innerHTML = html;
+    }
+    
+    function changePage(page) {
+        const totalItems = getFilteredItems().length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // ==================== EVENT LISTENERS ====================
     document.addEventListener('DOMContentLoaded', function() {
+        // Search input
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', function(e) {
@@ -996,12 +1227,42 @@
                 renderMenu();
             });
         }
+        
+        // Lightbox close button
+        const closeBtn = document.getElementById('closeMenuLightbox');
+        const lightboxModal = document.getElementById('menuLightbox');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeLightbox);
+        }
+        
+        if (lightboxModal) {
+            lightboxModal.addEventListener('click', function(e) {
+                if (e.target === this) closeLightbox();
+            });
+        }
+        
+        // Keyboard ESC for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (lightboxModal && lightboxModal.classList.contains('show')) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            }
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                closeAllDropdowns();
+            }
+        });
+        
+        // Initial render
+        renderMenu();
     });
     
-    // 2. PANGGIL RENDER MENU LANGSUNG DI LUAR, JANGAN DI DALAM DOMContentLoaded
-    // Ini akan membuat menu langsung dirender sedetik setelah struktur HTML dibuat
-    renderMenu();
-    
+    // Add animation style
     const style = document.createElement('style');
     style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}`;
     document.head.appendChild(style);

@@ -238,7 +238,7 @@
             justify-content: center;
         }
         
-        /* ==================== NOTIFICATION BELL STYLES - COMPACT ==================== */
+        /* ==================== NOTIFICATION BELL STYLES - DESKTOP ==================== */
         .notification-bell {
             position: relative;
         }
@@ -457,6 +457,154 @@
             display: flex;
             align-items: flex-start;
             gap: 0.6rem;
+        }
+        
+        /* ==================== MOBILE NOTIFICATION BUTTON ==================== */
+        .mobile-notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--wood);
+        }
+        
+        .mobile-notification-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .mobile-notification-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 600;
+            border-radius: 50%;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-notification-dropdown {
+            position: fixed;
+            top: auto;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            width: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.25);
+            z-index: 9999;
+            overflow: hidden;
+            border: 1px solid rgba(139, 168, 136, 0.15);
+            animation: mobileDropdownFade 0.2s ease;
+        }
+        
+        @keyframes mobileDropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .mobile-notification-header {
+            padding: 0.7rem 1rem;
+            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mobile-notification-header h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .mobile-notification-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.2rem;
+        }
+        
+        .mobile-notification-list {
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        
+        .mobile-notification-item {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mobile-notification-item.unread {
+            background: #FFF8F0;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .mobile-notification-item:active {
+            background: var(--cream);
+        }
+        
+        .mobile-notification-text {
+            flex: 1;
+        }
+        
+        .mobile-notification-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.2rem;
+        }
+        
+        .mobile-notification-message {
+            font-size: 0.68rem;
+            color: #6b7280;
+            line-height: 1.4;
+            margin-bottom: 0.2rem;
+        }
+        
+        .mobile-notification-time {
+            font-size: 0.58rem;
+            color: #9ca3af;
+        }
+        
+        .mobile-notification-footer {
+            padding: 0.55rem 1rem;
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        
+        .mobile-notification-footer a {
+            color: var(--sage);
+            text-decoration: none;
+            font-size: 0.68rem;
+            font-weight: 500;
         }
         
         /* Profile Dropdown */
@@ -763,26 +911,23 @@
                 <a href="{{ route('about') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'about' }">About</a>
                 <a href="{{ route('contact') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'contact' }">Contact</a>
 
-                <!-- Notification Bell - Compact & Clean -->
+                <!-- Notification Bell - DESKTOP ONLY -->
                 @auth
-                <div class="notification-bell" x-data="notificationData()" x-init="initNotification()">
+                <div class="notification-bell desktop-notification" x-data="desktopNotificationData()" x-init="initDesktopNotification()">
                     <button @click="toggleDropdown" class="notification-btn">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
-                        <span x-show="unreadCount > 0" x-text="unreadCount" class="notification-badge"></span>
+                        <span x-show="desktopUnreadCount > 0" x-text="desktopUnreadCount" class="notification-badge"></span>
                     </button>
                     
                     <div x-show="dropdownOpen" @click.away="dropdownOpen = false" x-cloak class="notification-dropdown">
                         <div class="notification-header">
-                            <h3>
-                                <span>🔔</span> Notifikasi
-                            </h3>
+                            <h3><span>🔔</span> Notifikasi</h3>
                             <p>Pemberitahuan pesanan dan reservasi</p>
                         </div>
-                        
                         <div class="notification-list">
-                            <template x-for="notif in notifications" :key="notif.id">
+                            <template x-for="notif in desktopNotifications.slice(0, 5)" :key="notif.id">
                                 <div class="notification-item" :class="{ 'unread': !notif.is_read }" @click="markAsRead(notif.id)">
                                     <div class="flex-start">
                                         <div class="notification-icon" :class="notif.type">
@@ -796,19 +941,15 @@
                                     </div>
                                 </div>
                             </template>
-                            
-                            <div x-show="notifications.length === 0" class="empty-notification">
+                            <div x-show="desktopNotifications.length === 0" class="empty-notification">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
                                 <p>Belum ada notifikasi</p>
                             </div>
                         </div>
-                        
                         <div class="notification-footer">
-                            <a href="{{ route('notifications.index') }}">
-                                📬 Lihat semua notifikasi →
-                            </a>
+                            <a href="{{ route('notifications.index') }}">📬 Lihat semua notifikasi →</a>
                         </div>
                     </div>
                 </div>
@@ -852,14 +993,57 @@
                 @endauth
             </div>
 
-            <!-- Mobile Buttons -->
+            <!-- Mobile Buttons (Cart + Notification + Menu) -->
             <div class="mobile-buttons">
+                <!-- NOTIFICATION BUTTON - MOBILE (di samping keranjang) -->
+                @auth
+                <div class="notification-bell mobile-notification" x-data="mobileNotificationData()" x-init="initMobileNotification()">
+                    <button @click="toggleMobileDropdown" class="mobile-notification-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span x-show="mobileUnreadCount > 0" x-text="mobileUnreadCount" class="mobile-notification-badge"></span>
+                    </button>
+                    
+                    <!-- Mobile Notification Dropdown -->
+                    <div x-show="mobileDropdownOpen" @click.away="mobileDropdownOpen = false" x-cloak class="mobile-notification-dropdown">
+                        <div class="mobile-notification-header">
+                            <h3><span>🔔</span> Notifikasi</h3>
+                            <button @click="mobileDropdownOpen = false" class="mobile-notification-close">✕</button>
+                        </div>
+                        <div class="mobile-notification-list">
+                            <template x-for="notif in mobileNotifications" :key="notif.id">
+                                <div class="mobile-notification-item" :class="{ 'unread': !notif.is_read }" @click="markMobileAsRead(notif.id)">
+                                    <div class="mobile-notification-text">
+                                        <div class="mobile-notification-title" x-text="notif.title"></div>
+                                        <div class="mobile-notification-message" x-text="notif.message.length > 70 ? notif.message.substring(0, 70) + '...' : notif.message"></div>
+                                        <div class="mobile-notification-time" x-text="formatMobileTime(notif.created_at)"></div>
+                                    </div>
+                                </div>
+                            </template>
+                            <div x-show="mobileNotifications.length === 0" class="empty-notification">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                <p>Belum ada notifikasi</p>
+                            </div>
+                        </div>
+                        <div class="mobile-notification-footer">
+                            <a href="{{ route('notifications.index') }}" @click="mobileDropdownOpen = false">📬 Lihat semua notifikasi →</a>
+                        </div>
+                    </div>
+                </div>
+                @endauth
+
+                <!-- Cart Button -->
                 <button class="cart-button" @click="cartOpenMobile = !cartOpenMobile">
                     <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                     <span x-show="cartTotal > 0" x-cloak class="cart-badge" x-text="cartTotal"></span>
                 </button>
+                
+                <!-- Menu Toggle Button -->
                 <button class="mobile-menu-btn" @click="toggleMobileMenu">
                     <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -868,7 +1052,7 @@
             </div>
         </div>
 
-        <!-- Mobile Menu -->
+        <!-- Mobile Menu (Sidebar) -->
         <div class="mobile-menu" :class="{ 'open': mobileMenuOpen }">
             <div class="mobile-menu-links">
                 <a href="{{ route('home') }}" class="mobile-link" :class="{ 'mobile-link-active': activeMenu === 'home' }" @click="toggleMobileMenu">🏠 Beranda</a>
@@ -1077,47 +1261,36 @@
         }
     }
     
-    // Notification Data Function - Compact Version
-    function notificationData() {
+    // Desktop Notification Data
+    function desktopNotificationData() {
         return {
             dropdownOpen: false,
-            unreadCount: 0,
-            notifications: [],
+            desktopUnreadCount: 0,
+            desktopNotifications: [],
             intervalId: null,
             
-            initNotification() {
-                this.fetchUnreadCount();
-                this.fetchLatestNotifications();
+            initDesktopNotification() {
+                this.fetchDesktopNotifications();
                 this.intervalId = setInterval(() => {
-                    this.fetchUnreadCount();
-                    this.fetchLatestNotifications();
+                    this.fetchDesktopNotifications();
                 }, 30000);
             },
             
             toggleDropdown() {
                 this.dropdownOpen = !this.dropdownOpen;
                 if (this.dropdownOpen) {
-                    this.fetchLatestNotifications();
+                    this.fetchDesktopNotifications();
                 }
             },
             
-            fetchUnreadCount() {
-                fetch('{{ route("notifications.unread-count") }}')
-                    .then(res => res.json())
-                    .then(data => {
-                        this.unreadCount = data.count;
-                    })
-                    .catch(err => console.error('Error fetching unread count:', err));
-            },
-            
-            fetchLatestNotifications() {
+            fetchDesktopNotifications() {
                 fetch('{{ route("notifications.latest") }}')
                     .then(res => res.json())
                     .then(data => {
-                        this.notifications = data.notifications || [];
-                        this.unreadCount = data.unread_count || 0;
+                        this.desktopNotifications = data.notifications || [];
+                        this.desktopUnreadCount = data.unread_count || 0;
                     })
-                    .catch(err => console.error('Error fetching notifications:', err));
+                    .catch(err => console.error('Error fetching desktop notifications:', err));
             },
             
             markAsRead(id) {
@@ -1130,8 +1303,11 @@
                 })
                 .then(res => res.json())
                 .then(() => {
-                    this.fetchLatestNotifications();
-                    this.fetchUnreadCount();
+                    this.fetchDesktopNotifications();
+                    // Update mobile notifications if exists
+                    if (window.mobileNotifData && typeof window.mobileNotifData.fetchMobileNotifications === 'function') {
+                        window.mobileNotifData.fetchMobileNotifications();
+                    }
                 })
                 .catch(err => console.error('Error marking as read:', err));
             },
@@ -1154,9 +1330,92 @@
         }
     }
     
+    // Mobile Notification Data
+    function mobileNotificationData() {
+        return {
+            mobileDropdownOpen: false,
+            mobileUnreadCount: 0,
+            mobileNotifications: [],
+            mobileIntervalId: null,
+            
+            initMobileNotification() {
+                this.fetchMobileNotifications();
+                this.mobileIntervalId = setInterval(() => {
+                    this.fetchMobileNotifications();
+                }, 30000);
+                
+                // Store reference for cross-component update
+                window.mobileNotifData = this;
+            },
+            
+            toggleMobileDropdown() {
+                this.mobileDropdownOpen = !this.mobileDropdownOpen;
+                if (this.mobileDropdownOpen) {
+                    this.fetchMobileNotifications();
+                }
+            },
+            
+            fetchMobileNotifications() {
+                fetch('{{ route("notifications.latest") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        this.mobileNotifications = data.notifications || [];
+                        this.mobileUnreadCount = data.unread_count || 0;
+                    })
+                    .catch(err => console.error('Error fetching mobile notifications:', err));
+            },
+            
+            markMobileAsRead(id) {
+                fetch(`/notifications/${id}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(res => res.json())
+                .then(() => {
+                    this.fetchMobileNotifications();
+                    // Update desktop notifications if needed
+                    if (window.desktopNotifData && typeof window.desktopNotifData.fetchDesktopNotifications === 'function') {
+                        window.desktopNotifData.fetchDesktopNotifications();
+                    }
+                })
+                .catch(err => console.error('Error marking as read:', err));
+            },
+            
+            formatMobileTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                if (diffMins < 1) return 'Baru saja';
+                if (diffMins < 60) return `${diffMins} menit lalu`;
+                if (diffHours < 24) return `${diffHours} jam lalu`;
+                if (diffDays === 1) return 'Kemarin';
+                if (diffDays < 7) return `${diffDays} hari lalu`;
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            }
+        }
+    }
+    
     document.addEventListener('alpine:init', () => {
         Alpine.data('navigationData', navigationData);
-        Alpine.data('notificationData', notificationData);
+        Alpine.data('desktopNotificationData', desktopNotificationData);
+        Alpine.data('mobileNotificationData', mobileNotificationData);
+    });
+    
+    // Store references for cross-component communication
+    document.addEventListener('DOMContentLoaded', () => {
+        // Will be populated after Alpine initializes
+        setTimeout(() => {
+            if (window.Alpine && window.Alpine.store) {
+                // Additional setup if needed
+            }
+        }, 100);
     });
 </script>
 

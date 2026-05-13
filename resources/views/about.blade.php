@@ -392,7 +392,7 @@
             
             <div class="space-y-8">
                 <div class="timeline-item">
-                    <div class="timeline-year">2018</div>
+                    <div class="timeline-year">2025</div>
                     <div class="timeline-content">
                         <h4 class="timeline-title">Awal Mula</h4>
                         <p class="timeline-text">
@@ -402,21 +402,11 @@
                 </div>
                 
                 <div class="timeline-item">
-                    <div class="timeline-year sage">2019</div>
+                    <div class="timeline-year sage">2026</div>
                     <div class="timeline-content">
                         <h4 class="timeline-title">Ekspansi Menu</h4>
                         <p class="timeline-text">
                             Mulai memperkenalkan menu makanan berat dengan resep turun-temurun dari berbagai daerah Indonesia. Menerima penghargaan "Best New Café" dari Jakarta Food Guide.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-year wood">2022</div>
-                    <div class="timeline-content">
-                        <h4 class="timeline-title">Renovasi & Digitalisasi</h4>
-                        <p class="timeline-text">
-                            Melakukan renovasi besar-besaran dan meluncurkan sistem pemesanan digital. Konsep "modern Indonesian café" semakin matang dengan desain interior yang lebih hangat.
                         </p>
                     </div>
                 </div>
