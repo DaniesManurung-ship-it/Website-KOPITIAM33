@@ -4,22 +4,22 @@
         box-sizing: border-box;
     }
     
-    /* Color Variables */
     :root {
         --sage: #8BA888;
         --cream: #F5EFE6;
         --wood: #A67B5B;
         --accent: #D97642;
+        --gray: #6B7280;
+        --white: #FFFFFF;
     }
     
-    /* Container */
     .container {
         max-width: 1280px;
         margin: 0 auto;
         padding: 0 1rem;
     }
     
-    /* Gallery Header */
+    /* HEADER - SAMA DENGAN HALAMAN LAIN */
     .gallery-header {
         background: var(--sage);
         color: white;
@@ -29,19 +29,19 @@
     
     .gallery-header h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
     
     .gallery-header p {
-        font-size: 1.25rem;
-        max-width: 768px;
+        font-size: 1rem;
+        max-width: 600px;
         margin: 0 auto;
         opacity: 0.9;
     }
     
-    /* Filter Section */
+    /* FILTER SECTION */
     .filter-section {
         background: #F5F1EC;
         padding: 1rem 0;
@@ -69,11 +69,12 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.75rem;
+        justify-content: center;
     }
     
     .filter-btn {
-        padding: 0.5rem 1rem;
-        border-radius: 0.875rem;
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
         font-size: 0.875rem;
         font-weight: 500;
         background: #EDE7DF;
@@ -86,6 +87,7 @@
     
     .filter-btn:hover {
         background: #e2dbd2;
+        transform: translateY(-2px);
     }
     
     .filter-btn.active {
@@ -93,155 +95,161 @@
         color: white;
     }
     
-    .sort-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .sort-label {
-        font-size: 0.875rem;
-        color: #6b7280;
-    }
-    
-    .sort-select {
-        border: 1px solid #e5e7eb;
-        border-radius: 0.75rem;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        background: white;
-        font-family: 'Poppins', sans-serif;
-        cursor: pointer;
-    }
-    
-    .sort-select:focus {
-        outline: none;
-        ring: 2px solid var(--sage);
-        border-color: var(--sage);
-    }
-    
-    /* Masonry Grid */
+    /* GALLERY GRID - RESPONSIVE GRID */
     .gallery-grid {
-        columns: 1;
-        column-gap: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
         padding: 2rem 0;
-    }
-    
-    .gallery-item {
-        break-inside: avoid;
-        margin-bottom: 1.5rem;
-        cursor: pointer;
     }
     
     @media (min-width: 640px) {
         .gallery-grid {
-            columns: 2;
+            grid-template-columns: repeat(2, 1fr);
         }
     }
     
     @media (min-width: 1024px) {
         .gallery-grid {
-            columns: 3;
+            grid-template-columns: repeat(3, 1fr);
         }
     }
     
     @media (min-width: 1280px) {
         .gallery-grid {
-            columns: 4;
+            grid-template-columns: repeat(4, 1fr);
         }
     }
     
-    /* Gallery Card */
+    /* SEMUA CARD MEMILIKI UKURAN YANG SAMA */
+    .gallery-item {
+        cursor: pointer;
+        height: 100%;
+    }
+    
     .gallery-card {
         background: white;
-        border-radius: 0.75rem;
+        border-radius: 1rem;
         overflow: hidden;
         transition: all 0.3s ease;
         border: 1px solid rgba(139, 168, 136, 0.1);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .gallery-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(139, 168, 136, 0.15);
-        border-color: rgba(139, 168, 136, 0.3);
+        box-shadow: 0 20px 40px rgba(139, 168, 136, 0.2);
     }
     
+    /* SEMUA GAMBAR MEMILIKI ASPECT RATIO 16:9 */
     .gallery-image-container {
         position: relative;
-        height: 200px;
+        aspect-ratio: 16 / 9;
+        width: 100%;
         overflow: hidden;
+        background-color: #f3f4f6;
     }
     
     .gallery-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
         transition: transform 0.5s ease;
     }
     
     .gallery-card:hover .gallery-image {
-        transform: scale(1.05);
+        transform: scale(1.08);
     }
     
+    /* BADGE KATEGORI */
     .category-badge {
         position: absolute;
-        top: 1rem;
-        left: 1rem;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
+        top: 0.75rem;
+        left: 0.75rem;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
         border-radius: 20px;
         padding: 0.25rem 0.75rem;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 500;
-        color: var(--wood);
-        border: 1px solid rgba(167, 123, 91, 0.2);
+        color: white;
         z-index: 10;
+        letter-spacing: 0.5px;
     }
     
+    /* INFO CARD */
     .gallery-info {
         padding: 1rem;
         background: white;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
     }
     
     .gallery-title {
         font-weight: 600;
-        color: #8B5A2B;
-        margin-bottom: 0.25rem;
+        color: var(--wood);
         font-size: 1rem;
-    }
-    
-    .gallery-description {
-        color: #6B7280;
-        font-size: 0.875rem;
+        margin: 0;
         line-height: 1.4;
     }
     
-    /* Load More Button */
-    .load-more-wrapper {
-        text-align: center;
-        margin-top: 2rem;
+    .gallery-description {
+        color: var(--gray);
+        font-size: 0.8rem;
+        line-height: 1.4;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    /* PAGINATION - SAMA SEPERTI MENU */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
         margin-bottom: 2rem;
     }
     
-    .load-more-btn {
-        background: var(--sage);
-        color: white;
-        padding: 0.75rem 2rem;
-        border: none;
+    .pagination-nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 0.5rem;
-        font-weight: 500;
+        background: var(--cream);
+        color: var(--wood);
+        border: none;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s;
         font-family: 'Poppins', sans-serif;
         font-size: 1rem;
     }
     
-    .load-more-btn:hover {
-        background: var(--wood);
+    .page-btn:hover {
+        background: var(--sage);
+        color: white;
     }
     
-    /* Lightbox Modal */
+    .page-btn.active {
+        background: var(--sage);
+        color: white;
+    }
+    
+    /* LIGHTBOX MODAL */
     .lightbox-modal {
         display: none;
         position: fixed;
@@ -249,257 +257,207 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(0, 0, 0, 0.95);
         z-index: 1000;
-        animation: fadeIn 0.3s ease;
+    }
+    
+    .lightbox-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .lightbox-content {
         position: relative;
         max-width: 90%;
-        max-height: 90vh;
-        margin: 5vh auto;
-        animation: zoomIn 0.3s ease;
+        max-height: 85vh;
     }
     
     .lightbox-image {
-        width: 100%;
+        width: auto;
+        max-width: 100%;
+        max-height: 70vh;
         height: auto;
+        object-fit: contain;
         border-radius: 0.5rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        display: block;
+        margin: 0 auto;
     }
     
     .lightbox-caption {
         position: absolute;
-        bottom: 0;
+        bottom: -60px;
         left: 0;
         right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-        padding: 2rem 1.5rem 1.5rem;
-        border-radius: 0 0 0.5rem 0.5rem;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
         color: white;
+        text-align: center;
     }
     
     .lightbox-title {
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
     
     .lightbox-description {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         opacity: 0.9;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
     }
     
     .lightbox-category {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background: rgba(255,255,255,0.2);
+        padding: 0.2rem 0.6rem;
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 20px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
     
+    /* NAVIGASI LIGHTBOX */
     .nav-btn {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.6);
         color: white;
         border: none;
         width: 50px;
         height: 50px;
         border-radius: 50%;
         font-size: 2rem;
+        cursor: pointer;
+        z-index: 10;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 10;
+        transition: all 0.2s ease;
     }
     
     .nav-btn:hover {
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.9);
+        transform: translateY(-50%) scale(1.1);
     }
     
     .nav-btn.prev {
-        left: 20px;
+        left: 30px;
     }
     
     .nav-btn.next {
-        right: 20px;
+        right: 30px;
     }
     
     .close-btn {
         position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(0,0,0,0.5);
+        top: 30px;
+        right: 40px;
+        background: rgba(0, 0, 0, 0.6);
         color: white;
         border: none;
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        font-size: 2rem;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 10;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 10;
+        transition: all 0.2s ease;
     }
     
     .close-btn:hover {
-        background: rgba(0,0,0,0.8);
-    }
-    
-    @keyframes zoomIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    /* Instagram Section */
-    .instagram-section {
-        background: var(--cream);
-        padding: 4rem 0;
-    }
-    
-    .instagram-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-    
-    .instagram-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 64px;
-        height: 64px;
-        background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
-        border-radius: 50%;
-        margin-bottom: 1rem;
-    }
-    
-    .instagram-icon svg {
-        width: 32px;
-        height: 32px;
-        color: white;
-    }
-    
-    .instagram-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.25rem;
-        font-weight: 600;
-        color: var(--wood);
-        margin-bottom: 1rem;
-    }
-    
-    .instagram-subtitle {
-        color: #6b7280;
-        max-width: 672px;
-        margin: 0 auto 2rem;
-    }
-    
-    .instagram-link {
-        display: inline-flex;
-        align-items: center;
-        background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        text-decoration: none;
-        font-weight: 500;
-        transition: opacity 0.2s;
-    }
-    
-    .instagram-link:hover {
-        opacity: 0.9;
-    }
-    
-    .instagram-link svg {
-        width: 20px;
-        height: 20px;
-        margin-left: 0.5rem;
-    }
-    
-    .instagram-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-    
-    @media (min-width: 768px) {
-        .instagram-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-    
-    .instagram-item {
-        position: relative;
-        overflow: hidden;
-        border-radius: 0.75rem;
-        aspect-ratio: 1;
-        text-decoration: none;
-    }
-    
-    .instagram-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .instagram-item:hover .instagram-image {
+        background: rgba(0, 0, 0, 0.9);
         transform: scale(1.1);
     }
     
-    .instagram-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .instagram-item:hover .instagram-overlay {
-        opacity: 1;
-    }
-    
-    .instagram-overlay svg {
-        width: 32px;
-        height: 32px;
-        color: white;
-    }
-    
-    /* Utilities */
-    .section {
-        padding: 3rem 0;
-    }
-    
-    .text-center {
+    /* EMPTY STATE */
+    .empty-state {
+        grid-column: 1 / -1;
         text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
     }
     
-    @media (max-width: 640px) {
+    .empty-state svg {
+        width: 80px;
+        height: 80px;
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.25rem;
+        color: var(--wood);
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
         .gallery-header h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
         }
         
         .gallery-header p {
-            font-size: 1rem;
+            font-size: 0.875rem;
         }
         
-        .instagram-title {
-            font-size: 1.75rem;
+        .gallery-grid {
+            gap: 1rem;
+            padding: 1.5rem 0;
+        }
+        
+        .filter-btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .nav-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+        }
+        
+        .nav-btn.prev {
+            left: 10px;
+        }
+        
+        .nav-btn.next {
+            right: 10px;
+        }
+        
+        .close-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+            top: 15px;
+            right: 15px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .gallery-info {
+            padding: 0.75rem;
+        }
+        
+        .gallery-title {
+            font-size: 0.85rem;
+        }
+        
+        .gallery-description {
+            font-size: 0.7rem;
+        }
+        
+        .category-badge {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
         }
     }

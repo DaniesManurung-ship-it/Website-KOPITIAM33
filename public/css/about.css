@@ -1,139 +1,117 @@
+    /* ==================== RESET & VARIABLES ==================== */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
     
-    /* Color Variables */
     :root {
         --sage: #8BA888;
+        --sage-dark: #6B8A6B;
+        --sage-light: #E8F0E6;
         --cream: #F5EFE6;
         --wood: #A67B5B;
+        --wood-dark: #8B5E3C;
         --accent: #D97642;
+        --dark: #2C1810;
+        --gray: #6B7280;
+        --light: #F9FAFB;
+        --white: #FFFFFF;
     }
     
-    /* Container */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--cream);
+        overflow-x: hidden;
+    }
+    
     .container {
         max-width: 1280px;
         margin: 0 auto;
-        padding: 0 1rem;
+        padding: 0 1.5rem;
     }
-    
-    /* Hero Section */
-    .hero {
-        position: relative;
+
+    /* ==================== ABOUT HEADER ==================== */
+    /* SAMA PERSIS DENGAN CONTACT & PROMO - padding 3rem 0 */
+    .about-header {
         background: var(--sage);
         color: white;
-        padding: 4rem 0;
-        min-height: 400px;
-        display: flex;
-        align-items: center;
-    }
-    
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 0;
-    }
-    
-    .hero-image {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-    }
-    
-    .hero-content {
-        position: relative;
-        z-index: 10;
+        padding: 3rem 0;
         text-align: center;
-        max-width: 768px;
-        margin: 0 auto;
     }
     
-    .hero-title {
+    .about-header h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
     }
     
-    .hero-subtitle {
-        font-size: 1.25rem;
+    .about-header p {
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
         opacity: 0.9;
     }
     
-    /* Section Styles */
+    /* ==================== SECTIONS ==================== */
     .section {
         padding: 4rem 0;
+    }
+    
+    .section-white {
+        background: var(--white);
     }
     
     .section-cream {
         background: var(--cream);
     }
     
-    .section-white {
-        background: white;
-    }
-    
-    /* Text Styles */
-    .text-center {
+    .section-header {
         text-align: center;
+        margin-bottom: 3rem;
     }
     
-    .text-wood {
-        color: var(--wood);
-    }
-    
-    .text-gray {
-        color: #6b7280;
-    }
-    
-    .text-sage {
-        color: var(--sage);
-    }
-    
-    /* Cards */
-    .card {
-        background: white;
-        border-radius: 1rem;
-        padding: 2rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .card-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(139, 168, 136, 0.2);
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-    }
-    
-    .card-icon svg {
-        width: 24px;
-        height: 24px;
-        color: var(--sage);
-    }
-    
-    .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
         color: var(--wood);
         margin-bottom: 0.75rem;
+        position: relative;
+        display: inline-block;
     }
     
-    .card-text {
-        color: #6b7280;
-        line-height: 1.6;
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--sage), var(--accent));
+        border-radius: 2px;
     }
     
-    /* Grid Layouts */
+    .section-subtitle {
+        font-size: 0.95rem;
+        color: var(--gray);
+        max-width: 600px;
+        margin: 1rem auto 0;
+    }
+    
+    /* ==================== UTILITY ==================== */
+    .max-w-4xl {
+        max-width: 896px;
+        margin: 0 auto;
+    }
+    
+    .space-y-8 > * + * {
+        margin-top: 2rem;
+    }
+    
+    /* ==================== GRID SYSTEMS ==================== */
     .grid-2 {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -147,69 +125,86 @@
         gap: 2rem;
     }
     
-    @media (max-width: 768px) {
-        .grid-2, .grid-3 {
-            grid-template-columns: 1fr;
-        }
+    /* ==================== CARDS ==================== */
+    .card {
+        background: var(--cream);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(139, 168, 136, 0.2);
     }
     
-    /* Timeline */
-    .timeline {
-        margin-top: 3rem;
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: var(--sage);
     }
     
-    .timeline-item {
-        display: flex;
-        margin-bottom: 2rem;
-    }
-    
-    .timeline-year {
-        flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        background: var(--accent);
-        color: white;
+    .card-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        margin: 0 auto 1.5rem;
     }
     
-    .timeline-year.sage {
-        background: var(--sage);
+    .card-icon svg {
+        width: 35px;
+        height: 35px;
+        color: white;
     }
     
-    .timeline-year.wood {
-        background: var(--wood);
-    }
-    
-    .timeline-content {
-        margin-left: 1.5rem;
-    }
-    
-    .timeline-title {
-        font-size: 1.25rem;
+    .card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
         font-weight: 600;
         color: var(--wood);
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
     }
     
-    .timeline-text {
-        color: #6b7280;
+    .card-text {
+        color: var(--gray);
         line-height: 1.6;
+        font-size: 0.9rem;
     }
     
-    /* Value Cards */
+    .mission-list {
+        list-style: none;
+        text-align: left;
+        padding-left: 0;
+    }
+    
+    .mission-list li {
+        color: var(--gray);
+        padding: 0.5rem 0;
+        font-size: 0.9rem;
+        text-align: left;
+    }
+    
+    /* ==================== VALUES SECTION ==================== */
     .value-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 2rem;
         text-align: center;
-        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid rgba(139, 168, 136, 0.15);
+    }
+    
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     }
     
     .value-icon {
-        width: 80px;
-        height: 80px;
-        background: rgba(139, 168, 136, 0.2);
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--cream) 0%, var(--sage-light) 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -218,12 +213,13 @@
     }
     
     .value-icon svg {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         color: var(--sage);
     }
     
     .value-title {
+        font-family: 'Playfair Display', serif;
         font-size: 1.25rem;
         font-weight: 600;
         color: var(--wood);
@@ -231,122 +227,49 @@
     }
     
     .value-text {
-        color: #6b7280;
+        color: var(--gray);
         line-height: 1.6;
+        font-size: 0.85rem;
     }
     
-    /* Team Cards */
-    .team-card {
-        text-align: center;
-    }
-    
-    .team-image {
-        width: 128px;
-        height: 128px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin: 0 auto 1rem;
-    }
-    
-    .team-name {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--wood);
-        margin-bottom: 0.25rem;
-    }
-    
-    .team-role {
-        color: var(--sage);
-        font-weight: 500;
-        margin-bottom: 0.75rem;
-    }
-    
-    .team-bio {
-        color: #6b7280;
-        font-size: 0.875rem;
-        line-height: 1.6;
-    }
-    
-    /* List Styles */
-    .mission-list {
-        list-style: none;
-        padding: 0;
-        margin-top: 0.5rem;
-    }
-    
-    .mission-list li {
-        color: #6b7280;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Section Headers */
-    .section-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-    
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.25rem;
-        font-weight: 600;
-        color: var(--wood);
-        margin-bottom: 1.5rem;
-    }
-    
-    .section-subtitle {
-        color: #6b7280;
-        font-size: 1.125rem;
-        max-width: 672px;
-        margin: 0 auto;
-    }
-    
-    /* Utilities */
-    .max-w-4xl {
-        max-width: 896px;
-        margin: 0 auto;
-    }
-    
-    .max-w-2xl {
-        max-width: 672px;
-        margin: 0 auto;
-    }
-    
-    .mx-auto {
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .mb-2 { margin-bottom: 0.5rem; }
-    .mb-3 { margin-bottom: 0.75rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .mb-6 { margin-bottom: 1.5rem; }
-    .mb-8 { margin-bottom: 2rem; }
-    .mb-12 { margin-bottom: 3rem; }
-    .mt-2 { margin-top: 0.5rem; }
-    
-    .space-y-2 > * + * {
-        margin-top: 0.5rem;
-    }
-    
-    .space-y-8 > * + * {
-        margin-top: 2rem;
-    }
-    
-    /* Responsive */
-    @media (max-width: 640px) {
-        .hero-title {
-            font-size: 2rem;
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+        .container { padding: 0 1rem; }
+        .about-header h1 { font-size: 1.75rem; }
+        .about-header { padding: 2rem 0; }
+        .section { padding: 2.5rem 0; }
+        .section-title { font-size: 1.5rem; }
+        .section-title::after { width: 40px; }
+        
+        .grid-2, .grid-3 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
         
-        .hero-subtitle {
-            font-size: 1rem;
+        .timeline-item {
+            flex-direction: column;
+            gap: 0.75rem;
         }
         
-        .section-title {
-            font-size: 1.75rem;
+        .timeline-year {
+            width: fit-content;
+            min-width: auto;
+            font-size: 1.25rem;
+            padding: 0.3rem 1rem;
         }
         
-        .section {
-            padding: 3rem 0;
-        }
+        .card, .value-card { padding: 1.5rem; }
+        .card-icon, .value-icon { width: 55px; height: 55px; }
+        .card-icon svg, .value-icon svg { width: 28px; height: 28px; }
+        .card-title { font-size: 1.25rem; }
+    }
+    
+    @media (max-width: 480px) {
+        .about-header h1 { font-size: 1.5rem; }
+        .section-title { font-size: 1.25rem; }
+        .timeline-year { font-size: 1rem; }
+        .timeline-title { font-size: 1rem; }
+        .timeline-text { font-size: 0.8rem; }
+        .value-title { font-size: 1.1rem; }
+        .value-text { font-size: 0.8rem; }
     }

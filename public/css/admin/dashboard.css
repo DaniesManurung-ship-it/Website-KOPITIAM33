@@ -1,0 +1,260 @@
+    /* Welcome Section */
+    .welcome-card {
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .welcome-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .welcome-date {
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-icon.menu { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-icon.order { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .stat-icon.reservasi { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-icon.testimoni { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    
+    .stat-icon svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--wood);
+    }
+    
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Chart & Recent Section */
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (min-width: 1024px) {
+        .two-columns {
+            grid-template-columns: 1.5fr 1fr;
+        }
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .chart-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .chart-title svg {
+        width: 20px;
+        height: 20px;
+        color: var(--sage);
+    }
+    
+    /* Recent Items */
+    .recent-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .recent-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .recent-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--wood);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .view-all {
+        font-size: 0.7rem;
+        color: var(--sage);
+        text-decoration: none;
+    }
+    
+    .view-all:hover {
+        text-decoration: underline;
+    }
+    
+    .recent-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .recent-item:last-child {
+        border-bottom: none;
+    }
+    
+    .recent-info {
+        flex: 1;
+    }
+    
+    .recent-name {
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.875rem;
+    }
+    
+    .recent-detail {
+        font-size: 0.7rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    
+    .recent-status {
+        padding: 0.25rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-weight: 500;
+    }
+    
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-confirmed { background: #d1fae5; color: #065f46; }
+    .status-processed { background: #dbeafe; color: #1e40af; }
+    .status-completed { background: #d1fae5; color: #065f46; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+    
+    /* Testimoni Section */
+    .testimoni-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+        .testimoni-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .testimoni-card {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-radius: 1rem;
+        padding: 1rem;
+        position: relative;
+    }
+    
+    .testimoni-card::before {
+        content: '"';
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        font-size: 3rem;
+        color: rgba(0,0,0,0.1);
+        font-family: serif;
+    }
+    
+    .testimoni-rating {
+        color: #fbbf24;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .testimoni-text {
+        font-size: 0.8rem;
+        color: #374151;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+    }
+    
+    .testimoni-author {
+        font-size: 0.7rem;
+        color: var(--wood);
+        font-weight: 500;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+    }

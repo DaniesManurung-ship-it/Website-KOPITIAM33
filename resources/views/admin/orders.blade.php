@@ -4,63 +4,7 @@
 @section('title', 'Kelola Pesanan')
 
 @push('styles')
-<style>
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    .stat-card {
-        background: var(--cream);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        text-align: center;
-    }
-    .stat-number {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--wood);
-    }
-    .order-table {
-        width: 100%;
-        background: white;
-        border-radius: 1rem;
-        overflow-x: auto;
-    }
-    .order-table table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .order-table th, .order-table td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid #f3f4f6;
-    }
-    .order-table th {
-        background: var(--cream);
-    }
-    .status-pending { background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
-    .status-processed { background: #dbeafe; color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
-    .status-completed { background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
-    .status-cancelled { background: #fee2e2; color: #991b1b; padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    .btn-process, .btn-complete, .btn-cancel, .btn-delete {
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.375rem;
-        border: none;
-        cursor: pointer;
-        font-size: 0.7rem;
-    }
-    .btn-process { background: #3b82f6; color: white; }
-    .btn-complete { background: #10b981; color: white; }
-    .btn-cancel { background: #ef4444; color: white; }
-    .btn-delete { background: #6b7280; color: white; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/admin/orders.css') }}">
 @endpush
 
 @section('content')

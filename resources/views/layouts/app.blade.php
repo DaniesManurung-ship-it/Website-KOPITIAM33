@@ -17,650 +17,7 @@
     <!-- Alpine JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    <style>
-        /* ========== RESET & VARIABLES ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --sage: #8BA888;
-            --cream: #F5EFE6;
-            --wood: #A67B5B;
-            --accent: #D97642;
-            --dark: #4A3728;
-            --gray: #6B7280;
-            --gray-light: #F3F4F6;
-            --white: #FFFFFF;
-            --black: #1F2937;
-            --success: #10B981;
-            --success-dark: #059669;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --info: #3B82F6;
-        }
-        
-        body {
-            background: var(--cream);
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
-            color: var(--black);
-        }
-        
-        /* ========== UTILITY CLASSES ========== */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        
-        .mt-1 { margin-top: 0.25rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 0.75rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mb-1 { margin-bottom: 0.25rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 0.75rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        
-        .p-1 { padding: 0.25rem; }
-        .p-2 { padding: 0.5rem; }
-        .p-3 { padding: 0.75rem; }
-        .p-4 { padding: 1rem; }
-        
-        .flex { display: flex; }
-        .inline-flex { display: inline-flex; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-1 { gap: 0.25rem; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-3 { gap: 0.75rem; }
-        .gap-4 { gap: 1rem; }
-        
-        .flex-col { flex-direction: column; }
-        .flex-wrap { flex-wrap: wrap; }
-        
-        .w-full { width: 100%; }
-        .h-full { height: 100%; }
-        
-        .rounded { border-radius: 0.25rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-        .rounded-2xl { border-radius: 1rem; }
-        
-        .shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        
-        .hidden { display: none; }
-        
-        [x-cloak] { display: none !important; }
-        
-        /* ========== MAIN CONTENT ========== */
-        .main-content {
-            min-height: calc(100vh - 60px);
-        }
-        
-        /* ========== ANIMATIONS ========== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from {
-                transform: translateY(10px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        
-        .animate-slide-up {
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        /* ========== TESTIMONI WIDGET STYLES ========== */
-        .testimoni-widget-wrapper {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            z-index: 999;
-        }
-        
-        .testimoni-widget-btn {
-            background: linear-gradient(135deg, white 0%, #f8f6f2 100%);
-            border: 2px solid var(--sage);
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        
-        .testimoni-widget-btn:hover {
-            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(139, 168, 136, 0.3);
-        }
-        
-        .testimoni-widget-btn svg {
-            width: 22px;
-            height: 22px;
-            color: var(--wood);
-            transition: all 0.3s ease;
-        }
-        
-        .testimoni-widget-btn:hover svg {
-            color: white;
-        }
-        
-        .testimoni-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            font-size: 9px;
-            font-weight: bold;
-            border-radius: 50%;
-            min-width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 3px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        
-        .testimoni-widget-dropdown {
-            position: absolute;
-            bottom: 58px;
-            left: 0;
-            width: 340px;
-            max-width: calc(100vw - 40px);
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            overflow: hidden;
-            animation: fadeIn 0.2s ease;
-        }
-        
-        .testimoni-dropdown-header {
-            padding: 10px 14px;
-            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
-            color: white;
-        }
-        
-        .testimoni-dropdown-header h4 {
-            margin: 0;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .testimoni-dropdown-body {
-            max-height: 380px;
-            overflow-y: auto;
-            background: white;
-        }
-        
-        .testimoni-list {
-            padding: 0;
-        }
-        
-        .testimoni-item {
-            padding: 12px 14px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-        
-        .testimoni-item:last-child {
-            border-bottom: none;
-        }
-        
-        .testimoni-item:hover {
-            background: var(--cream);
-        }
-        
-        .testimoni-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-        
-        .testimoni-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            color: var(--wood);
-            font-size: 0.8rem;
-        }
-        
-        .testimoni-date {
-            font-size: 0.55rem;
-            color: #9ca3af;
-        }
-        
-        .testimoni-rating {
-            display: flex;
-            gap: 2px;
-            margin-top: 3px;
-        }
-        
-        .testimoni-star {
-            font-size: 0.6rem;
-            color: #d1d5db;
-        }
-        
-        .testimoni-star.active {
-            color: #fbbf24;
-        }
-        
-        .testimoni-message {
-            font-size: 0.75rem;
-            color: #4b5563;
-            line-height: 1.45;
-            margin-top: 6px;
-            margin-left: 42px;
-        }
-        
-        .testimoni-dropdown-footer {
-            padding: 10px 14px;
-            border-top: 1px solid #efefef;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .btn-give-testimoni {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 8px 12px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-size: 0.75rem;
-        }
-        
-        .btn-give-testimoni:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
-        }
-        
-        .btn-view-all {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            padding: 7px 12px;
-            background: #f3f4f6;
-            color: var(--wood);
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-view-all:hover {
-            background: #e5e7eb;
-        }
-        
-        /* ========== MODAL STYLES ========== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal-container {
-            background: white;
-            border-radius: 1rem;
-            max-width: 28rem;
-            width: 100%;
-            padding: 1.5rem;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .modal-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .modal-title-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-title-icon svg {
-            width: 18px;
-            height: 18px;
-            color: white;
-        }
-        
-        .modal-title h3 {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--wood);
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: color 0.2s;
-        }
-        
-        .modal-close:hover {
-            color: #6b7280;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.25rem;
-        }
-        
-        .rating-stars {
-            display: flex;
-            gap: 0.25rem;
-            font-size: 1.5rem;
-        }
-        
-        .star-rating {
-            cursor: pointer;
-            color: #d1d5db;
-            transition: all 0.15s;
-        }
-        
-        .star-rating.active {
-            color: #fbbf24;
-        }
-        
-        .form-textarea {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.2s;
-        }
-        
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--sage);
-            ring: 2px solid var(--sage);
-        }
-        
-        .form-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .btn-submit {
-            flex: 1;
-            background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
-            color: white;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-submit:hover {
-            box-shadow: 0 4px 12px rgba(139, 168, 136, 0.3);
-        }
-        
-        .btn-cancel {
-            flex: 1;
-            background: #f3f4f6;
-            color: #4b5563;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-cancel:hover {
-            background: #e5e7eb;
-        }
-        
-        /* ========== ORDER SUCCESS MODAL ========== */
-        .order-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        
-        .order-modal-overlay.active {
-            display: flex;
-        }
-        
-        .order-modal-container {
-            background: white;
-            border-radius: 1rem;
-            max-width: 28rem;
-            width: 100%;
-            padding: 1.5rem;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        .order-modal-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-        }
-        
-        .order-modal-icon svg {
-            width: 32px;
-            height: 32px;
-            color: #10b981;
-        }
-        
-        .order-modal-title {
-            font-size: 1.5rem;
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--wood);
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .order-modal-message {
-            color: #6b7280;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        .order-modal-detail {
-            background: rgba(139, 168, 136, 0.1);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .order-modal-detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .order-modal-detail-label {
-            font-weight: 500;
-        }
-        
-        .order-modal-detail-value {
-            font-weight: 700;
-            color: var(--accent);
-        }
-        
-        .order-modal-footer {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 1.5rem;
-        }
-        
-        .order-modal-footer p {
-            font-size: 0.875rem;
-        }
-        
-        .order-modal-close {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .order-modal-close:hover {
-            background: #c0392b;
-        }
-        
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .testimoni-widget-dropdown {
-                width: 320px;
-                left: -10px;
-                bottom: 55px;
-            }
-            
-            .testimoni-widget-wrapper {
-                bottom: 20px;
-                left: 20px;
-            }
-            
-            .testimoni-widget-btn {
-                width: 44px;
-                height: 44px;
-            }
-            
-            .testimoni-widget-btn svg {
-                width: 20px;
-                height: 20px;
-            }
-            
-            .testimoni-message {
-                margin-left: 38px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/layouts/app.css') }}">
     
     @stack('styles')
 </head>
@@ -780,7 +137,8 @@
             
             <div class="form-group">
                 <label class="form-label">Testimoni</label>
-                <textarea name="message" rows="3" class="form-textarea" placeholder="Ceritakan pengalaman Anda di Café Kopitiam33..."></textarea>
+                <textarea name="message" id="testimonialMessage" rows="3" class="form-textarea" placeholder="Ceritakan pengalaman Anda di Café Kopitiam33..."></textarea>
+                <small class="text-danger" id="messageError" style="display: none; color: #dc2626; font-size: 0.7rem; margin-top: 0.25rem;">Testimoni minimal 10 karakter</small>
             </div>
             
             <div class="form-buttons">
@@ -871,6 +229,9 @@
                     star.classList.remove('active');
                 }
             });
+            // Sembunyikan pesan error jika ada
+            const errorMsg = document.getElementById('messageError');
+            if (errorMsg) errorMsg.style.display = 'none';
         }
     }
     
@@ -1002,30 +363,67 @@
             });
         }
         
-        // Testimonial Form AJAX Submission
+        // PERBAIKAN: Testimonial Form Validation
         const form = document.getElementById('testimonialForm');
+        const messageTextarea = document.getElementById('testimonialMessage');
+        const messageError = document.getElementById('messageError');
+        
         if (form) {
+            // Hilangkan validasi default HTML
+            messageTextarea?.removeAttribute('required');
+            
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
+                // Ambil nilai message dengan benar
+                const message = messageTextarea ? messageTextarea.value.trim() : '';
                 const rating = document.getElementById('rating').value;
-                const message = document.querySelector('textarea[name="message"]').value;
                 
-                if (!message || message.length < 10) {
-                    alert('Testimoni minimal 10 karakter');
+                // Debug: console log untuk cek nilai
+                console.log('Message length:', message.length);
+                console.log('Message value:', message);
+                
+                // Validasi: message harus diisi dan minimal 10 karakter
+                if (!message || message.length === 0) {
+                    if (messageError) {
+                        messageError.textContent = 'Testimoni tidak boleh kosong!';
+                        messageError.style.display = 'block';
+                        messageTextarea?.focus();
+                    }
                     return;
                 }
                 
+                if (message.length < 10) {
+                    if (messageError) {
+                        messageError.textContent = 'Testimoni minimal 10 karakter (saat ini ' + message.length + ' karakter)';
+                        messageError.style.display = 'block';
+                        messageTextarea?.focus();
+                    }
+                    return;
+                }
+                
+                // Sembunyikan error jika valid
+                if (messageError) messageError.style.display = 'none';
+                
+                // Kirim form dengan AJAX
                 const formData = new FormData();
                 formData.append('rating', rating);
                 formData.append('message', message);
                 formData.append('_token', document.querySelector('input[name="_token"]').value);
                 
+                const submitBtn = form.querySelector('.btn-submit');
+                const originalText = submitBtn?.textContent || 'Kirim Testimoni';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '⏳ Mengirim...';
+                }
+                
                 fetch(form.action, {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
                 })
                 .then(response => response.json())
@@ -1044,8 +442,27 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan, silakan coba lagi');
+                    alert('Terjadi kesalahan: ' + error.message);
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
                 });
+            });
+        }
+        
+        // Real-time validation on input
+        if (messageTextarea && messageError) {
+            messageTextarea.addEventListener('input', function() {
+                const message = this.value.trim();
+                if (message.length >= 10 || message.length === 0) {
+                    messageError.style.display = 'none';
+                } else if (message.length > 0 && message.length < 10) {
+                    messageError.textContent = 'Testimoni minimal 10 karakter (saat ini ' + message.length + ' karakter)';
+                    messageError.style.display = 'block';
+                }
             });
         }
     });

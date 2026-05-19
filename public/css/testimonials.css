@@ -1,0 +1,279 @@
+    /* RESET & OVERRIDE - SAMA PERSIS DENGAN CART */
+    .testimonial-header {
+        background: #8BA888 !important;
+        background-color: #8BA888 !important;
+        color: white !important;
+        padding: 3rem 0 !important;
+        text-align: center !important;
+    }
+    
+    .testimonial-header h1 {
+        font-family: 'Playfair Display', serif !important;
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.5rem !important;
+        color: white !important;
+    }
+    
+    .testimonial-header p {
+        font-size: 1rem !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        opacity: 0.9 !important;
+        color: white !important;
+    }
+    
+    /* Pastikan tidak ada gradient atau background lain yang mengganggu */
+    .testimonial-header::before,
+    .testimonial-header::after {
+        display: none !important;
+    }
+
+        /* ==================== COLOR VARIABLES ==================== */
+    :root {
+        --sage: #8BA888;
+        --sage-dark: #6B8A6B;
+        --sage-light: #E8F0E6;
+        --wood: #A67B5B;
+        --wood-dark: #8B5E3C;
+        --accent: #D97642;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #2C1810;
+        --gray: #6B7280;
+        --light: #F5EFE6;
+        --white: #FFFFFF;
+        --border: #E5E7EB;
+        --yellow: #fbbf24;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--light);
+    }
+    
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    /* ==================== SECTION ==================== */
+    .testimonial-section {
+        padding: 3rem 0;
+    }
+    
+    /* ==================== ALERT ==================== */
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-left: 4px solid var(--success);
+    }
+    
+    .alert-error {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-left: 4px solid var(--danger);
+    }
+    
+    /* ==================== TESTIMONI GRID ==================== */
+    .testimoni-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    @media (min-width: 640px) {
+        .testimoni-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .testimoni-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    .testimoni-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border);
+    }
+    
+    .testimoni-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border-color: var(--sage);
+    }
+    
+    /* Rating Bar */
+    .rating-bar {
+        height: 4px;
+        background: linear-gradient(90deg, var(--yellow), var(--yellow) var(--rating), #e5e7eb var(--rating));
+        border-radius: 2px;
+        margin-bottom: 1rem;
+    }
+    
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .user-avatar {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .user-details h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--wood);
+        margin-bottom: 0.25rem;
+    }
+    
+    .user-date {
+        font-size: 0.7rem;
+        color: var(--gray);
+    }
+    
+    /* Rating Stars */
+    .rating-stars {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .star {
+        font-size: 1rem;
+        color: #d1d5db;
+    }
+    
+    .star.active {
+        color: var(--yellow);
+    }
+    
+    /* Message */
+    .testimoni-message {
+        color: var(--gray);
+        line-height: 1.6;
+        font-size: 0.85rem;
+        font-style: italic;
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    /* ==================== PAGINATION ==================== */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .pagination nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .pagination a, .pagination span {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        background: var(--cream);
+        color: var(--wood);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+    }
+    
+    .pagination a:hover {
+        background: var(--sage);
+        color: white;
+    }
+    
+    .pagination .active span {
+        background: var(--sage);
+        color: white;
+    }
+    
+    /* ==================== EMPTY STATE ==================== */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .empty-state svg {
+        width: 80px;
+        height: 80px;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.25rem;
+        color: var(--wood);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 1rem;
+    }
+    
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+        .testimonial-header h1 {
+            font-size: 1.75rem !important;
+        }
+        
+        .testimonial-header p {
+            font-size: 0.875rem !important;
+        }
+        
+        .testimonial-section {
+            padding: 2rem 0;
+        }
+    }

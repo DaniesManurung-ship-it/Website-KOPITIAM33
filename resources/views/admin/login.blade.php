@@ -4,7 +4,7 @@
 @section('title', 'Login - Café Kopitiam33')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/login.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/login.css') }}">
 @endpush
 
 @section('content')

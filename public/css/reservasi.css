@@ -25,18 +25,56 @@
         color: white;
         padding: 3rem 0;
         text-align: center;
+        position: relative;
+    }
+    
+    /* Tombol Riwayat di Header */
+    .history-btn {
+        position: absolute;
+        top: 50%;
+        right: 2rem;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+    
+    .history-btn:hover {
+        background: rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .history-btn {
+            position: static;
+            transform: none;
+            display: inline-flex;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        
+        .reservasi-header .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     }
     
     .reservasi-header h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
     
     .reservasi-header p {
-        font-size: 1.25rem;
-        max-width: 768px;
+        font-size: 1rem;
+        max-width: 600px;
         margin: 0 auto;
         opacity: 0.9;
     }
@@ -72,6 +110,7 @@
         display: flex;
         align-items: center;
         gap: 1rem;
+        flex-wrap: wrap;
     }
     
     .status-icon {
@@ -99,6 +138,27 @@
     .status-text {
         font-size: 0.875rem;
         color: #6b7280;
+    }
+    
+    .hours-list {
+        margin-top: 0.5rem;
+    }
+    
+    .hours-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .hours-day {
+        font-weight: 500;
+        color: var(--wood);
+    }
+    
+    .hours-time {
+        color: var(--accent);
+        font-weight: 500;
     }
     
     .badge {
@@ -215,6 +275,11 @@
         box-shadow: 0 0 0 2px rgba(139, 168, 136, 0.2);
     }
     
+    .form-input.error {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+    
     textarea.form-input {
         padding-top: 0.75rem;
     }
@@ -223,6 +288,42 @@
         appearance: none;
         background: white;
         cursor: pointer;
+    }
+    
+    /* Error Message */
+    .error-message {
+        color: #ef4444;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    
+    .error-message.show {
+        display: block;
+    }
+    
+    /* Alert Success */
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Alert Error */
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     /* Info Box */
@@ -287,6 +388,11 @@
         cursor: pointer;
     }
     
+    .checkbox-wrapper input.error {
+        outline: 2px solid #ef4444;
+        outline-offset: 2px;
+    }
+    
     .checkbox-label {
         font-size: 0.875rem;
         color: #374151;
@@ -302,7 +408,7 @@
         text-decoration: underline;
     }
     
-    /* Submit Button */
+    /* Submit Button - SAMA UNTUK SEMUA USER (TIDAK ADA PERBEDAAN) */
     .submit-section {
         display: flex;
         justify-content: space-between;
@@ -312,24 +418,37 @@
     }
     
     .btn-submit {
-        background: linear-gradient(to right, var(--sage), var(--wood));
+        background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
         color: white;
-        padding: 1rem 2rem;
+        padding: 0.9rem 2rem;
         border: none;
         border-radius: 0.5rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
+        gap: 0.6rem;
+        transition: all 0.3s ease;
         font-family: 'Poppins', sans-serif;
         font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(139, 168, 136, 0.3);
     }
     
     .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 16px rgba(139, 168, 136, 0.4);
+    }
+    
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .btn-submit svg {
+        width: 18px;
+        height: 18px;
+        stroke: white;
     }
     
     .required-text {
@@ -339,124 +458,6 @@
     
     .required-text span {
         color: #ef4444;
-    }
-    
-    /* Table Cards */
-    .table-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    @media (max-width: 1024px) {
-        .table-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (max-width: 640px) {
-        .table-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .table-card {
-        background: rgba(245, 239, 230, 0.5);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        transition: all 0.2s;
-    }
-    
-    .table-card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .table-title {
-        font-weight: 600;
-        color: var(--wood);
-    }
-    
-    .table-count {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--sage);
-    }
-    
-    .table-description {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 0.75rem;
-    }
-    
-    .progress-bar {
-        width: 100%;
-        background: #e5e7eb;
-        border-radius: 9999px;
-        height: 8px;
-        margin-bottom: 0.75rem;
-    }
-    
-    .progress-fill {
-        background: var(--sage);
-        height: 8px;
-        border-radius: 9999px;
-    }
-    
-    .table-footer {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-    }
-    
-    .table-capacity {
-        color: #6b7280;
-    }
-    
-    .table-type {
-        color: var(--sage);
-    }
-    
-    /* Legend */
-    .legend {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #f3f4f6;
-    }
-    
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-    }
-    
-    .legend-dot.sage {
-        background: var(--sage);
-    }
-    
-    .legend-dot.yellow {
-        background: #eab308;
-    }
-    
-    .legend-dot.red {
-        background: #ef4444;
     }
     
     /* Contact Section */
@@ -515,18 +516,6 @@
         text-align: center;
     }
     
-    /* Margin Utilities */
-    .mt-1 { margin-top: 0.25rem; }
-    .mt-2 { margin-top: 0.5rem; }
-    .mt-4 { margin-top: 1rem; }
-    .mt-6 { margin-top: 1.5rem; }
-    .mt-8 { margin-top: 2rem; }
-    .mb-2 { margin-bottom: 0.5rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .mb-6 { margin-bottom: 1.5rem; }
-    .mb-8 { margin-bottom: 2rem; }
-    .mb-12 { margin-bottom: 3rem; }
-    
     /* Error State */
     .input-error {
         border-color: #ef4444;
@@ -535,11 +524,11 @@
     /* Responsive */
     @media (max-width: 640px) {
         .reservasi-header h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
         }
         
         .reservasi-header p {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .form-body {
@@ -548,5 +537,15 @@
         
         .form-header {
             padding: 1rem 1.5rem;
+        }
+        
+        .hours-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
         }
     }

@@ -135,6 +135,17 @@
         color: var(--sage);
     }
     
+    /* Bar Chart Container */
+    .bar-chart-container {
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .bar-chart-wrapper {
+        min-width: 100%;
+    }
+    
     /* Recent Items */
     .recent-card {
         background: white;
@@ -265,6 +276,71 @@
         padding: 2rem;
         color: #6b7280;
     }
+    
+    /* Custom Bar Chart Styles */
+    .custom-bar-chart {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        height: 300px;
+        padding: 1rem 0;
+        gap: 8px;
+    }
+    
+    .bar-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .bar {
+        width: 100%;
+        max-width: 50px;
+        background: linear-gradient(180deg, var(--sage) 0%, var(--wood) 100%);
+        border-radius: 8px 8px 4px 4px;
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+        min-height: 4px;
+    }
+    
+    .bar:hover {
+        transform: scaleX(1.1);
+        box-shadow: 0 4px 12px rgba(139, 168, 136, 0.4);
+    }
+    
+    .bar-value {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+        white-space: nowrap;
+    }
+    
+    .bar-label {
+        font-size: 12px;
+        color: #6b7280;
+        text-align: center;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .bar-label {
+            font-size: 10px;
+        }
+        .bar-value {
+            font-size: 10px;
+            top: -22px;
+        }
+        .custom-bar-chart {
+            height: 250px;
+        }
+    }
 </style>
 @endpush
 
@@ -325,7 +401,7 @@
     
     <!-- Chart & Recent Orders -->
     <div class="two-columns">
-        <!-- Chart -->
+        <!-- Chart - DIAGRAM BATANG (BAR CHART) -->
         <div class="chart-card">
             <div class="chart-title">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -333,7 +409,13 @@
                 </svg>
                 Statistik Pesanan Bulanan
             </div>
-            <canvas id="orderChart" height="200"></canvas>
+            <div class="bar-chart-container">
+                <div class="bar-chart-wrapper">
+                    <div class="custom-bar-chart" id="barChart">
+                        <!-- Bar chart akan diisi dengan JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Recent Orders -->
@@ -425,38 +507,47 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('orderChart')?.getContext('2d');
-    if (ctx) {
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                datasets: [{
-                    label: 'Jumlah Pesanan',
-                    data: {{ json_encode($chartData ?? []) }},
-                    borderColor: '#8BA888',
-                    backgroundColor: 'rgba(139, 168, 136, 0.1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#D97642',
-                    pointBorderColor: '#fff',
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                }
-            }
+    // Data chart dari controller
+    const chartData = @json($chartData ?? array_fill(0, 12, 0));
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    
+    // Cari nilai maksimum untuk skala
+    const maxValue = Math.max(...chartData, 1);
+    const chartHeight = 250; // tinggi maksimum chart dalam px
+    
+    function renderBarChart() {
+        const container = document.getElementById('barChart');
+        if (!container) return;
+        
+        let html = '';
+        
+        chartData.forEach((value, index) => {
+            // Hitung tinggi bar dalam px (max 220px, sisanya untuk label)
+            const barHeight = value > 0 ? (value / maxValue) * 200 : 4;
+            const displayValue = value > 0 ? value : 0;
+            
+            html += `
+                <div class="bar-item">
+                    <div class="bar" style="height: ${barHeight}px; position: relative;">
+                        ${value > 0 ? `<div class="bar-value">${displayValue}</div>` : ''}
+                    </div>
+                    <div class="bar-label">${months[index]}</div>
+                </div>
+            `;
         });
+        
+        container.innerHTML = html;
     }
+    
+    // Render chart saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        renderBarChart();
+    });
+    
+    // Responsif: update chart saat window resize
+    window.addEventListener('resize', function() {
+        renderBarChart();
+    });
 </script>
 @endsection
