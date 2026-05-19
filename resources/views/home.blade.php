@@ -88,6 +88,7 @@
     
     .slide-text {
         max-width: 768px;
+        width: 100%;
     }
     
     .hero-title {
@@ -107,6 +108,11 @@
         color: rgba(255, 255, 255, 0.9);
         margin-bottom: 2rem;
         line-height: 1.6;
+        /* PERBAIKAN: tinggi minimal agar semua slide sama */
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .hero-btn {
@@ -212,7 +218,6 @@
         object-fit: cover;
         border-radius: 1rem;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        /* Hilangkan efek fade/transition biar langsung muncul */
     }
     
     /* Touch indicator */
@@ -237,7 +242,10 @@
     
     @media (max-width: 640px) {
         .hero-title { font-size: 2rem; }
-        .hero-subtitle { font-size: 1rem; }
+        .hero-subtitle { 
+            font-size: 0.9rem;
+            min-height: 80px;
+        }
         .about-title { font-size: 1.75rem; }
         .about-image { height: 250px; }
     }
@@ -250,14 +258,14 @@
     <div class="swiper-hero">
         <div class="swiper-wrapper" id="swiperWrapper">
             
-            <!-- Slide 1: Gambar pertama prioritas tinggi -->
+            <!-- Slide 1 -->
             <div class="swiper-slide">
                 <div class="slide-overlay"></div>
                 <img src="{{ asset('images/menu kita.jpeg') }}" alt="Kopi Nusantara" class="slide-image" fetchpriority="high">
                 <div class="slide-content">
                     <div class="slide-text">
                         <h1 class="hero-title">Cita Rasa <span>Kopitiam33</span></h1>
-                        <p class="hero-subtitle">Menyajikan kehangatan dan kelezatan dalam setiap sajian. Dari biji kopi pilihan hingga hidangan tradisional dengan sentuhan modern.</p>
+                        <p class="hero-subtitle">Nikmati harmoni antara keaslian rasa lokal dan inovasi modern dalam setiap hidangan yang kami sajikan dengan penuh perhatian.</p>
                         <a href="{{ route('menu') }}" class="hero-btn">Jelajahi Menu</a>
                     </div>
                 </div>
@@ -270,20 +278,20 @@
                 <div class="slide-content">
                     <div class="slide-text">
                         <h1 class="hero-title">Warisan <span>Kuliner</span></h1>
-                        <p class="hero-subtitle">Setiap hidangan adalah cerita. Kami menghadirkan resep turun-temurun dengan inovasi yang mengikuti zaman.</p>
+                        <p class="hero-subtitle">Setiap hidangan menghadirkan perpaduan cita rasa lokal yang akrab dengan inovasi modern yang mengikuti selera masa kini.</p>
                         <a href="{{ route('menu') }}" class="hero-btn">Lihat Spesial Hari Ini</a>
                     </div>
                 </div>
             </div>
             
-            <!-- Slide 3 -->
+            <!-- Slide 3 - Dipersingkat teksnya agar sama tinggi -->
             <div class="swiper-slide">
                 <div class="slide-overlay"></div>
                 <img src="{{ asset('images/suasana.jpeg') }}" alt="Suasana Café" class="slide-image" loading="eager">
                 <div class="slide-content">
                     <div class="slide-text">
                         <h1 class="hero-title">Suasana <span>Hangat</span></h1>
-                        <p class="hero-subtitle">Tempat di mana cerita bertemu kopi. Nikmati momen terbaik Anda dalam suasana yang cozy dan penuh inspirasi.</p>
+                        <p class="hero-subtitle">Hadirkan kenyamanan dalam setiap momen. Tempat terbaik untuk bersantai, berbagi cerita, dan menikmati cita rasa.</p>
                         <a href="{{ route('reservasi') }}" class="hero-btn">Kunjungi Kami</a>
                     </div>
                 </div>
@@ -306,17 +314,17 @@
     </div>
 </section>
 
-<!-- About Preview - GAMBAR BAWAH LANGSUNG DIMUAT -->
+<!-- About Preview -->
 <section class="about-preview">
     <div class="container">
         <div class="about-grid">
             <div>
                 <h2 class="about-title">Cerita Kami</h2>
                 <p class="about-text">
-                    Café Kopitiam33 lahir dari kecintaan terhadap warisan kuliner Indonesia. Didirikan pada tahun 2020, kami berkomitmen untuk menghadirkan cita rasa autentik dengan sentuhan modern yang sesuai dengan selera masa kini.
+                    Kopitiam33 lahir dari keinginan untuk menghadirkan pengalaman kuliner yang menggabungkan kehangatan cita rasa lokal dengan sentuhan inovasi modern. Berdiri sejak tahun 2025, kami berkomitmen menyajikan hidangan yang tidak hanya lezat, tetapi juga relevan dengan selera masa kini dan tetap terjangkau bagi semua kalangan.
                 </p>
                 <p class="about-text">
-                    Setiap hidangan yang kami sajikan adalah hasil dari penelitian mendalam tentang resep tradisional, dipadukan dengan teknik penyajian terkini. Kami percaya bahwa makanan tidak hanya memuaskan lidah, tetapi juga menghubungkan kita dengan budaya dan kenangan.
+                Setiap menu kami dikembangkan melalui eksplorasi resep tradisional yang dipadukan dengan pendekatan modern, sehingga menghasilkan cita rasa yang unik namun tetap akrab di lidah. Bagi kami, makanan bukan sekadar sajian, melainkan bagian dari momen kebersamaan—tempat di mana cerita, tawa, dan kenangan tercipta.
                 </p>
                 <a href="{{ route('about') }}" class="about-btn">
                     Kenali Kami Lebih Dekat
@@ -326,7 +334,6 @@
                 </a>
             </div>
             <div>
-                <!-- GANTI: loading="lazy" DIHAPUS, ganti dengan fetchpriority dan eager -->
                 <img src="{{ asset('images/home/depan.jpeg') }}" 
                      alt="Interior Café" 
                      class="about-image" 
@@ -338,7 +345,6 @@
 </section>
 
 <script>
-    // JS MURNI STANDAR TANPA OVER-ENGINEERING
     (function() {
         const swiperWrapper = document.getElementById('swiperWrapper');
         const dots = document.querySelectorAll('.pagination-dot');

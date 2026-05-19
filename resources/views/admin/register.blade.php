@@ -15,7 +15,7 @@
                 <span class="logo-text">CK</span>
             </div>
             <h1>Café Kopitiam33</h1>
-            <p>Daftar Akun Admin</p>
+            <p>Daftar Akun</p>
         </div>
     </div>
     
@@ -76,12 +76,86 @@
         
         <div class="register-link">
             <p class="register-text">
-                Sudah punya akun admin?
+                Sudah punya akun?
                 <a href="{{ route('login') }}" class="register-link-btn">Login di sini</a>
             </p>
         </div>
     </div>
 </div>
+
+<style>
+    /* Perbaikan hanya pada bagian register-link */
+    .register-link {
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        text-align: center;
+        border-top: 1px solid rgba(139, 168, 136, 0.2);
+        position: relative;
+    }
+    
+    .register-text {
+        color: #6B7280;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .register-link-btn {
+        color: #D97642;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        background: rgba(217, 118, 66, 0.1);
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+    
+    .register-link-btn:hover {
+        background: #D97642;
+        color: white;
+        transform: translateX(3px);
+        box-shadow: 0 2px 8px rgba(217, 118, 66, 0.3);
+    }
+    
+    /* Responsive Mobile */
+    @media (max-width: 768px) {
+        .register-text {
+            font-size: 0.8rem;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        
+        .register-link-btn {
+            padding: 0.35rem 1rem;
+            font-size: 0.8rem;
+            width: auto;
+            min-width: 120px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .register-link {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+        }
+        
+        .register-text {
+            font-size: 0.75rem;
+        }
+        
+        .register-link-btn {
+            padding: 0.3rem 0.9rem;
+            font-size: 0.75rem;
+            min-width: 110px;
+        }
+    }
+</style>
 
 <script>
     function togglePassword(fieldId) {

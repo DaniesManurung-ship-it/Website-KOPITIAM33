@@ -192,61 +192,6 @@
         text-align: left;
     }
     
-    /* ==================== TIMELINE ==================== */
-    .timeline {
-        margin-top: 3rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(139, 168, 136, 0.2);
-    }
-    
-    .timeline-item {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        padding: 1rem;
-        background: var(--cream);
-        border-radius: 1rem;
-        transition: all 0.3s ease;
-    }
-    
-    .timeline-item:hover {
-        transform: translateX(10px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-    
-    .timeline-year {
-        min-width: 100px;
-        font-size: 1.5rem;
-        font-weight: 700;
-        font-family: 'Playfair Display', serif;
-        color: var(--sage);
-        text-align: center;
-        padding: 0.5rem;
-        background: var(--white);
-        border-radius: 0.75rem;
-        height: fit-content;
-    }
-    
-    .timeline-year.sage { color: var(--sage); }
-    .timeline-year.wood { color: var(--wood); }
-    
-    .timeline-content {
-        flex: 1;
-    }
-    
-    .timeline-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--wood);
-        margin-bottom: 0.5rem;
-    }
-    
-    .timeline-text {
-        color: var(--gray);
-        line-height: 1.6;
-        font-size: 0.9rem;
-    }
-    
     /* ==================== VALUES SECTION ==================== */
     .value-card {
         background: var(--white);
@@ -351,10 +296,10 @@
         <div class="section-header">
             <h2 class="section-title">Visi & Misi Kami</h2>
             <p class="section-subtitle">
-                Menjadi wadah yang menghubungkan tradisi dengan modernitas melalui pengalaman kuliner yang autentik
+                Menghubungkan kehangatan cita rasa lokal dengan sentuhan modern dalam suasana santai yang berkesan.
             </p>
         </div>
-        
+
         <div class="grid-2">
             <!-- Visi Card -->
             <div class="card">
@@ -365,7 +310,8 @@
                 </div>
                 <h3 class="card-title">Visi</h3>
                 <p class="card-text">
-                    Menjadi café terdepan yang melestarikan dan memodernisasi kuliner Indonesia, menciptakan pengalaman bersantap yang mengedukasi sekaligus memanjakan.
+                Menjadi tempat bersantai pilihan yang menghadirkan inovasi cita rasa kuliner dengan tetap mempertahankan keaslian rasa lokal,
+                serta memberikan pengalaman yang nyaman, terjangkau, dan berkesan bagi semua kalangan.
                 </p>
             </div>
             
@@ -378,41 +324,14 @@
                 </div>
                 <h3 class="card-title">Misi</h3>
                 <ul class="mission-list">
-                    <li>• Menggunakan bahan lokal berkualitas terbaik</li>
-                    <li>• Melestarikan resep tradisional dengan sentuhan modern</li>
-                    <li>• Menciptakan lingkungan yang nyaman dan inspiratif</li>
-                    <li>• Mendukung petani dan produsen lokal</li>
+                    <li>• Menghadirkan menu dengan perpaduan cita rasa tradisional dan sentuhan modern yang unik</li>
+                    <li>• Menyediakan produk berkualitas dengan harga yang terjangkau dan stabil</li>
+                    <li>• Menciptakan tempat yang nyaman untuk bersantai bagi pelajar, pekerja, dan keluarga</li>
+                    <li>• Mengikuti perkembangan selera konsumen tanpa meninggalkan identitas rasa lokal</li>
+                    <li>• Menjadi ruang berkumpul yang hangat dan menyenangkan bagi masyarakat sekitar</li>
                 </ul>
             </div>
         </div>
-        
-        <!-- Timeline -->
-        <div class="timeline">
-            <h3 class="section-title" style="font-size: 1.875rem; text-align: center; margin-bottom: 2rem;">Perjalanan Kami</h3>
-            
-            <div class="space-y-8">
-                <div class="timeline-item">
-                    <div class="timeline-year">2025</div>
-                    <div class="timeline-content">
-                        <h4 class="timeline-title">Awal Mula</h4>
-                        <p class="timeline-text">
-                            Café Kopitiam33 didirikan oleh tiga sahabat yang memiliki kecintaan sama pada kopi dan kuliner Indonesia. Dimulai dari kedai kecil di Kemang dengan 10 meja saja.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-year sage">2026</div>
-                    <div class="timeline-content">
-                        <h4 class="timeline-title">Ekspansi Menu</h4>
-                        <p class="timeline-text">
-                            Mulai memperkenalkan menu makanan berat dengan resep turun-temurun dari berbagai daerah Indonesia. Menerima penghargaan "Best New Café" dari Jakarta Food Guide.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 
 <!-- Values -->
@@ -448,11 +367,11 @@
                 </div>
                 <h3 class="value-title">Kualitas</h3>
                 <p class="value-text">
-                    Hanya bahan terbaik yang kami gunakan. Setiap biji kopi dan setiap rempah dipilih dengan teliti.
-                </p>
-            </div>
-            
-            <!-- Keaslian -->
+                    Kami menjaga kualitas rasa terbaik dengan bahan pilihan, tanpa mengorbankan harga yang tetap bersahabat.
+                    </p>
+                </div>
+                
+                <!-- Keaslian -->
             <div class="value-card">
                 <div class="value-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -461,11 +380,11 @@
                 </div>
                 <h3 class="value-title">Keaslian</h3>
                 <p class="value-text">
-                    Kami menghormati resep asli dan teknik tradisional, sambil berinovasi dalam penyajian dan pengalaman.
-                </p>
+                    Kami menghargai rasa lokal sebagai akar, dan mengembangkannya dengan sentuhan modern yang segar dan relevan.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 </section>
 
 <script>

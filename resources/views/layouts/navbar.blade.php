@@ -927,8 +927,8 @@
                             <p>Pemberitahuan pesanan dan reservasi</p>
                         </div>
                         <div class="notification-list">
-                            <template x-for="notif in desktopNotifications.slice(0, 5)" :key="notif.id">
-                                <div class="notification-item" :class="{ 'unread': !notif.is_read }" @click="markAsRead(notif.id)">
+                            <template x-for="notif in desktopNotifications" :key="notif.id">
+                                <div class="notification-item" :class="{ 'unread': !notif.is_read }" @click="handleNotificationClick(notif.id)">
                                     <div class="flex-start">
                                         <div class="notification-icon" :class="notif.type">
                                             <span x-text="notif.type === 'order' ? '📦' : '📅'"></span>
@@ -945,7 +945,7 @@
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
-                                <p>Belum ada notifikasi</p>
+                                <p>Tidak ada notifikasi baru</p>
                             </div>
                         </div>
                         <div class="notification-footer">
@@ -1013,7 +1013,7 @@
                         </div>
                         <div class="mobile-notification-list">
                             <template x-for="notif in mobileNotifications" :key="notif.id">
-                                <div class="mobile-notification-item" :class="{ 'unread': !notif.is_read }" @click="markMobileAsRead(notif.id)">
+                                <div class="mobile-notification-item" :class="{ 'unread': !notif.is_read }" @click="handleMobileNotificationClick(notif.id)">
                                     <div class="mobile-notification-text">
                                         <div class="mobile-notification-title" x-text="notif.title"></div>
                                         <div class="mobile-notification-message" x-text="notif.message.length > 70 ? notif.message.substring(0, 70) + '...' : notif.message"></div>
@@ -1025,7 +1025,7 @@
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
-                                <p>Belum ada notifikasi</p>
+                                <p>Tidak ada notifikasi baru</p>
                             </div>
                         </div>
                         <div class="mobile-notification-footer">
@@ -1287,14 +1287,17 @@
                 fetch('{{ route("notifications.latest") }}')
                     .then(res => res.json())
                     .then(data => {
-                        this.desktopNotifications = data.notifications || [];
+                        // HANYA tampilkan notifikasi yang BELUM dibaca (is_read = false)
+                        this.desktopNotifications = (data.notifications || []).filter(notif => !notif.is_read);
                         this.desktopUnreadCount = data.unread_count || 0;
                     })
                     .catch(err => console.error('Error fetching desktop notifications:', err));
             },
             
-            markAsRead(id) {
-                fetch(`/notifications/${id}/read`, {
+            // Fungsi untuk menangani klik notifikasi - redirect ke halaman notifikasi
+            handleNotificationClick(notifId) {
+                // Tandai sebagai dibaca terlebih dahulu
+                fetch(`/notifications/${notifId}/read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1303,13 +1306,10 @@
                 })
                 .then(res => res.json())
                 .then(() => {
-                    this.fetchDesktopNotifications();
-                    // Update mobile notifications if exists
-                    if (window.mobileNotifData && typeof window.mobileNotifData.fetchMobileNotifications === 'function') {
-                        window.mobileNotifData.fetchMobileNotifications();
-                    }
+                    // Redirect ke halaman notifikasi
+                    window.location.href = '{{ route("notifications.index") }}';
                 })
-                .catch(err => console.error('Error marking as read:', err));
+                .catch(err => console.error('Error:', err));
             },
             
             formatTime(dateString) {
@@ -1359,14 +1359,17 @@
                 fetch('{{ route("notifications.latest") }}')
                     .then(res => res.json())
                     .then(data => {
-                        this.mobileNotifications = data.notifications || [];
+                        // HANYA tampilkan notifikasi yang BELUM dibaca (is_read = false)
+                        this.mobileNotifications = (data.notifications || []).filter(notif => !notif.is_read);
                         this.mobileUnreadCount = data.unread_count || 0;
                     })
                     .catch(err => console.error('Error fetching mobile notifications:', err));
             },
             
-            markMobileAsRead(id) {
-                fetch(`/notifications/${id}/read`, {
+            // Fungsi untuk menangani klik notifikasi mobile - redirect ke halaman notifikasi
+            handleMobileNotificationClick(notifId) {
+                // Tandai sebagai dibaca terlebih dahulu
+                fetch(`/notifications/${notifId}/read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1375,13 +1378,10 @@
                 })
                 .then(res => res.json())
                 .then(() => {
-                    this.fetchMobileNotifications();
-                    // Update desktop notifications if needed
-                    if (window.desktopNotifData && typeof window.desktopNotifData.fetchDesktopNotifications === 'function') {
-                        window.desktopNotifData.fetchDesktopNotifications();
-                    }
+                    // Redirect ke halaman notifikasi
+                    window.location.href = '{{ route("notifications.index") }}';
                 })
-                .catch(err => console.error('Error marking as read:', err));
+                .catch(err => console.error('Error:', err));
             },
             
             formatMobileTime(dateString) {
@@ -1410,7 +1410,6 @@
     
     // Store references for cross-component communication
     document.addEventListener('DOMContentLoaded', () => {
-        // Will be populated after Alpine initializes
         setTimeout(() => {
             if (window.Alpine && window.Alpine.store) {
                 // Additional setup if needed
