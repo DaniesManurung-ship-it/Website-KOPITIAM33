@@ -1,4 +1,4 @@
-    /* Welcome Section */
+/* Welcome Section */
     .welcome-card {
         background: linear-gradient(135deg, var(--sage) 0%, var(--wood) 100%);
         border-radius: 1rem;
@@ -126,6 +126,17 @@
         width: 20px;
         height: 20px;
         color: var(--sage);
+    }
+    
+    /* Bar Chart Container */
+    .bar-chart-container {
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .bar-chart-wrapper {
+        min-width: 100%;
     }
     
     /* Recent Items */
@@ -257,4 +268,69 @@
         text-align: center;
         padding: 2rem;
         color: #6b7280;
+    }
+    
+    /* Custom Bar Chart Styles */
+    .custom-bar-chart {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        height: 300px;
+        padding: 1rem 0;
+        gap: 8px;
+    }
+    
+    .bar-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .bar {
+        width: 100%;
+        max-width: 50px;
+        background: linear-gradient(180deg, var(--sage) 0%, var(--wood) 100%);
+        border-radius: 8px 8px 4px 4px;
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+        min-height: 4px;
+    }
+    
+    .bar:hover {
+        transform: scaleX(1.1);
+        box-shadow: 0 4px 12px rgba(139, 168, 136, 0.4);
+    }
+    
+    .bar-value {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+        white-space: nowrap;
+    }
+    
+    .bar-label {
+        font-size: 12px;
+        color: #6b7280;
+        text-align: center;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .bar-label {
+            font-size: 10px;
+        }
+        .bar-value {
+            font-size: 10px;
+            top: -22px;
+        }
+        .custom-bar-chart {
+            height: 250px;
+        }
     }
