@@ -60,6 +60,55 @@ class TestimonialController extends Controller
         return redirect()->back()->with('success', 'Terima kasih! Testimoni Anda telah terkirim.');
     }
     
+    // ========== TAMBAHKAN METHOD UPDATE INI ==========
+    /**
+     * Update testimoni milik sendiri
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            // Cari testimoni berdasarkan ID dan pastikan milik user yang login
+            $testimonial = Testimonial::where('id', $id)
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
+            
+            // Validasi input
+            $request->validate([
+                'rating' => 'required|integer|min:1|max:5',
+                'message' => 'required|string|min:10|max:500',
+            ]);
+            
+            // Update data
+            $testimonial->rating = $request->rating;
+            $testimonial->message = $request->message;
+            $testimonial->save();
+            
+            \Log::info('Testimoni berhasil diupdate: ', ['id' => $testimonial->id, 'user_id' => Auth::id()]);
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Testimoni berhasil diperbarui!'
+                ]);
+            }
+            
+            return redirect()->back()->with('success', 'Testimoni berhasil diperbarui!');
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Testimoni tidak ditemukan atau bukan milik Anda'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error update testimoni: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    // ========== END METHOD UPDATE ==========
+    
     // Hapus testimoni milik sendiri
     public function destroy($id)
     {
@@ -68,6 +117,10 @@ class TestimonialController extends Controller
             ->firstOrFail();
         
         $testimonial->delete();
+        
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Testimoni berhasil dihapus!']);
+        }
         
         return redirect()->back()->with('success', 'Testimoni berhasil dihapus!');
     }

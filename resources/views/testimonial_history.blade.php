@@ -5,6 +5,53 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/testimonials_history.css') }}">
+<style>
+    /* Toast Notification Style */
+    .toast-notification {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 9999;
+        animation: slideInRight 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .toast-notification.error {
+        background: #ef4444;
+    }
+    
+    .toast-notification.warning {
+        background: #f59e0b;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+</style>
 @endpush
 
 @section('content')
@@ -28,8 +75,6 @@
     @if($testimonials->count() > 0)
         @foreach($testimonials as $testimonial)
         @php
-            // ========== PERBAIKAN JAM - REAL TIME WIB ==========
-            // Menggunakan timezone Asia/Jakarta untuk waktu real
             $createdAt = \Carbon\Carbon::parse($testimonial->created_at)->setTimezone('Asia/Jakarta');
         @endphp
         <div class="testimonial-card" data-id="{{ $testimonial->id }}">
@@ -100,6 +145,50 @@
 </div>
 
 <script>
+    function showNotification(message, type = 'success') {
+        // Hapus notifikasi yang sudah ada
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        // Buat elemen notifikasi baru
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type === 'success' ? '' : type}`;
+        if (type === 'success') {
+            toast.innerHTML = `
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>${message}</span>
+            `;
+        } else if (type === 'error') {
+            toast.innerHTML = `
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>${message}</span>
+            `;
+        } else {
+            toast.innerHTML = `
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>${message}</span>
+            `;
+        }
+        
+        document.body.appendChild(toast);
+        
+        // Auto hide setelah 3 detik
+        setTimeout(() => {
+            toast.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 300);
+        }, 3000);
+    }
+    
     function deleteTestimonial(id) {
         if(confirm('Apakah Anda yakin ingin menghapus testimoni ini?')) {
             const form = document.createElement('form');
@@ -125,11 +214,25 @@
         document.getElementById('editModal').classList.remove('show');
     }
     
+    // PERBAIKAN: Edit Form Submission dengan notifikasi
     document.getElementById('editForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
         const id = document.getElementById('edit_id').value;
         const rating = document.getElementById('edit_rating').value;
         const message = document.getElementById('edit_message').value;
+        
+        // Validasi message minimal 10 karakter
+        if (message.trim().length < 10) {
+            showNotification('Testimoni minimal 10 karakter!', 'warning');
+            return;
+        }
+        
+        // Disable button sementara
+        const submitBtn = document.querySelector('#editForm .btn-save');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Menyimpan...';
         
         fetch(`/testimonial/${id}`, {
             method: 'PUT',
@@ -142,15 +245,28 @@
         })
         .then(response => response.json())
         .then(data => {
-            if(data.success) {
-                location.reload();
+            if (data.success) {
+                // Tampilkan notifikasi sukses
+                showNotification(data.message || 'Testimoni berhasil diupdate!', 'success');
+                
+                // Tutup modal
+                closeEditModal();
+                
+                // Reload halaman setelah 1 detik agar perubahan terlihat
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             } else {
-                alert(data.message || 'Gagal mengupdate testimoni');
+                showNotification(data.message || 'Gagal mengupdate testimoni', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan');
+            showNotification('Terjadi kesalahan: ' + error.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         });
     });
     

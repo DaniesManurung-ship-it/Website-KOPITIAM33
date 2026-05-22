@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     // Customer Testimonial (Hanya untuk yang login)
     Route::post('/testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
     Route::get('/testimonial/my', [TestimonialController::class, 'myTestimonials'])->name('testimonial.my');
+    Route::put('/testimonial/{id}', [TestimonialController::class, 'update'])->name('testimonial.update');
     Route::delete('/testimonial/{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
     
     // Customer Order (Hanya untuk yang login)
