@@ -285,28 +285,47 @@
     }
     
     function addToCart(promoId, price, originalPrice, discount) {
+        if (!requireLogin()) return;
+        
         const promo = promoData.find(p => p.id === promoId);
         if (!promo) return;
         
-        const existing = cart.find(item => item.id === promoId && item.is_promo);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                id: promo.id,
+        // Kirim ke server untuk disimpan di session per user
+        fetch('{{ route("cart.add") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                item_id: promo.id,
+                item_type: 'promo',
                 name: promo.name,
-                price: price,
-                original_price: originalPrice,
-                discount: discount,
-                image: promo.image,
+                price: parseInt(price),
                 quantity: 1,
-                is_promo: true
-            });
-        }
-        
-        localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
-        showNotification(`${promo.name} ditambahkan ke keranjang! 🛒`);
-        window.dispatchEvent(new CustomEvent('cart-updated'));
+                image: promo.image,
+                is_promo: true,
+                is_menu_spesial: false
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(`${promo.name} ditambahkan ke keranjang! 🛒`);
+                // Update local cart array dengan response dari server
+                if (data.cart) {
+                    cart = data.cart;
+                }
+                window.dispatchEvent(new CustomEvent('cart-updated'));
+            } else {
+                showNotification('Gagal menambahkan ke keranjang', true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan', true);
+        });
     }
     
     function orderNow(promoId, price, originalPrice, discount) {

@@ -11,6 +11,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\MenuSpesialController;
+use App\Http\Controllers\CartController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
@@ -34,7 +35,16 @@ Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
 // Static Pages
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
-Route::view('/cart', 'cart')->name('cart');
+// routes/web.php
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::put('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count');
+});
 
 // Halaman Reservasi (hanya view, tanpa aksi)
 Route::get('/reservasi', [ReservasiController::class, 'index'])->name('reservasi');

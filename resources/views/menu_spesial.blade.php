@@ -345,26 +345,42 @@
             return;
         }
         
-        // Cek apakah item sudah ada di keranjang (berdasarkan ID dan is_menu_spesial)
-        const existing = cart.find(c => c.id === itemId && c.is_menu_spesial === true);
-        
-        if (existing) {
-            existing.quantity += 1;
-            showNotification(`Jumlah ${item.name} diperbarui! 🛒`);
-        } else {
-            cart.push({ 
-                id: item.id, 
-                name: item.name, 
-                price: parseInt(item.price), // Pastikan price adalah integer
-                image: item.image, 
+        // Kirim ke server untuk disimpan di session per user
+        fetch('{{ route("cart.add") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                item_id: item.id,
+                item_type: 'menu_spesial',
+                name: item.name,
+                price: parseInt(item.price),
                 quantity: 1,
+                image: item.image,
+                is_promo: false,
                 is_menu_spesial: true
-            });
-            showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
-        }
-        
-        localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
-        window.dispatchEvent(new CustomEvent('cart-updated'));
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
+                // Update local cart array dengan response dari server
+                if (data.cart) {
+                    cart = data.cart;
+                }
+                window.dispatchEvent(new CustomEvent('cart-updated'));
+            } else {
+                showNotification('Gagal menambahkan ke keranjang', true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan', true);
+        });
     }
     
     // ==================== PERBAIKAN ORDER NOW ====================

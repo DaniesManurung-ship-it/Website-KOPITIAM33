@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Auth/LoginController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -9,13 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    // Tampilkan form login (pakai tampilan admin yang mewah)
     public function showLoginForm()
     {
+        // CEK: Jika sudah login, langsung redirect berdasarkan role
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('home');
+        }
+        
         return view('admin.login');
     }
     
-    // Proses login untuk semua user (admin dan customer)
     public function login(Request $request)
     {
         $request->validate([
@@ -27,14 +33,18 @@ class LoginController extends Controller
         $remember = $request->has('remember');
         
         if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            
             $user = Auth::user();
             
+            // ========== INI PERBAIKAN UTAMA ==========
             // Redirect berdasarkan role
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('home');
             }
+            
+            return redirect()->route('home');
+            // ========================================
         }
         
         return back()->withErrors([
@@ -42,7 +52,6 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
     
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();

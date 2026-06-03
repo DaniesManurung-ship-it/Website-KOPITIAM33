@@ -30,8 +30,37 @@
 </section>
 
 <script>
-    let cart = JSON.parse(localStorage.getItem('kopitiam_cart')) || [];
+    // ========== FETCH CART DATA FROM SERVER (PER USER) ==========
+    let cart = [];
     const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    const userId = {{ Auth::id() ?? 'null' }};
+    
+    // Load cart dari server saat page load
+    function loadCartFromServer() {
+        if (!isLoggedIn) {
+            renderCart();
+            return;
+        }
+        
+        fetch('{{ route("cart.get") }}', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                cart = data.cart;
+            }
+            renderCart();
+        })
+        .catch(error => {
+            console.error('Error loading cart:', error);
+            renderCart();
+        });
+    }
     
     // Fungsi untuk mendapatkan URL gambar yang benar
     function getImageUrl(image) {
@@ -218,27 +247,64 @@
         if (cart[index]) {
             const newQty = cart[index].quantity + delta;
             if (newQty <= 0) {
-                cart.splice(index, 1);
-                showNotification('Item dihapus dari keranjang');
+                removeItem(index);
             } else {
-                cart[index].quantity = newQty;
-                showNotification(`Jumlah ${cart[index].name} diperbarui`);
+                const itemKey = cart[index].type + '_' + cart[index].id;
+                
+                fetch('{{ route("cart.update", ":id") }}'.replace(':id', itemKey), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: newQty })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update local cart dengan response dari server
+                        cart = data.cart || [];
+                        showNotification(`Jumlah ${cart[index]?.name} diperbarui`);
+                        renderCart();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Gagal mengubah kuantitas', true);
+                });
             }
-            saveCart();
-            renderCart();
         }
     }
     
     function removeItem(index) {
         const itemName = cart[index]?.name || 'Item';
-        cart.splice(index, 1);
-        saveCart();
-        renderCart();
-        showNotification(`${itemName} dihapus dari keranjang`);
+        const itemKey = cart[index].type + '_' + cart[index].id;
+        
+        fetch('{{ route("cart.destroy", ":id") }}'.replace(':id', itemKey), {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update local cart dengan response dari server
+                cart = data.cart || [];
+                showNotification(`${itemName} dihapus dari keranjang`);
+                renderCart();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Gagal menghapus item', true);
+        });
     }
     
     function saveCart() {
-        localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
+        // Tidak perlu save ke localStorage lagi, semua disimpan di server
         window.dispatchEvent(new CustomEvent('cart-updated'));
     }
     
@@ -297,13 +363,21 @@
         .then(data => {
             hideLoading();
             if (data.success) {
-                localStorage.removeItem('kopitiam_cart');
-                cart = [];
-                window.dispatchEvent(new CustomEvent('cart-updated'));
-                showNotification('Pesanan berhasil dibuat! Silakan ambil pesanan di kasir.');
-                setTimeout(() => {
-                    window.location.href = '{{ route("orders.history") }}';
-                }, 2000);
+                // Clear server-side cart
+                fetch('{{ route("cart.clear") }}', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                }).then(() => {
+                    cart = [];
+                    window.dispatchEvent(new CustomEvent('cart-updated'));
+                    showNotification('Pesanan berhasil dibuat! Silakan ambil pesanan di kasir.');
+                    setTimeout(() => {
+                        window.location.href = '{{ route("orders.history") }}';
+                    }, 2000);
+                });
             } else {
                 showNotification(data.message || 'Gagal menyimpan pesanan', true);
             }
@@ -316,7 +390,7 @@
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        renderCart();
+        loadCartFromServer();
     });
 </script>
 @endsection

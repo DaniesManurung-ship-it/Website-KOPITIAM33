@@ -253,22 +253,42 @@
         const item = menuData.find(m => m.id === itemId);
         if (!item) return;
         
-        const existing = cart.find(c => c.id === itemId);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({ 
-                id: item.id, 
-                name: item.name, 
-                price: item.price, 
-                image: item.image, 
-                quantity: 1 
-            });
-        }
-        
-        localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
-        showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
-        window.dispatchEvent(new CustomEvent('cart-updated'));
+        // Kirim ke server untuk disimpan di session per user
+        fetch('{{ route("cart.add") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                item_id: item.id,
+                item_type: 'menu',
+                name: item.name,
+                price: parseInt(item.price),
+                quantity: 1,
+                image: item.image,
+                is_promo: false,
+                is_menu_spesial: false
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
+                // Update local cart array dengan response dari server
+                if (data.cart) {
+                    cart = data.cart;
+                }
+                window.dispatchEvent(new CustomEvent('cart-updated'));
+            } else {
+                showNotification('Gagal menambahkan ke keranjang', true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan', true);
+        });
     }
     
     function orderNow(itemId) {

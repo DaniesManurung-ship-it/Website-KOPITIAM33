@@ -140,9 +140,9 @@
                 @endauth
             </div>
 
-            <!-- Mobile Buttons (Cart + Notification + Menu) -->
+            <!-- PERBAIKAN: Mobile Buttons (Cart + Notification + Menu) -->
             <div class="mobile-buttons">
-                <!-- NOTIFICATION BUTTON - MOBILE (di samping keranjang) -->
+                <!-- NOTIFICATION BUTTON - MOBILE -->
                 @auth
                 <div class="notification-bell mobile-notification" x-data="mobileNotificationData()" x-init="initMobileNotification()">
                     <button @click="toggleMobileDropdown" class="mobile-notification-btn">
@@ -152,7 +152,6 @@
                         <span x-show="mobileUnreadCount > 0" x-text="mobileUnreadCount" class="mobile-notification-badge"></span>
                     </button>
                     
-                    <!-- Mobile Notification Dropdown -->
                     <div x-show="mobileDropdownOpen" @click.away="mobileDropdownOpen = false" x-cloak class="mobile-notification-dropdown">
                         <div class="mobile-notification-header">
                             <h3><span>🔔</span> Notifikasi</h3>
@@ -182,13 +181,13 @@
                 </div>
                 @endauth
 
-                <!-- Cart Button -->
-                <button class="cart-button" @click="cartOpenMobile = !cartOpenMobile">
+                <!-- PERBAIKAN: CART BUTTON - Mengubah dari button menjadi a href -->
+                <a href="{{ route('cart') }}" class="cart-button">
                     <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                     <span x-show="cartTotal > 0" x-cloak class="cart-badge" x-text="cartTotal"></span>
-                </button>
+                </a>
                 
                 <!-- Menu Toggle Button -->
                 <button class="mobile-menu-btn" @click="toggleMobileMenu">
@@ -268,7 +267,6 @@
             cartTotalPrice: 0,
             activeMenu: 'home',
             mobileMenuOpen: false,
-            cartOpenMobile: false,
             
             init() {
                 this.setActiveFromURL();
@@ -314,22 +312,48 @@
             },
             
             loadCart() {
-                const saved = localStorage.getItem('kopitiam_cart');
-                if (saved) {
-                    try {
-                        this.cartItems = JSON.parse(saved);
-                        this.cartTotal = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-                        this.cartTotalPrice = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                    } catch(e) {
+                @auth
+                    // Jika user sudah login, fetch dari server
+                    fetch('{{ route("cart.get") }}', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.cartItems = data.cart || [];
+                        } else {
+                            this.cartItems = [];
+                        }
+                        this.updateCartCount();
+                    })
+                    .catch(error => {
+                        console.error('Error loading cart:', error);
                         this.cartItems = [];
-                        this.cartTotal = 0;
-                        this.cartTotalPrice = 0;
+                        this.updateCartCount();
+                    });
+                @else
+                    // Jika guest, gunakan localStorage (temporary)
+                    const saved = localStorage.getItem('kopitiam_cart');
+                    if (saved) {
+                        try {
+                            this.cartItems = JSON.parse(saved);
+                        } catch(e) {
+                            this.cartItems = [];
+                        }
+                    } else {
+                        this.cartItems = [];
                     }
-                } else {
-                    this.cartItems = [];
-                    this.cartTotal = 0;
-                    this.cartTotalPrice = 0;
-                }
+                    this.updateCartCount();
+                @endauth
+            },
+            
+            updateCartCount() {
+                this.cartTotal = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                this.cartTotalPrice = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             },
             
             addToCart(product) {
@@ -434,16 +458,13 @@
                 fetch('{{ route("notifications.latest") }}')
                     .then(res => res.json())
                     .then(data => {
-                        // HANYA tampilkan notifikasi yang BELUM dibaca (is_read = false)
                         this.desktopNotifications = (data.notifications || []).filter(notif => !notif.is_read);
                         this.desktopUnreadCount = data.unread_count || 0;
                     })
                     .catch(err => console.error('Error fetching desktop notifications:', err));
             },
             
-            // Fungsi untuk menangani klik notifikasi - redirect ke halaman notifikasi
             handleNotificationClick(notifId) {
-                // Tandai sebagai dibaca terlebih dahulu
                 fetch(`/notifications/${notifId}/read`, {
                     method: 'POST',
                     headers: {
@@ -453,7 +474,6 @@
                 })
                 .then(res => res.json())
                 .then(() => {
-                    // Redirect ke halaman notifikasi
                     window.location.href = '{{ route("notifications.index") }}';
                 })
                 .catch(err => console.error('Error:', err));
@@ -491,7 +511,6 @@
                     this.fetchMobileNotifications();
                 }, 30000);
                 
-                // Store reference for cross-component update
                 window.mobileNotifData = this;
             },
             
@@ -506,16 +525,13 @@
                 fetch('{{ route("notifications.latest") }}')
                     .then(res => res.json())
                     .then(data => {
-                        // HANYA tampilkan notifikasi yang BELUM dibaca (is_read = false)
                         this.mobileNotifications = (data.notifications || []).filter(notif => !notif.is_read);
                         this.mobileUnreadCount = data.unread_count || 0;
                     })
                     .catch(err => console.error('Error fetching mobile notifications:', err));
             },
             
-            // Fungsi untuk menangani klik notifikasi mobile - redirect ke halaman notifikasi
             handleMobileNotificationClick(notifId) {
-                // Tandai sebagai dibaca terlebih dahulu
                 fetch(`/notifications/${notifId}/read`, {
                     method: 'POST',
                     headers: {
@@ -525,7 +541,6 @@
                 })
                 .then(res => res.json())
                 .then(() => {
-                    // Redirect ke halaman notifikasi
                     window.location.href = '{{ route("notifications.index") }}';
                 })
                 .catch(err => console.error('Error:', err));
@@ -555,7 +570,6 @@
         Alpine.data('mobileNotificationData', mobileNotificationData);
     });
     
-    // Store references for cross-component communication
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (window.Alpine && window.Alpine.store) {
