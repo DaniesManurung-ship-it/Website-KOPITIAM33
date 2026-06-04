@@ -95,11 +95,23 @@ Route::get('/testimonials', [TestimonialController::class, 'index'])->name('test
 
 // API endpoint untuk mengambil testimonial terbaru (tanpa auth, untuk dropdown widget)
 Route::get('/testimonials/latest', function() {
-    return App\Models\Testimonial::where('is_approved', true)
-        ->where('is_archived', false)
-        ->orderBy('created_at', 'desc')
-        ->take(5)
-        ->get();
+    try {
+        $testimonials = App\Models\Testimonial::where('is_archived', false)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+        
+        return response()->json([
+            'success' => true,
+            'data' => $testimonials
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memuat testimoni',
+            'data' => []
+        ], 500);
+    }
 })->name('testimonials.latest');
 
 // ========== ADMIN ROUTES (Protected - Hanya admin yang login) ==========

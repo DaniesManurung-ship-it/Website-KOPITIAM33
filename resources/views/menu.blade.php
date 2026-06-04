@@ -276,6 +276,24 @@
         .then(data => {
             if (data.success) {
                 showNotification(`${item.name} ditambahkan ke keranjang! 🛒`);
+                // PERBAIKAN: Simpan cart ke localStorage dengan key user-agnostic
+                // Sehingga tetap ada saat logout
+                const localCart = JSON.parse(localStorage.getItem('kopitiam_cart') || '[]');
+                const existingIndex = localCart.findIndex(c => c.id === item.id && c.type === 'menu');
+                if (existingIndex > -1) {
+                    localCart[existingIndex].quantity += 1;
+                } else {
+                    localCart.push({
+                        id: item.id,
+                        type: 'menu',
+                        name: item.name,
+                        price: item.price,
+                        quantity: 1,
+                        image: item.image
+                    });
+                }
+                localStorage.setItem('kopitiam_cart', JSON.stringify(localCart));
+                
                 // Update local cart array dengan response dari server
                 if (data.cart) {
                     cart = data.cart;

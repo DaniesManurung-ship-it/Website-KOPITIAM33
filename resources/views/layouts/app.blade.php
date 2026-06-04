@@ -277,13 +277,20 @@
             
             fetchTestimonials() {
                 fetch('/testimonials/latest')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('API Error: ' + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        this.testimonials = data;
-                        this.testimonialCount = data.length;
+                        // Handle both array response and object with data property
+                        const testimonials = Array.isArray(data) ? data : (data.data || []);
+                        this.testimonials = testimonials;
+                        this.testimonialCount = testimonials.length;
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.warn('Testimonials widget: Failed to load testimonials', error);
                         this.testimonials = [];
                         this.testimonialCount = 0;
                     });

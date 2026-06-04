@@ -55,7 +55,10 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
+        
+        // PENTING: Jangan invalidate session - biarkan cart di localStorage tetap ada
+        // Hanya clear session vars yang berkaitan dengan auth
+        $request->session()->forget(['auth_user', 'user_id']);
         $request->session()->regenerateToken();
         
         return redirect('/');
