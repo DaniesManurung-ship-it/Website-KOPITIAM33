@@ -37,14 +37,6 @@
             <div class="stat-number">{{ $statusCount['cancelled'] ?? 0 }}</div>
             <div class="stat-label">❌ Dibatalkan</div>
         </div>
-        <div class="stat-card" onclick="filterStatus('completed')">
-            <div class="stat-number">{{ $statusCount['completed'] ?? 0 }}</div>
-            <div class="stat-label">📋 Selesai</div>
-        </div>
-        <div class="stat-card" onclick="filterStatus('archived')">
-            <div class="stat-number">{{ $statusCount['archived'] ?? 0 }}</div>
-            <div class="stat-label">📦 Diarsipkan</div>
-        </div>
     </div>
     
     @if(session('success'))
@@ -74,8 +66,6 @@
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>⏳ Menunggu</option>
                 <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>✅ Dikonfirmasi</option>
                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>❌ Dibatalkan</option>
-                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>📋 Selesai</option>
-                <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>📦 Diarsipkan</option>
             </select>
             <input type="date" name="date" class="filter-input" value="{{ request('date') }}">
             <button type="submit" class="filter-btn filter-btn-primary">🔍 Filter</button>
@@ -152,7 +142,7 @@
                                 {{ $reservasi->time }} WIB
                             </div>
                         </div>
-                     </td>
+                    </td>
                     
                     <!-- People -->
                     <td>
@@ -190,8 +180,7 @@
                             @if($reservasi->status == 'pending') ⏳ Menunggu
                             @elseif($reservasi->status == 'confirmed') ✅ Dikonfirmasi
                             @elseif($reservasi->status == 'cancelled') ❌ Dibatalkan
-                            @elseif($reservasi->status == 'completed') 📋 Selesai
-                            @else 📦 Diarsipkan
+                            @elseif($reservasi->status == 'archived') 📦 Diarsipkan
                             @endif
                         </span>
                     </td>
@@ -284,71 +273,73 @@
         }
     }
     
-    function archiveReservasi(id, btn) {
-        if(confirm('📦 Arsipkan reservasi ini? Reservasi akan disembunyikan dari halaman admin.')) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳...';
-            btn.disabled = true;
-            
-            fetch(`/admin/reservasi/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    location.reload();
-                } else {
-                    alert('❌ ' + (data.message || 'Gagal mengarsipkan'));
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('⚠️ Terjadi kesalahan pada server');
+    // PERBAIKAN: Mengubah method dari DELETE menjadi PATCH
+// PERBAIKAN: Menggunakan method DELETE (sama seperti pesanan)
+function archiveReservasi(id, btn) {
+    if(confirm('📦 Arsipkan reservasi ini? Reservasi akan disembunyikan dari halaman admin.')) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳...';
+        btn.disabled = true;
+        
+        fetch(`/admin/reservasi/${id}`, { 
+            method: 'DELETE',  // SEKARANG PAKAI DELETE, SAMA SEPERTI PESANAN
+            headers: { 
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            } 
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                location.reload();
+            } else {
+                alert('❌ ' + (data.message || 'Gagal mengarsipkan'));
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            });
-        }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('⚠️ Terjadi kesalahan pada server');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
-    
-    function restoreReservasi(id, btn) {
-        if(confirm('🔄 Pulihkan reservasi ini? Reservasi akan muncul kembali di halaman admin.')) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳...';
-            btn.disabled = true;
-            
-            fetch(`/admin/reservasi/${id}/restore`, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    location.reload();
-                } else {
-                    alert('❌ ' + (data.message || 'Gagal memulihkan'));
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('⚠️ Terjadi kesalahan pada server');
+}
+
+function restoreReservasi(id, btn) {
+    if(confirm('🔄 Pulihkan reservasi ini? Reservasi akan muncul kembali di halaman admin.')) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳...';
+        btn.disabled = true;
+        
+        fetch(`/admin/reservasi/${id}/restore`, { 
+            method: 'PATCH', 
+            headers: { 
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            } 
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                location.reload();
+            } else {
+                alert('❌ ' + (data.message || 'Gagal memulihkan'));
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            });
-        }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('⚠️ Terjadi kesalahan pada server');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
+}
     
     function bulkAction(action) {
         const selected = [];
@@ -362,20 +353,15 @@
         }
         
         let confirmMessage = '';
-        let actionText = '';
         
         if(action === 'confirm') {
             confirmMessage = `✅ Konfirmasi ${selected.length} reservasi yang dipilih?`;
-            actionText = 'dikonfirmasi';
         } else if(action === 'cancel') {
             confirmMessage = `❌ Batalkan ${selected.length} reservasi yang dipilih?`;
-            actionText = 'dibatalkan';
         } else if(action === 'archive') {
             confirmMessage = `📦 Arsipkan ${selected.length} reservasi yang dipilih?`;
-            actionText = 'diarsipkan';
         } else if(action === 'restore') {
             confirmMessage = `🔄 Pulihkan ${selected.length} reservasi yang dipilih?`;
-            actionText = 'dipulihkan';
         }
         
         if(confirm(confirmMessage)) {
@@ -400,18 +386,65 @@
             } else {
                 select.value = status;
             }
-            document.querySelector('.filter-btn-primary').click();
+            // Cari tombol filter dan klik
+            const filterBtn = document.querySelector('.filter-btn-primary');
+            if(filterBtn) {
+                filterBtn.click();
+            }
         }
     }
     
-    // Select All
-    const selectAll = document.getElementById('selectAll');
-    if(selectAll) {
-        selectAll.addEventListener('change', function() {
-            document.querySelectorAll('.checkbox-select-item').forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
+    // Fungsi notifikasi sederhana
+    function showNotification(type, message) {
+        // Cek apakah sudah ada notifikasi
+        let notification = document.querySelector('.alert-success, .alert-error');
+        if(notification) {
+            notification.remove();
+        }
+        
+        // Buat notifikasi baru
+        const div = document.createElement('div');
+        div.className = type === 'success' ? 'alert-success' : 'alert-error';
+        div.style.position = 'fixed';
+        div.style.top = '20px';
+        div.style.right = '20px';
+        div.style.zIndex = '9999';
+        div.style.maxWidth = '350px';
+        div.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                ${type === 'success' ? 
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>' :
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+                }
+            </svg>
+            ${message}
+        `;
+        document.body.appendChild(div);
+        
+        // Hapus notifikasi setelah 3 detik
+        setTimeout(() => {
+            if(div && div.parentNode) {
+                div.style.opacity = '0';
+                div.style.transition = 'opacity 0.3s';
+                setTimeout(() => {
+                    if(div && div.parentNode) {
+                        div.remove();
+                    }
+                }, 300);
+            }
+        }, 3000);
     }
+    
+    // Select All functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAll');
+        if(selectAll) {
+            selectAll.addEventListener('change', function() {
+                document.querySelectorAll('.checkbox-select-item').forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+        }
+    });
 </script>
 @endsection

@@ -445,6 +445,9 @@
     .pagination nav {
         display: flex;
         justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
     }
     
     .pagination .page-link {
@@ -469,6 +472,22 @@
         background: var(--sage);
         color: white;
         border-color: var(--sage);
+    }
+
+    /* Simple Prev/Next layout support */
+    .pagination .page-info {
+        color: var(--gray);
+        font-size: 0.85rem;
+        margin: 0 0.5rem;
+        display: inline-block;
+    }
+
+    .pagination .page-link.disabled {
+        opacity: 0.55;
+        pointer-events: none;
+        background: #f9fafb;
+        color: var(--gray);
+        border-color: var(--border);
     }
     
     /* Responsive */

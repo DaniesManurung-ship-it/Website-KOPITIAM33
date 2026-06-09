@@ -18,21 +18,36 @@ class TestimonialController extends Controller
         return view('admin.testimonial', compact('testimonials', 'archivedCount', 'activeCount'));
     }
     
-    public function archive($id)
+    public function archive(Request $request, $id)
     {
         $testimonial = Testimonial::findOrFail($id);
         $testimonial->is_archived = !$testimonial->is_archived;
         $testimonial->save();
         
         $status = $testimonial->is_archived ? 'diarsipkan' : 'dipulihkan';
+
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Testimoni berhasil {$status}!"
+            ]);
+        }
+        
         return redirect()->route('admin.testimonial')->with('success', "Testimoni berhasil {$status}!");
     }
     
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $testimonial = Testimonial::findOrFail($id);
         $testimonial->delete();
         
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Testimoni berhasil dihapus!'
+            ]);
+        }
+
         return redirect()->route('admin.testimonial')->with('success', 'Testimoni berhasil dihapus!');
     }
 }

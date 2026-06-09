@@ -5,6 +5,35 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/reservasi.css') }}">
+<style>
+    /* Style untuk input yang readonly */
+    .form-input[readonly] {
+        background: #f3f4f6;
+        cursor: not-allowed;
+        border-color: #e5e7eb;
+        color: #6b7280;
+    }
+    
+    /* Info login */
+    .login-info {
+        background: #E8F0E6;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        color: var(--wood);
+    }
+    
+    .login-info svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        color: var(--sage);
+    }
+</style>
 @endpush
 
 @section('content')
@@ -80,10 +109,21 @@
                     <p>Isi data dengan lengkap untuk memudahkan konfirmasi</p>
                 </div>
 
+                <!-- Info Login - Menampilkan data user yang sedang login -->
+                @auth
+                @else
+                <div class="login-info">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0h4"/>
+                    </svg>
+                    <span>Login untuk memudahkan pengisian data! <a href="{{ route('login') }}" style="color: var(--accent);">Login Sekarang</a></span>
+                </div>
+                @endauth
+
                 <form class="form-body" id="reservationForm" method="POST" action="{{ route('reservasi.store') }}">
                     @csrf
                     <div class="form-grid">
-                        <!-- Nama Lengkap -->
+                        <!-- Nama Lengkap - OTOMATIS TERISI jika login -->
                         <div class="form-group">
                             <label class="form-label">Nama Lengkap <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -92,12 +132,16 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
                                 </div>
-                                <input type="text" name="name" id="nama" class="form-input" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
+                                @auth
+                                    <input type="text" name="name" id="nama" class="form-input" value="{{ Auth::user()->name }}" readonly disabled>
+                                @else
+                                    <input type="text" name="name" id="nama" class="form-input" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
+                                @endauth
                             </div>
                             <div class="error-message" id="error-nama">Nama lengkap harus diisi</div>
                         </div>
 
-                        <!-- Email -->
+                        <!-- Email - OTOMATIS TERISI jika login -->
                         <div class="form-group">
                             <label class="form-label">Email <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -106,7 +150,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
-                                <input type="email" name="email" id="email" class="form-input" value="{{ old('email') }}" placeholder="email@example.com" required>
+                                @auth
+                                    <input type="email" name="email" id="email" class="form-input" value="{{ Auth::user()->email }}" readonly disabled>
+                                @else
+                                    <input type="email" name="email" id="email" class="form-input" value="{{ old('email') }}" placeholder="email@example.com" required>
+                                @endauth
                             </div>
                             <div class="error-message" id="error-email">Email harus diisi dengan format yang benar</div>
                         </div>
@@ -144,7 +192,7 @@
                     </div>
 
                     <div class="form-grid">
-                        <!-- Jam Reservasi - Menggunakan input type time -->
+                        <!-- Jam Reservasi -->
                         <div class="form-group">
                             <label class="form-label">Jam Reservasi <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -174,23 +222,6 @@
                     </div>
 
                     <div class="form-grid-3">
-                        <!-- Tipe Meja -->
-                        <div class="form-group">
-                            <label class="form-label">Tipe Meja</label>
-                            <div class="input-wrapper">
-                                <div class="input-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <select name="table_type" id="tipe_meja" class="form-input">
-                                    <option value="">Pilih tipe meja</option>
-                                    <option value="reguler">Reguler (2-4 orang)</option>
-                                    <option value="family">Family (4-10 orang)</option>
-                                    <option value="outdoor">Outdoor (2-4 orang)</option>
-                                </select>
-                            </div>
-                        </div>
 
                         <!-- Lantai -->
                         <div class="form-group">
@@ -218,7 +249,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </div>
-                                <textarea name="notes" id="catatan" rows="2" class="form-input" style="padding-left: 2.5rem;" placeholder="Contoh: Meja dekat jendela, dll."></textarea>
+                                <textarea name="notes" id="catatan" rows="2" class="form-input" style="padding-left: 2.5rem;" placeholder="Contoh: Meja dekat jendela, dll.">{{ old('notes') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -242,7 +273,7 @@
                         </div>
                     </div>
 
-                    <!-- Terms & Conditions - WAJIB DICENTANG -->
+                    <!-- Terms & Conditions -->
                     <div class="checkbox-wrapper">
                         <input type="checkbox" name="terms" id="terms" value="1">
                         <label for="terms" class="checkbox-label">
@@ -251,7 +282,7 @@
                     </div>
                     <div class="error-message" id="error-terms">Anda harus menyetujui syarat dan ketentuan</div>
 
-                    <!-- Submit Button - SAMA UNTUK SEMUA USER (TIDAK ADA PERBEDAAN) -->
+                    <!-- Submit Button -->
                     <div class="submit-section">
                         <button type="submit" class="btn-submit" id="submitBtn">
                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,22 +348,24 @@
                 });
                 document.getElementById('terms')?.classList.remove('error');
                 
-                // Validasi Nama
+                @guest
+                // Validasi Nama (hanya untuk guest)
                 const nama = document.getElementById('nama');
-                if (!nama.value.trim()) {
+                if (nama && !nama.value.trim()) {
                     nama.classList.add('error');
                     document.getElementById('error-nama').classList.add('show');
                     isValid = false;
                 }
                 
-                // Validasi Email
+                // Validasi Email (hanya untuk guest)
                 const email = document.getElementById('email');
                 const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-                if (!email.value.trim() || !emailRegex.test(email.value)) {
+                if (email && (!email.value.trim() || !emailRegex.test(email.value))) {
                     email.classList.add('error');
                     document.getElementById('error-email').classList.add('show');
                     isValid = false;
                 }
+                @endguest
                 
                 // Validasi Telepon
                 const telepon = document.getElementById('telepon');

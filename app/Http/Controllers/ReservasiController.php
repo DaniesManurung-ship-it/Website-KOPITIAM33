@@ -18,8 +18,6 @@ class ReservasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'date' => 'required|date|after_or_equal:today',
             'time' => 'required',
@@ -29,10 +27,12 @@ class ReservasiController extends Controller
             'notes' => 'nullable|string',
         ]);
         
+        $user = Auth::user();
+        
         $reservation = Reservation::create([
             'user_id' => Auth::id(),
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $user->name,
+            'email' => $user->email,
             'phone' => $request->phone,
             'date' => $request->date,
             'time' => $request->time,
@@ -50,7 +50,6 @@ class ReservasiController extends Controller
     
     public function history()
     {
-        // Customer melihat SEMUA reservasi mereka termasuk yang diarsipkan admin
         $reservations = Reservation::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
@@ -78,15 +77,21 @@ class ReservasiController extends Controller
             ->firstOrFail();
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'date' => 'required|date',
             'time' => 'required',
             'people' => 'required|integer|min:1|max:20',
         ]);
         
-        $reservation->update($request->only(['name', 'email', 'phone', 'date', 'time', 'people', 'table_type', 'floor', 'notes']));
+        $reservation->update([
+            'phone' => $request->phone,
+            'date' => $request->date,
+            'time' => $request->time,
+            'people' => $request->people,
+            'table_type' => $request->table_type,
+            'floor' => $request->floor,
+            'notes' => $request->notes,
+        ]);
         
         return redirect()->route('reservasi.history')->with('success', 'Reservasi berhasil diupdate!');
     }

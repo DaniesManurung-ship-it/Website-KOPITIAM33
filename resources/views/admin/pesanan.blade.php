@@ -20,28 +20,24 @@
     <!-- Stats Cards -->
     <div class="stats-grid">
         <div class="stat-card" onclick="filterStatus('all')">
-            <div class="stat-number">{{ $pesanans->total() ?? $pesanans->count() }}</div>
+            <div class="stat-number">{{ $statusCount['total'] ?? 0 }}</div>
             <div class="stat-label">📊 Total Pesanan</div>
         </div>
         <div class="stat-card" onclick="filterStatus('pending')">
-            <div class="stat-number">{{ $pesanans->where('status', 'pending')->count() }}</div>
+            <div class="stat-number">{{ $statusCount['pending'] ?? 0 }}</div>
             <div class="stat-label">⏳ Menunggu</div>
         </div>
         <div class="stat-card" onclick="filterStatus('processed')">
-            <div class="stat-number">{{ $pesanans->where('status', 'processed')->count() }}</div>
+            <div class="stat-number">{{ $statusCount['processed'] ?? 0 }}</div>
             <div class="stat-label">🔄 Diproses</div>
         </div>
         <div class="stat-card" onclick="filterStatus('completed')">
-            <div class="stat-number">{{ $pesanans->where('status', 'completed')->count() }}</div>
+            <div class="stat-number">{{ $statusCount['completed'] ?? 0 }}</div>
             <div class="stat-label">✅ Selesai</div>
         </div>
         <div class="stat-card" onclick="filterStatus('cancelled')">
-            <div class="stat-number">{{ $pesanans->where('status', 'cancelled')->count() }}</div>
+            <div class="stat-number">{{ $statusCount['cancelled'] ?? 0 }}</div>
             <div class="stat-label">❌ Dibatalkan</div>
-        </div>
-        <div class="stat-card" onclick="filterStatus('archived')">
-            <div class="stat-number">{{ $pesanans->where('status', 'archived')->count() }}</div>
-            <div class="stat-label">📦 Diarsipkan</div>
         </div>
     </div>
     
@@ -225,7 +221,23 @@
         
         @if(method_exists($pesanans, 'links') && $pesanans->hasPages())
         <div class="pagination">
-            {{ $pesanans->appends(request()->query())->links() }}
+            <nav aria-label="Pagination">
+                @php $p = $pesanans->appends(request()->query()); @endphp
+
+                @if(!$p->onFirstPage())
+                    <a href="{{ $p->previousPageUrl() }}" class="page-link">« Prev</a>
+                @else
+                    <span class="page-link disabled">« Prev</span>
+                @endif
+
+                <span class="page-info">Showing {{ $pesanans->firstItem() }} to {{ $pesanans->lastItem() }} of {{ $pesanans->total() }} results</span>
+
+                @if($p->hasMorePages())
+                    <a href="{{ $p->nextPageUrl() }}" class="page-link">Next »</a>
+                @else
+                    <span class="page-link disabled">Next »</span>
+                @endif
+            </nav>
         </div>
         @endif
     </div>

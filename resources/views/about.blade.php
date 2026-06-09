@@ -6,7 +6,7 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/about.css') }}">
 
-<!-- About Header - SAMA PERSIS DENGAN CONTACT & PROMO (padding: 3rem 0) -->
+<!-- About Header -->
 <section class="about-header">
     <div class="container">
         <h1>📖 Tentang Kami</h1>
@@ -14,9 +14,9 @@
     </div>
 </section>
 
-<!-- Our Story -->
+<!-- Our Story - Visi & Misi -->
 <section class="section section-white">
-    <div class="container max-w-4xl">
+    <div class="container">
         <div class="section-header">
             <h2 class="section-title">Visi & Misi Kami</h2>
             <p class="section-subtitle">
@@ -24,9 +24,10 @@
             </p>
         </div>
 
-        <div class="grid-2">
+        <!-- Visi & Misi Wrapper -->
+        <div class="visi-misi-wrapper">
             <!-- Visi Card -->
-            <div class="card">
+            <div class="card visi-card">
                 <div class="card-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
@@ -34,13 +35,13 @@
                 </div>
                 <h3 class="card-title">Visi</h3>
                 <p class="card-text">
-                Menjadi tempat bersantai pilihan yang menghadirkan inovasi cita rasa kuliner dengan tetap mempertahankan keaslian rasa lokal,
-                serta memberikan pengalaman yang nyaman, terjangkau, dan berkesan bagi semua kalangan.
+                    Menjadi tempat bersantai pilihan yang menghadirkan inovasi cita rasa kuliner dengan tetap mempertahankan keaslian rasa lokal,
+                    serta memberikan pengalaman yang nyaman, terjangkau, dan berkesan bagi semua kalangan.
                 </p>
             </div>
             
             <!-- Misi Card -->
-            <div class="card">
+            <div class="card misi-card">
                 <div class="card-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
@@ -48,14 +49,15 @@
                 </div>
                 <h3 class="card-title">Misi</h3>
                 <ul class="mission-list">
-                    <li>• Menghadirkan menu dengan perpaduan cita rasa tradisional dan sentuhan modern yang unik</li>
-                    <li>• Menyediakan produk berkualitas dengan harga yang terjangkau dan stabil</li>
-                    <li>• Menciptakan tempat yang nyaman untuk bersantai bagi pelajar, pekerja, dan keluarga</li>
-                    <li>• Mengikuti perkembangan selera konsumen tanpa meninggalkan identitas rasa lokal</li>
-                    <li>• Menjadi ruang berkumpul yang hangat dan menyenangkan bagi masyarakat sekitar</li>
+                    <li>Menghadirkan menu dengan perpaduan cita rasa tradisional dan sentuhan modern yang unik</li>
+                    <li>Menyediakan produk berkualitas dengan harga yang terjangkau dan stabil</li>
+                    <li>Menciptakan tempat yang nyaman untuk bersantai bagi pelajar, pekerja, dan keluarga</li>
+                    <li>Mengikuti perkembangan selera konsumen tanpa meninggalkan identitas rasa lokal</li>
+                    <li>Menjadi ruang berkumpul yang hangat dan menyenangkan bagi masyarakat sekitar</li>
                 </ul>
             </div>
         </div>
+    </div>
 </section>
 
 <!-- Values -->
@@ -92,10 +94,10 @@
                 <h3 class="value-title">Kualitas</h3>
                 <p class="value-text">
                     Kami menjaga kualitas rasa terbaik dengan bahan pilihan, tanpa mengorbankan harga yang tetap bersahabat.
-                    </p>
-                </div>
-                
-                <!-- Keaslian -->
+                </p>
+            </div>
+            
+            <!-- Keaslian -->
             <div class="value-card">
                 <div class="value-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,15 +107,15 @@
                 <h3 class="value-title">Keaslian</h3>
                 <p class="value-text">
                     Kami menghargai rasa lokal sebagai akar, dan mengembangkannya dengan sentuhan modern yang segar dan relevan.
-                    </p>
-                </div>
+                </p>
             </div>
         </div>
+    </div>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Smooth scroll untuk anchor links (jika ada)
+        // Smooth scroll untuk anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -125,7 +127,7 @@
         });
         
         // Animasi scroll (Elemen muncul saat di-scroll)
-        const revealElements = document.querySelectorAll('.card, .value-card, .timeline-item');
+        const revealElements = document.querySelectorAll('.visi-card, .misi-card, .value-card');
         
         revealElements.forEach(el => {
             el.style.opacity = '0';
@@ -148,4 +150,4 @@
         revealOnScroll();
     });
 </script>
-@endsection 
+@endsection

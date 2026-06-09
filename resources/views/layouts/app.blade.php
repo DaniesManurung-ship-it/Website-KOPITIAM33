@@ -7,7 +7,7 @@
     <title>{{ config('app.name', 'Café Kopitiam33') }} - @yield('title')</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="{{ asset('images/logokopitiam33.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,13 @@
     @yield('content')
 </main>
 
+    @if(!Route::is('login') && !Route::is('register') && !request()->routeIs('admin.*'))
+        @include('layouts.footer')
+    @endif
+
 <!-- Testimoni Widget -->
+@if(!Route::is('login') && !Route::is('register') && !request()->routeIs('admin.*'))
+
 <div x-data="testimoniWidget()" x-init="init()" class="testimoni-widget-wrapper">
     <button @click="toggleDropdown()" class="testimoni-widget-btn">
         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,6 +84,7 @@
                 </template>
             </div>
         </div>
+
         
         <div class="testimoni-dropdown-footer">
             @auth
@@ -105,7 +112,7 @@
         </div>
     </div>
 </div>
-
+@endif
 <!-- Testimonial Modal -->
 <div id="testimonialModal" class="modal-overlay">
     <div class="modal-container">

@@ -38,6 +38,16 @@
     // Load cart dari server saat page load
     function loadCartFromServer() {
         if (!isLoggedIn) {
+            const saved = localStorage.getItem('kopitiam_cart');
+            if (saved) {
+                try {
+                    cart = JSON.parse(saved);
+                } catch(e) {
+                    cart = [];
+                }
+            } else {
+                cart = [];
+            }
             renderCart();
             return;
         }
@@ -249,6 +259,15 @@
             if (newQty <= 0) {
                 removeItem(index);
             } else {
+                if (!isLoggedIn) {
+                    cart[index].quantity = newQty;
+                    localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
+                    window.dispatchEvent(new CustomEvent('cart-updated'));
+                    showNotification(`Jumlah ${cart[index]?.name} diperbarui`);
+                    renderCart();
+                    return;
+                }
+                
                 const itemKey = cart[index].type + '_' + cart[index].id;
                 
                 fetch('{{ route("cart.update", ":id") }}'.replace(':id', itemKey), {
@@ -279,6 +298,16 @@
     
     function removeItem(index) {
         const itemName = cart[index]?.name || 'Item';
+        
+        if (!isLoggedIn) {
+            cart.splice(index, 1);
+            localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
+            window.dispatchEvent(new CustomEvent('cart-updated'));
+            showNotification(`${itemName} dihapus dari keranjang`);
+            renderCart();
+            return;
+        }
+
         const itemKey = cart[index].type + '_' + cart[index].id;
         
         fetch('{{ route("cart.destroy", ":id") }}'.replace(':id', itemKey), {
@@ -372,6 +401,7 @@
                     }
                 }).then(() => {
                     cart = [];
+                    localStorage.removeItem('kopitiam_cart');
                     window.dispatchEvent(new CustomEvent('cart-updated'));
                     showNotification('Pesanan berhasil dibuat! Silakan ambil pesanan di kasir.');
                     setTimeout(() => {

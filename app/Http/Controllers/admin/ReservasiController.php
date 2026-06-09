@@ -64,8 +64,6 @@ class ReservasiController extends Controller
             
             $reservasi->save();
             
-            // Notifikasi sudah dihandle oleh Model Reservation via boot method
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Status berhasil diubah',
@@ -74,11 +72,12 @@ class ReservasiController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage());
+            Log::error('Error update status: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
     
+    // PERBAIKAN: Mengubah nama method dari archive menjadi destroy (sama seperti pesanan)
     public function destroy($id)
     {
         try {
@@ -87,9 +86,9 @@ class ReservasiController extends Controller
             $reservasi->can_edit = false;
             $reservasi->save();
             
-            return redirect()->route('admin.reservasi')->with('success', "Reservasi milik {$reservasi->name} telah diarsipkan!");
+            return response()->json(['success' => true, 'message' => 'Reservasi telah diarsipkan']);
         } catch (\Exception $e) {
-            return redirect()->route('admin.reservasi')->with('error', 'Gagal mengarsipkan reservasi: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
     
@@ -101,81 +100,128 @@ class ReservasiController extends Controller
             $reservasi->can_edit = true;
             $reservasi->save();
             
-            return redirect()->route('admin.reservasi')->with('success', "Reservasi milik {$reservasi->name} berhasil dipulihkan!");
+            return response()->json(['success' => true, 'message' => 'Reservasi berhasil dipulihkan']);
         } catch (\Exception $e) {
-            return redirect()->route('admin.reservasi')->with('error', 'Gagal memulihkan reservasi: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
     
     public function edit($id)
     {
-        $reservasi = Reservation::findOrFail($id);
-        return response()->json($reservasi);
+        try {
+            $reservasi = Reservation::findOrFail($id);
+            return response()->json($reservasi);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Reservasi tidak ditemukan'], 404);
+        }
     }
     
     public function update(Request $request, $id)
     {
-        $reservasi = Reservation::findOrFail($id);
-        $reservasi->update($request->all());
-        
-        if (in_array($request->status, ['confirmed', 'cancelled', 'completed', 'archived'])) {
-            $reservasi->can_edit = false;
-            $reservasi->save();
+        try {
+            $reservasi = Reservation::findOrFail($id);
+            
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|string|max:20',
+                'date' => 'required|date',
+                'time' => 'required',
+                'people' => 'required|integer|min:1',
+                'table_type' => 'nullable|string',
+                'floor' => 'nullable|string',
+                'notes' => 'nullable|string'
+            ]);
+            
+            $reservasi->update($validated);
+            
+            if (in_array($reservasi->status, ['confirmed', 'cancelled', 'completed', 'archived'])) {
+                $reservasi->can_edit = false;
+                $reservasi->save();
+            }
+            
+            return redirect()->route('admin.reservasi')->with('success', 'Reservasi berhasil diupdate!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reservasi')->with('error', 'Gagal mengupdate reservasi: ' . $e->getMessage());
         }
-        
-        return redirect()->route('admin.reservasi')->with('success', 'Reservasi berhasil diupdate!');
     }
     
     public function bulkAction(Request $request)
     {
-        $ids = explode(',', $request->ids);
-        
-        if ($request->action == 'delete') {
-            Reservation::whereIn('id', $ids)->update(['status' => 'archived', 'can_edit' => false]);
-            $message = count($ids) . ' reservasi berhasil diarsipkan!';
-        } elseif ($request->action == 'confirm') {
-            Reservation::whereIn('id', $ids)->update(['status' => 'confirmed', 'can_edit' => false]);
-            $message = count($ids) . ' reservasi berhasil dikonfirmasi!';
-        } elseif ($request->action == 'cancel') {
-            Reservation::whereIn('id', $ids)->update(['status' => 'cancelled', 'can_edit' => false]);
-            $message = count($ids) . ' reservasi berhasil dibatalkan!';
-        } elseif ($request->action == 'restore') {
-            Reservation::whereIn('id', $ids)->update(['status' => 'pending', 'can_edit' => true]);
-            $message = count($ids) . ' reservasi berhasil dipulihkan!';
+        try {
+            $ids = explode(',', $request->ids);
+            
+            if (empty($ids)) {
+                return redirect()->route('admin.reservasi')->with('error', 'Tidak ada data yang dipilih');
+            }
+            
+            if ($request->action == 'archive') {
+                Reservation::whereIn('id', $ids)->update(['status' => 'archived', 'can_edit' => false]);
+                $message = count($ids) . ' reservasi berhasil diarsipkan!';
+            } elseif ($request->action == 'confirm') {
+                Reservation::whereIn('id', $ids)->update(['status' => 'confirmed', 'can_edit' => false]);
+                $message = count($ids) . ' reservasi berhasil dikonfirmasi!';
+            } elseif ($request->action == 'cancel') {
+                Reservation::whereIn('id', $ids)->update(['status' => 'cancelled', 'can_edit' => false]);
+                $message = count($ids) . ' reservasi berhasil dibatalkan!';
+            } elseif ($request->action == 'restore') {
+                Reservation::whereIn('id', $ids)->update(['status' => 'pending', 'can_edit' => true]);
+                $message = count($ids) . ' reservasi berhasil dipulihkan!';
+            } else {
+                return redirect()->route('admin.reservasi')->with('error', 'Aksi tidak valid');
+            }
+            
+            return redirect()->route('admin.reservasi')->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reservasi')->with('error', 'Gagal melakukan aksi: ' . $e->getMessage());
         }
-        
-        return redirect()->route('admin.reservasi')->with('success', $message);
     }
     
     public function export(Request $request)
     {
-        $query = Reservation::orderBy('created_at', 'desc');
-        
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-        
-        $reservasis = $query->get();
-        $filename = "reservasi_" . date('Y-m-d_His') . ".csv";
-        $handle = fopen('php://temp', 'w+');
-        
-        fputcsv($handle, ['ID', 'Nama', 'Email', 'Telepon', 'Tanggal', 'Jam', 'Jumlah Orang', 'Tipe Meja', 'Lantai', 'Catatan', 'Status', 'Bisa Edit', 'Dibuat Pada']);
-        
-        foreach ($reservasis as $r) {
-            fputcsv($handle, [
-                $r->id, $r->name, $r->email, $r->phone, $r->date, $r->time, $r->people,
-                $r->table_type ?? '-', $r->floor ?? '-', $r->notes ?? '-', $r->status,
-                $r->can_edit ? 'Ya' : 'Tidak', $r->created_at
+        try {
+            $query = Reservation::orderBy('created_at', 'desc');
+            
+            if ($request->has('status') && $request->status != '') {
+                $query->where('status', $request->status);
+            }
+            
+            $reservasis = $query->get();
+            $filename = "reservasi_" . date('Y-m-d_His') . ".csv";
+            $handle = fopen('php://temp', 'w+');
+            
+            // Header CSV
+            fputcsv($handle, ['ID', 'Nama', 'Email', 'Telepon', 'Tanggal', 'Jam', 'Jumlah Orang', 'Tipe Meja', 'Lantai', 'Catatan', 'Status', 'Bisa Edit', 'Dibuat Pada']);
+            
+            // Data CSV
+            foreach ($reservasis as $r) {
+                fputcsv($handle, [
+                    $r->id, 
+                    $r->name, 
+                    $r->email, 
+                    $r->phone, 
+                    $r->date, 
+                    $r->time, 
+                    $r->people,
+                    $r->table_type ?? '-', 
+                    $r->floor ?? '-', 
+                    $r->notes ?? '-', 
+                    $r->status,
+                    $r->can_edit ? 'Ya' : 'Tidak', 
+                    $r->created_at
+                ]);
+            }
+            
+            rewind($handle);
+            $csvContent = stream_get_contents($handle);
+            fclose($handle);
+            
+            return response($csvContent, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => "attachment; filename=\"$filename\"",
             ]);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reservasi')->with('error', 'Gagal mengexport data: ' . $e->getMessage());
         }
-        
-        rewind($handle);
-        $csvContent = stream_get_contents($handle);
-        fclose($handle);
-        
-        return response($csvContent, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ]);
     }
 }

@@ -154,7 +154,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::delete('/reservasi/{id}', [AdminReservasiController::class, 'destroy'])->name('reservasi.destroy');
     Route::patch('/reservasi/{id}/restore', [AdminReservasiController::class, 'restore'])->name('reservasi.restore');
     Route::post('/reservasi/bulk', [AdminReservasiController::class, 'bulkAction'])->name('reservasi.bulk');
-    
+    Route::get('/reservasi/{id}/edit', [AdminReservasiController::class, 'edit'])->name('admin.reservasi.edit');
+    Route::put('/reservasi/{id}', [AdminReservasiController::class, 'update'])->name('admin.reservasi.update');
+    Route::get('/reservasi/export', [AdminReservasiController::class, 'export'])->name('admin.reservasi.export');
     // Pesanan Management (Order)
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
     Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.status');
@@ -163,7 +165,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     
     // Testimonial Management (Admin)
     Route::get('/testimonial', [AdminTestimonialController::class, 'index'])->name('testimonial');
-    Route::patch('/testimonial/{id}/status', [AdminTestimonialController::class, 'updateStatus'])->name('testimonial.status');
     Route::delete('/testimonial/{id}', [AdminTestimonialController::class, 'destroy'])->name('testimonial.destroy');
     Route::patch('/testimonial/{id}/archive', [AdminTestimonialController::class, 'archive'])->name('testimonial.archive');
+    Route::patch('/testimonial/{id}/restore', [AdminTestimonialController::class, 'archive'])->name('testimonial.restore');
 });
