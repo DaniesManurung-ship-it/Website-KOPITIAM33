@@ -847,6 +847,12 @@
         /* Responsive Logo */
         @media (max-width: 480px) {
             .logo-brand {
-                display: none;
+                display: block;
+                font-size: 0.9rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 120px;
             }
         }

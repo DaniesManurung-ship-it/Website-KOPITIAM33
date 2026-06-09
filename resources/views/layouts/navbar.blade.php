@@ -26,7 +26,7 @@
                 <div class="logo-circle">
                     <span class="logo-text">CK</span>
                 </div>
-                <span class="logo-brand">Café Kopitiam33</span>
+                <span class="logo-brand" style="color: #A67B5B !important; display: block !important; opacity: 1 !important; visibility: visible !important;">Café Kopitiam33</span>
             </a>
 
             <!-- Desktop Menu -->
@@ -1525,7 +1525,13 @@
         /* Responsive Logo */
         @media (max-width: 480px) {
             .logo-brand {
-                display: none;
+                display: block;
+                font-size: 0.9rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 120px;
             }
         }
 </style>
