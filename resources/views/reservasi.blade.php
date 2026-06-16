@@ -265,6 +265,7 @@
                             <div>
                                 <h4 class="info-title">Informasi Penting:</h4>
                                 <ul class="info-list">
+                                    <li>Jika reservasi dikonfirmasi oleh admin, maka meja tersebut dianggap masih tersedia untuk digunakan pelanggan lain.</li>
                                     <li>Reservasi akan hangus jika tidak hadir lebih dari 30 menit dari jam kedatangan</li>
                                     <li>Konfirmasi akan dikirim dalam 1x24 jam</li>
                                     <li>Pembatalan reservasi maksimal H-2 jam sebelum jam kedatangan</li>

@@ -13,12 +13,14 @@ class CartController extends Controller
     {
         $user = Auth::user();
         
-        // Load cart dari database untuk user ini
         $cartItems = Cart::where('user_id', $user->id)->get();
         $cart = [];
         $total = 0;
         
         foreach ($cartItems as $item) {
+            // EKSTRAK METADATA DULU SEBELUM DIPAKAI
+            $metadata = is_string($item->metadata) ? json_decode($item->metadata, true) : $item->metadata;
+
             $key = $item->item_type . '_' . $item->item_id;
             $cart[$key] = [
                 'id' => $item->item_id,
@@ -27,12 +29,14 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
-                'db_id' => $item->id
+                'db_id' => $item->id,
+                // SEKARANG METADATA-NYA TERBACA
+                'is_promo' => $metadata['is_promo'] ?? false,
+                'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
             $total += $item->price * $item->quantity;
         }
         
-        // Simpan ke session untuk akses cepat
         $cartKey = 'cart_' . $user->id;
         session()->put($cartKey, $cart);
         
@@ -44,11 +48,13 @@ class CartController extends Controller
     {
         $user = Auth::user();
         
-        // Load cart dari database
         $cartItems = Cart::where('user_id', $user->id)->get();
         $cart = [];
         
         foreach ($cartItems as $item) {
+            // EKSTRAK METADATA
+            $metadata = is_string($item->metadata) ? json_decode($item->metadata, true) : $item->metadata;
+
             $cart[] = [
                 'id' => $item->item_id,
                 'type' => $item->item_type,
@@ -56,11 +62,12 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
-                'db_id' => $item->id
+                'db_id' => $item->id,
+                'is_promo' => $metadata['is_promo'] ?? false,
+                'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
         
-        // Simpan ke session juga
         $cartKey = 'cart_' . $user->id;
         $sessionCart = [];
         foreach ($cart as $item) {
@@ -83,18 +90,15 @@ class CartController extends Controller
         $itemId = $request->item_id;
         $itemType = $request->item_type ?? 'menu';
         
-        // Cek apakah item sudah ada di database
         $existingCart = Cart::where('user_id', $user->id)
             ->where('item_id', $itemId)
             ->where('item_type', $itemType)
             ->first();
         
         if ($existingCart) {
-            // Update quantity
             $existingCart->quantity += $request->quantity ?? 1;
             $existingCart->save();
         } else {
-            // Tambah item baru
             Cart::create([
                 'user_id' => $user->id,
                 'item_id' => $itemId,
@@ -110,11 +114,13 @@ class CartController extends Controller
             ]);
         }
         
-        // Load updated cart dari database
         $cartItems = Cart::where('user_id', $user->id)->get();
         $cart = [];
         
         foreach ($cartItems as $item) {
+            // EKSTRAK METADATA
+            $metadata = is_string($item->metadata) ? json_decode($item->metadata, true) : $item->metadata;
+
             $cart[] = [
                 'id' => $item->item_id,
                 'type' => $item->item_type,
@@ -122,6 +128,8 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
+                'is_promo' => $metadata['is_promo'] ?? false,
+                'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
         
@@ -138,10 +146,14 @@ class CartController extends Controller
     {
         $user = Auth::user();
         
-        // Parse ID: "menu_123" atau "promo_456"
-        $parts = explode('_', $id);
-        $itemType = $parts[0] ?? 'menu';
-        $itemId = $parts[1] ?? null;
+        $lastUnderscorePos = strrpos($id, '_');
+        if ($lastUnderscorePos !== false) {
+            $itemType = substr($id, 0, $lastUnderscorePos);
+            $itemId = substr($id, $lastUnderscorePos + 1);
+        } else {
+            $itemType = 'menu';
+            $itemId = null;
+        }
         
         if (!$itemId) {
             return response()->json(['success' => false, 'message' => 'Invalid item ID'], 400);
@@ -163,10 +175,12 @@ class CartController extends Controller
             }
         }
         
-        // Load updated cart
         $cartItems = Cart::where('user_id', $user->id)->get();
         $cart = [];
         foreach ($cartItems as $item) {
+            // EKSTRAK METADATA
+            $metadata = is_string($item->metadata) ? json_decode($item->metadata, true) : $item->metadata;
+
             $cart[] = [
                 'id' => $item->item_id,
                 'type' => $item->item_type,
@@ -174,6 +188,8 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
+                'is_promo' => $metadata['is_promo'] ?? false,
+                'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
         
@@ -189,10 +205,14 @@ class CartController extends Controller
     {
         $user = Auth::user();
         
-        // Parse ID: "menu_123" atau "promo_456"
-        $parts = explode('_', $id);
-        $itemType = $parts[0] ?? 'menu';
-        $itemId = $parts[1] ?? null;
+        $lastUnderscorePos = strrpos($id, '_');
+        if ($lastUnderscorePos !== false) {
+            $itemType = substr($id, 0, $lastUnderscorePos);
+            $itemId = substr($id, $lastUnderscorePos + 1);
+        } else {
+            $itemType = 'menu';
+            $itemId = null;
+        }
         
         if (!$itemId) {
             return response()->json(['success' => false, 'message' => 'Invalid item ID'], 400);
@@ -203,10 +223,12 @@ class CartController extends Controller
             ->where('item_type', $itemType)
             ->delete();
         
-        // Load updated cart
         $cartItems = Cart::where('user_id', $user->id)->get();
         $cart = [];
         foreach ($cartItems as $item) {
+            // EKSTRAK METADATA
+            $metadata = is_string($item->metadata) ? json_decode($item->metadata, true) : $item->metadata;
+
             $cart[] = [
                 'id' => $item->item_id,
                 'type' => $item->item_type,
@@ -214,6 +236,8 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
+                'is_promo' => $metadata['is_promo'] ?? false,
+                'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
         

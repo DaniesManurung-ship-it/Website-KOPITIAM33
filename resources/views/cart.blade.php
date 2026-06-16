@@ -165,7 +165,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="item-price">Rp ${item.price.toLocaleString('id-ID')}</td>
+                    <td class="item-price">Rp${item.price.toLocaleString('id-ID')}</td>
                     <td>
                         <div class="quantity-control">
                             <button class="qty-btn" onclick="updateQuantity(${index}, -1)">−</button>
@@ -173,7 +173,7 @@
                             <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
                         </div>
                     </td>
-                    <td class="item-price">Rp ${subtotal.toLocaleString('id-ID')}</td>
+                    <td class="item-price">Rp${subtotal.toLocaleString('id-ID')}</td>
                     <td>
                         <button class="remove-btn" onclick="removeItem(${index})" title="Hapus item">
                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
