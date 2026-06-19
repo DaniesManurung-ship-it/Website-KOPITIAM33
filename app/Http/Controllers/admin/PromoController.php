@@ -4,61 +4,53 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Promo;
+use App\Models\Menu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PromoController extends Controller
 {
     public function index()
     {
-        // Admin melihat SEMUA promo (termasuk yang expired)
-        $promos = Promo::orderBy('created_at', 'desc')->get();
-        return view('admin.promo', compact('promos'));
+        $promos = Promo::with('menu')->orderBy('created_at', 'desc')->get();
+        $menus = Menu::all();
+        return view('admin.promo', compact('promos', 'menus'));
     }
     
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'description' => 'nullable|string',
-            'original_price' => 'required|integer|min:1000',
+            'menu_id' => 'required|exists:menus,id',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
         
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            
-            $destinationPath = public_path('uploads/promos');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-            $file->move($destinationPath, $filename);
-            $imagePath = 'uploads/promos/' . $filename;
-            
-            Promo::create([
-                'name' => $request->name,
-                'image' => $imagePath,
-                'description' => $request->description,
-                'original_price' => $request->original_price,
-                'discount' => $request->discount,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'is_active' => true,
-            ]);
-        }
+        Promo::create([
+            'menu_id' => $request->menu_id,
+            'discount' => $request->discount,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'is_active' => true,
+            'user_id' => Auth::id(),
+        ]);
         
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil ditambahkan!');
     }
     
     public function edit($id)
     {
-        $promo = Promo::findOrFail($id);
-        return response()->json($promo);
+        $promo = Promo::with('menu')->findOrFail($id);
+        return response()->json([
+            'id' => $promo->id,
+            'menu_id' => $promo->menu_id,
+            'original_price' => $promo->menu ? $promo->menu->price : 0,
+            'discount' => $promo->discount,
+            'start_date' => $promo->start_date->format('Y-m-d'),
+            'end_date' => $promo->end_date->format('Y-m-d'),
+            'is_active' => $promo->is_active,
+        ]);
     }
     
     public function update(Request $request, $id)
@@ -66,39 +58,19 @@ class PromoController extends Controller
         $promo = Promo::findOrFail($id);
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'description' => 'nullable|string',
-            'original_price' => 'required|integer|min:1000',
+            'menu_id' => 'required|exists:menus,id',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
         
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-            'original_price' => $request->original_price,
+        $promo->update([
+            'menu_id' => $request->menu_id,
             'discount' => $request->discount,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-        ];
+        ]);
         
-        if ($request->hasFile('image')) {
-            if ($promo->image && file_exists(public_path($promo->image))) {
-                unlink(public_path($promo->image));
-            }
-            
-            $file = $request->file('image');
-            $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/promos');
-            $file->move($destinationPath, $filename);
-            $data['image'] = 'uploads/promos/' . $filename;
-        }
-        
-        $promo->update($data);
-        
-        // Update is_active berdasarkan tanggal setelah update
         $this->updateActiveStatus($promo);
         
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil diupdate!');
@@ -107,13 +79,7 @@ class PromoController extends Controller
     public function destroy($id)
     {
         $promo = Promo::findOrFail($id);
-        
-        if ($promo->image && file_exists(public_path($promo->image))) {
-            unlink(public_path($promo->image));
-        }
-        
         $promo->delete();
-        
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil dihapus!');
     }
     
@@ -126,7 +92,6 @@ class PromoController extends Controller
         return response()->json(['success' => true]);
     }
     
-    // Method untuk update status aktif berdasarkan tanggal
     private function updateActiveStatus($promo)
     {
         $now = Carbon::now();

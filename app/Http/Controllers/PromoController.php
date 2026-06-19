@@ -12,7 +12,7 @@ class PromoController extends Controller
         $now = Carbon::now();
         
         // HANYA tampilkan promo yang masih aktif berdasarkan tanggal
-        $promos = Promo::active()
+        $promos = Promo::with('menu')->active()
             ->orderBy('created_at', 'desc')
             ->get();
         

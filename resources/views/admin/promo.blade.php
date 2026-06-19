@@ -175,34 +175,27 @@
             <h3 id="modalTitle">Tambah Promo</h3>
             <button class="close-modal" onclick="closeModal()">✕</button>
         </div>
-        <form id="promoForm" method="POST" enctype="multipart/form-data">
+        <form id="promoForm" method="POST">
             @csrf
             <input type="hidden" id="promo_id" name="promo_id">
             <input type="hidden" id="method" name="_method" value="POST">
             
             <div class="form-group">
-                <label class="form-label">Nama Promo <span>*</span></label>
-                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Promo Akhir Tahun" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Gambar Promo <span>*</span></label>
-                <input type="file" name="image" id="image" class="form-input-file" accept="image/*" onchange="previewImage(this)">
-                <img id="imagePreview" class="preview-image" style="display: none;">
-                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                    📷 Format: JPG, PNG, JPEG, GIF, WEBP (Max 2MB)
-                </small>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Deskripsi</label>
-                <textarea name="description" id="description" class="form-textarea" rows="3" placeholder="Deskripsi promo..."></textarea>
+                <label class="form-label">Pilih Menu <span>*</span></label>
+                <select name="menu_id" id="menu_id" class="form-select" required onchange="updateMenuData()">
+                    <option value="">-- Pilih Menu --</option>
+                    @foreach($menus as $menu)
+                        <option value="{{ $menu->id }}" data-price="{{ $menu->price }}">
+                            {{ $menu->name }} - Rp {{ number_format($menu->price, 0, ',', '.') }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Harga Awal <span>*</span></label>
-                    <input type="number" name="original_price" id="original_price" class="form-input" min="1000" step="1000" placeholder="Rp 0" required oninput="calculatePrice()">
+                    <label class="form-label">Harga Asli (Otomatis)</label>
+                    <input type="number" id="original_price" class="form-input" readonly placeholder="Pilih menu terlebih dahulu">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Diskon (%) <span>*</span></label>
@@ -244,6 +237,20 @@
 </div>
 
 <script>
+    function updateMenuData() {
+        const select = document.getElementById('menu_id');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (selectedOption.value) {
+            const price = selectedOption.getAttribute('data-price');
+            document.getElementById('original_price').value = price;
+            calculatePrice();
+        } else {
+            document.getElementById('original_price').value = '';
+            document.getElementById('finalPrice').innerHTML = 'Rp 0';
+        }
+    }
+
     function calculatePrice() {
         const originalPrice = parseInt(document.getElementById('original_price').value) || 0;
         const discount = parseInt(document.getElementById('discount').value) || 0;
@@ -262,23 +269,10 @@
         }
     }
     
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
     function openAddModal() {
         document.getElementById('modalTitle').innerText = 'Tambah Promo';
         document.getElementById('promoForm').reset();
         document.getElementById('promo_id').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('method').value = 'POST';
         document.getElementById('pricePreview').style.background = 'linear-gradient(135deg, #E8F0E6, #F5EFE6)';
         document.getElementById('finalPrice').innerHTML = 'Rp 0';
@@ -292,14 +286,12 @@
             .then(data => {
                 document.getElementById('modalTitle').innerText = 'Edit Promo';
                 document.getElementById('promo_id').value = data.id;
-                document.getElementById('name').value = data.name;
-                document.getElementById('description').value = data.description || '';
+                document.getElementById('menu_id').value = data.menu_id;
                 document.getElementById('original_price').value = data.original_price || 0;
                 document.getElementById('discount').value = data.discount || 0;
                 document.getElementById('start_date').value = data.start_date;
                 document.getElementById('end_date').value = data.end_date;
                 document.getElementById('is_active').value = data.is_active ? '1' : '0';
-                document.getElementById('imagePreview').style.display = 'none';
                 document.getElementById('method').value = 'PUT';
                 
                 calculatePrice();

@@ -154,45 +154,21 @@
             <h3 id="modalTitle">Tambah Menu Spesial</h3>
             <button class="close-modal" onclick="closeModal()">✕</button>
         </div>
-        <form id="menuForm" method="POST" enctype="multipart/form-data">
+        <form id="menuForm" method="POST">
             @csrf
-            <input type="hidden" id="menu_id" name="menu_id">
+            <input type="hidden" id="spesial_id" name="spesial_id">
             <input type="hidden" id="method" name="_method" value="POST">
             
             <div class="form-group">
-                <label class="form-label">Nama Menu <span>*</span></label>
-                <input type="text" name="name" id="name" class="form-input" placeholder="Contoh: Ayam Goreng" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Gambar Menu <span>*</span></label>
-                <input type="file" name="image" id="image" class="form-input-file" accept="image/*" onchange="previewImage(this)">
-                <img id="imagePreview" class="preview-image" style="display: none;">
-                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                    📷 Format: JPG, PNG, JPEG, GIF, WEBP (Max 2MB)
-                </small>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Deskripsi</label>
-                <textarea name="description" id="description" class="form-textarea" rows="3" placeholder="Deskripsi menu spesial..."></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Harga <span>*</span></label>
-                    <input type="number" name="price" id="price" class="form-input" min="1000" step="1000" placeholder="Rp 0" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Badge (Label)</label>
-                    <select name="badge" id="badge" class="form-select">
-                        <option value="">Tidak Ada</option>
-                        <option value="Signature">✨ Signature</option>
-                        <option value="Premium">⭐ Premium</option>
-                        <option value="Limited">🔥 Limited Edition</option>
-                        <option value="Chef Recomendation">👨‍🍳 Chef Recomendation</option>
-                    </select>
-                </div>
+                <label class="form-label">Pilih Menu <span>*</span></label>
+                <select name="menu_id" id="menu_id" class="form-select" required>
+                    <option value="">-- Pilih Menu --</option>
+                    @foreach($menus as $menuData)
+                        <option value="{{ $menuData->id }}">
+                            {{ $menuData->name }} - Rp {{ number_format($menuData->price, 0, ',', '.') }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
             
             <div class="checkbox-group">
@@ -211,23 +187,11 @@
 </div>
 
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
     function openAddModal() {
         document.getElementById('modalTitle').innerText = 'Tambah Menu Spesial';
         document.getElementById('menuForm').reset();
+        document.getElementById('spesial_id').value = '';
         document.getElementById('menu_id').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('method').value = 'POST';
         document.getElementById('menuForm').action = "{{ route('admin.menu-spesial.store') }}";
         document.getElementById('menuModal').classList.add('show');
@@ -238,14 +202,9 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('modalTitle').innerText = 'Edit Menu Spesial';
-                document.getElementById('menu_id').value = data.id;
-                document.getElementById('name').value = data.name;
-                document.getElementById('description').value = data.description || '';
-                // PERBAIKAN: Hapus .00 dengan mengubah ke integer/parseInt
-                document.getElementById('price').value = parseInt(data.price) || 0;
-                document.getElementById('badge').value = data.badge || '';
-                document.getElementById('is_featured').checked = data.is_featured === 1;
-                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('spesial_id').value = data.id;
+                document.getElementById('menu_id').value = data.menu_id;
+                document.getElementById('is_featured').checked = data.is_featured === 1 || data.is_featured === true;
                 document.getElementById('method').value = 'PUT';
                 document.getElementById('menuForm').action = `/admin/menu-spesial/${id}`;
                 document.getElementById('menuModal').classList.add('show');
@@ -257,7 +216,7 @@
     }
     
     function deleteMenu(id) {
-        if(confirm('Yakin ingin menghapus menu ini?')) {
+        if(confirm('Yakin ingin menghapus menu spesial ini?')) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/admin/menu-spesial/${id}`;

@@ -11,7 +11,7 @@ class Menu extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'description', 'price', 'category', 'image', 'badge', 'is_featured', 'is_available'
+        'name', 'description', 'price', 'category', 'image', 'badge', 'is_featured', 'is_available', 'user_id'
     ];
     
     protected $casts = [
@@ -34,7 +34,26 @@ class Menu extends Model
         if (str_starts_with($this->image, '/storage/')) {
             return asset($this->image);
         }
+
+        if (str_starts_with($this->image, 'uploads/')) {
+            return asset($this->image);
+        }
         
         return asset('storage/' . $this->image);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function promos()
+    {
+        return $this->hasMany(Promo::class);
+    }
+
+    public function menuSpesials()
+    {
+        return $this->hasMany(MenuSpesial::class);
     }
 }

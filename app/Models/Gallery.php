@@ -14,6 +14,12 @@ class Gallery extends Model
         'title', 
         'image', 
         'category', 
-        'description'
+        'description',
+        'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

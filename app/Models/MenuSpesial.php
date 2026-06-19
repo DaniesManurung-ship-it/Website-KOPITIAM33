@@ -13,43 +13,62 @@ class MenuSpesial extends Model
     protected $table = 'menu_spesials';
     
     protected $fillable = [
-        'name', 'description', 'price', 'image', 'badge', 'is_featured', 'is_active'
+        'menu_id', 'is_featured', 'is_active', 'user_id'
     ];
     
     protected $casts = [
-        'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    protected $appends = [
+        'name', 'description', 'price', 'image', 'badge', 'category', 'image_url'
+    ];
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
+    // Accessors to delegate to Menu
+    public function getNameAttribute()
+    {
+        return $this->menu ? $this->menu->name : 'Unknown Menu';
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->menu ? $this->menu->description : '';
+    }
+
+    public function getPriceAttribute()
+    {
+        return $this->menu ? $this->menu->price : 0;
+    }
+
+    public function getImageAttribute()
+    {
+        return $this->menu ? $this->menu->image : null;
+    }
+
+    public function getBadgeAttribute()
+    {
+        return $this->menu ? $this->menu->badge : null;
+    }
+
+    public function getCategoryAttribute()
+    {
+        return $this->menu ? $this->menu->category : null;
+    }
+
     // Accessor untuk URL gambar - SAMA PERSIS DENGAN MENU
     public function getImageUrlAttribute()
     {
-        if (!$this->image) {
-            return asset('uploads/default/default-menu.jpg');
-        }
-        
-        // Jika sudah URL lengkap
-        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
-            return $this->image;
-        }
-        
-        // Jika sudah ada /storage/ di depan
-        if (str_starts_with($this->image, '/storage/')) {
-            return asset($this->image);
-        }
-        
-        // Jika sudah ada storage/ di depan
-        if (str_starts_with($this->image, 'storage/')) {
-            return asset($this->image);
-        }
-        
-        // Jika sudah ada uploads/ di depan (data baru)
-        if (str_starts_with($this->image, 'uploads/')) {
-            return asset($this->image);
-        }
-        
-        // Default: tambahkan storage di depan
-        return asset('storage/' . $this->image);
+        return $this->menu ? $this->menu->image_url : asset('uploads/default/default-menu.jpg');
     }
 }

@@ -11,16 +11,55 @@ class Promo extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'image', 'description', 'discount', 'original_price', 'start_date', 'end_date', 'is_active'
+        'menu_id', 'discount', 'start_date', 'end_date', 'is_active', 'user_id'
     ];
     
     protected $casts = [
-        'original_price' => 'integer',
         'discount' => 'integer',
         'is_active' => 'boolean',
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    protected $appends = [
+        'name', 'description', 'original_price', 'image', 'category', 'image_url', 'final_price'
+    ];
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Accessors to delegate to Menu
+    public function getNameAttribute()
+    {
+        return $this->menu ? $this->menu->name : 'Unknown Menu';
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->menu ? $this->menu->description : '';
+    }
+
+    public function getOriginalPriceAttribute()
+    {
+        return $this->menu ? $this->menu->price : 0;
+    }
+
+    public function getImageAttribute()
+    {
+        return $this->menu ? $this->menu->image : null;
+    }
+
+    public function getCategoryAttribute()
+    {
+        return $this->menu ? $this->menu->category : null;
+    }
     
     // ========== PERBAIKAN: Cek apakah promo masih aktif berdasarkan tanggal ==========
     public function getIsStillActiveAttribute()
@@ -59,23 +98,7 @@ class Promo extends Model
     // Accessor untuk URL gambar
     public function getImageUrlAttribute()
     {
-        if (!$this->image) {
-            return asset('uploads/default/default-promo.jpg');
-        }
-        
-        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
-            return $this->image;
-        }
-        
-        if (str_starts_with($this->image, '/storage/')) {
-            return asset($this->image);
-        }
-        
-        if (str_starts_with($this->image, 'uploads/')) {
-            return asset($this->image);
-        }
-        
-        return asset('storage/' . $this->image);
+        return $this->menu ? $this->menu->image_url : asset('uploads/default/default-promo.jpg');
     }
     
     // Accessor untuk harga setelah diskon

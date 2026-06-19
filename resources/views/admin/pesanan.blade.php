@@ -69,7 +69,6 @@
                 <option value="processed" {{ request('status') == 'processed' ? 'selected' : '' }}>🔄 Diproses</option>
                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>✅ Selesai</option>
                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>❌ Dibatalkan</option>
-                <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>📦 Diarsipkan</option>
             </select>
             <input type="date" name="date" class="filter-input" value="{{ request('date') }}">
             <button type="submit" class="filter-btn filter-btn-primary">🔍 Filter</button>
@@ -157,7 +156,6 @@
                             @elseif($pesanan->status == 'processed') 🔄 Diproses
                             @elseif($pesanan->status == 'completed') ✅ Selesai
                             @elseif($pesanan->status == 'cancelled') ❌ Dibatalkan
-                            @elseif($pesanan->status == 'archived') 📦 Diarsipkan
                             @endif
                         </span>
                         @if(in_array($pesanan->status, ['completed', 'cancelled']))
