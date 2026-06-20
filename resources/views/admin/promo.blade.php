@@ -58,9 +58,8 @@
                     <th width="5%">ID</th>
                     <th width="10%">Gambar</th>
                     <th width="15%">Nama Promo</th>
-                    <th width="10%">Harga Awal</th>
+                    <th width="20%">Menu Termasuk</th>
                     <th width="8%">Diskon</th>
-                    <th width="10%">Harga Akhir</th>
                     <th width="15%">Periode</th>
                     <th width="8%">Status</th>
                     <th width="12%">Aksi</th>
@@ -69,8 +68,6 @@
             <tbody>
                 @forelse($promos as $promo)
                 @php
-                    $originalPrice = $promo->original_price ?? 0;
-                    $finalPrice = $originalPrice - ($originalPrice * $promo->discount / 100);
                     $isBigDiscount = $promo->discount >= 50;
                 @endphp
                 <tr>
@@ -78,7 +75,7 @@
                     <td>
                         <div class="promo-image-wrapper">
                             @if($promo->image)
-                                <img src="{{ asset($promo->image) }}" class="promo-image" alt="{{ $promo->name }}" onerror="this.src='/uploads/default/default-promo.jpg'">
+                                <img src="{{ $promo->image_url }}" class="promo-image" alt="{{ $promo->name }}" onerror="this.src='/storage/default-promo.jpg'">
                             @else
                                 <div class="no-image">No Image</div>
                             @endif
@@ -89,28 +86,19 @@
                         <div class="desc-text" title="{{ $promo->description }}">{{ Str::limit($promo->description, 40) ?? '-' }}</div>
                     </td>
                     <td>
-                        @if($originalPrice > 0)
-                            <span class="price-badge">Rp {{ number_format($originalPrice, 0, ',', '.') }}</span>
-                        @else
-                            <span class="price-badge" style="background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%);">Belum diisi</span>
-                        @endif
+                        <div class="menu-list" style="font-size: 0.8rem; max-height: 60px; overflow-y: auto;">
+                            @foreach($promo->menus as $menu)
+                                <span style="background: #e5e7eb; padding: 2px 6px; border-radius: 4px; margin: 2px; display: inline-block;">{{ $menu->name }}</span>
+                            @endforeach
+                            @if($promo->menus->isEmpty())
+                                <span style="color: var(--danger);">Belum ada menu</span>
+                            @endif
+                        </div>
                     </td>
                     <td>
                         <span class="discount-badge">
                             🔥 {{ $promo->discount }}% OFF
                         </span>
-                    </td>
-                    <td>
-                        @if($originalPrice > 0)
-                            <div>
-                                <span class="price-new">Rp {{ number_format($finalPrice, 0, ',', '.') }}</span>
-                                @if($isBigDiscount)
-                                    <span style="display: block; font-size: 0.6rem; color: var(--danger);">Hemat {{ $promo->discount }}%!</span>
-                                @endif
-                            </div>
-                        @else
-                            <span class="price-badge" style="background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%);">Belum diisi</span>
-                        @endif
                     </td>
                     <td>
                         <span class="period-badge">
@@ -175,17 +163,27 @@
             <h3 id="modalTitle">Tambah Promo</h3>
             <button class="close-modal" onclick="closeModal()">✕</button>
         </div>
-        <form id="promoForm" method="POST">
+        <form id="promoForm" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" id="promo_id" name="promo_id">
             <input type="hidden" id="method" name="_method" value="POST">
             
             <div class="form-group">
+                <label class="form-label">Nama Promo <span>*</span></label>
+                <input type="text" name="name" id="name" class="form-input" required placeholder="Contoh: Promo Kemerdekaan">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Deskripsi Promo</label>
+                <textarea name="description" id="description" class="form-input" rows="2" placeholder="Deskripsi singkat promo..."></textarea>
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Pilih Menu <span>*</span></label>
-                <select name="menu_id" id="menu_id" class="form-select" required onchange="updateMenuData()">
+                <select name="menus[]" id="menus" class="form-select" required>
                     <option value="">-- Pilih Menu --</option>
                     @foreach($menus as $menu)
-                        <option value="{{ $menu->id }}" data-price="{{ $menu->price }}">
+                        <option value="{{ $menu->id }}">
                             {{ $menu->name }} - Rp {{ number_format($menu->price, 0, ',', '.') }}
                         </option>
                     @endforeach
@@ -194,17 +192,9 @@
             
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Harga Asli (Otomatis)</label>
-                    <input type="number" id="original_price" class="form-input" readonly placeholder="Pilih menu terlebih dahulu">
-                </div>
-                <div class="form-group">
                     <label class="form-label">Diskon (%) <span>*</span></label>
-                    <input type="number" name="discount" id="discount" class="form-input" min="1" max="100" placeholder="Contoh: 20" required oninput="calculatePrice()">
+                    <input type="number" name="discount" id="discount" class="form-input" min="1" max="100" placeholder="Contoh: 20" required oninput="calculatePreview()">
                 </div>
-            </div>
-            
-            <div class="price-preview" id="pricePreview">
-                💰 Harga Setelah Diskon: <span id="finalPrice">Rp 0</span>
             </div>
             
             <div class="form-row">
@@ -237,36 +227,9 @@
 </div>
 
 <script>
-    function updateMenuData() {
-        const select = document.getElementById('menu_id');
-        const selectedOption = select.options[select.selectedIndex];
-        
-        if (selectedOption.value) {
-            const price = selectedOption.getAttribute('data-price');
-            document.getElementById('original_price').value = price;
-            calculatePrice();
-        } else {
-            document.getElementById('original_price').value = '';
-            document.getElementById('finalPrice').innerHTML = 'Rp 0';
-        }
-    }
-
-    function calculatePrice() {
-        const originalPrice = parseInt(document.getElementById('original_price').value) || 0;
+    function calculatePreview() {
         const discount = parseInt(document.getElementById('discount').value) || 0;
-        
-        const finalPrice = originalPrice - (originalPrice * discount / 100);
-        
-        document.getElementById('finalPrice').innerHTML = 'Rp ' + finalPrice.toLocaleString('id-ID');
-        
-        const previewDiv = document.getElementById('pricePreview');
-        if (discount >= 50) {
-            previewDiv.style.background = 'linear-gradient(135deg, #FEF3C7, #FDE68A)';
-            previewDiv.style.border = '1px solid #f59e0b';
-        } else {
-            previewDiv.style.background = 'linear-gradient(135deg, #E8F0E6, #F5EFE6)';
-            previewDiv.style.border = '1px solid #E5E7EB';
-        }
+        // Hanya sekadar animasi warna
     }
     
     function openAddModal() {
@@ -274,8 +237,9 @@
         document.getElementById('promoForm').reset();
         document.getElementById('promo_id').value = '';
         document.getElementById('method').value = 'POST';
-        document.getElementById('pricePreview').style.background = 'linear-gradient(135deg, #E8F0E6, #F5EFE6)';
-        document.getElementById('finalPrice').innerHTML = 'Rp 0';
+        // Reset select
+        document.getElementById('menus').value = '';
+        
         document.getElementById('promoForm').action = "{{ route('admin.promo.store') }}";
         document.getElementById('promoModal').classList.add('show');
     }
@@ -286,15 +250,23 @@
             .then(data => {
                 document.getElementById('modalTitle').innerText = 'Edit Promo';
                 document.getElementById('promo_id').value = data.id;
-                document.getElementById('menu_id').value = data.menu_id;
-                document.getElementById('original_price').value = data.original_price || 0;
+                document.getElementById('name').value = data.name;
+                document.getElementById('description').value = data.description || '';
+                
+                // Set select
+                const select = document.getElementById('menus');
+                const selectedMenus = data.menus || [];
+                if (selectedMenus.length > 0) {
+                    select.value = selectedMenus[0];
+                } else {
+                    select.value = '';
+                }
+                
                 document.getElementById('discount').value = data.discount || 0;
                 document.getElementById('start_date').value = data.start_date;
                 document.getElementById('end_date').value = data.end_date;
                 document.getElementById('is_active').value = data.is_active ? '1' : '0';
                 document.getElementById('method').value = 'PUT';
-                
-                calculatePrice();
                 
                 document.getElementById('promoForm').action = `/admin/promo/${id}`;
                 document.getElementById('promoModal').classList.add('show');

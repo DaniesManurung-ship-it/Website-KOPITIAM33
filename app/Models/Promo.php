@@ -11,7 +11,7 @@ class Promo extends Model
     use HasFactory;
     
     protected $fillable = [
-        'menu_id', 'discount', 'start_date', 'end_date', 'is_active', 'user_id'
+        'name', 'description', 'image', 'discount', 'start_date', 'end_date', 'is_active', 'user_id'
     ];
     
     protected $casts = [
@@ -22,43 +22,17 @@ class Promo extends Model
     ];
 
     protected $appends = [
-        'name', 'description', 'original_price', 'image', 'category', 'image_url', 'final_price'
+        'image_url'
     ];
 
-    public function menu()
+    public function menus()
     {
-        return $this->belongsTo(Menu::class);
+        return $this->hasMany(Menu::class);
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Accessors to delegate to Menu
-    public function getNameAttribute()
-    {
-        return $this->menu ? $this->menu->name : 'Unknown Menu';
-    }
-
-    public function getDescriptionAttribute()
-    {
-        return $this->menu ? $this->menu->description : '';
-    }
-
-    public function getOriginalPriceAttribute()
-    {
-        return $this->menu ? $this->menu->price : 0;
-    }
-
-    public function getImageAttribute()
-    {
-        return $this->menu ? $this->menu->image : null;
-    }
-
-    public function getCategoryAttribute()
-    {
-        return $this->menu ? $this->menu->category : null;
     }
     
     // ========== PERBAIKAN: Cek apakah promo masih aktif berdasarkan tanggal ==========
@@ -98,26 +72,23 @@ class Promo extends Model
     // Accessor untuk URL gambar
     public function getImageUrlAttribute()
     {
-        return $this->menu ? $this->menu->image_url : asset('uploads/default/default-promo.jpg');
-    }
-    
-    // Accessor untuk harga setelah diskon
-    public function getFinalPriceAttribute()
-    {
-        $original = (int) $this->original_price;
-        $discount = (int) $this->discount;
-        return $original - ($original * $discount / 100);
-    }
-    
-    // Accessor untuk format harga rupiah
-    public function getFormattedOriginalPriceAttribute()
-    {
-        return 'Rp ' . number_format($this->original_price, 0, ',', '.');
-    }
-    
-    public function getFormattedFinalPriceAttribute()
-    {
-        return 'Rp ' . number_format($this->final_price, 0, ',', '.');
+        if (!$this->image) {
+            return asset('storage/default-promo.jpg');
+        }
+        
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        
+        if (str_starts_with($this->image, '/storage/')) {
+            return asset($this->image);
+        }
+
+        if (str_starts_with($this->image, 'uploads/')) {
+            return asset($this->image);
+        }
+        
+        return asset('storage/' . $this->image);
     }
     
     // Format tanggal untuk ditampilkan

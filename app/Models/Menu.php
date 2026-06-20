@@ -11,7 +11,7 @@ class Menu extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'description', 'price', 'category', 'image', 'badge', 'is_featured', 'is_available', 'user_id'
+        'name', 'description', 'price', 'category', 'image', 'badge', 'is_featured', 'is_available', 'user_id', 'promo_id'
     ];
     
     protected $casts = [
@@ -47,13 +47,13 @@ class Menu extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function promos()
+    public function promo()
     {
-        return $this->hasMany(Promo::class);
+        return $this->belongsTo(Promo::class);
     }
 
-    public function menuSpesials()
+    public function menuSpesial()
     {
-        return $this->hasMany(MenuSpesial::class);
+        return $this->hasOne(MenuSpesial::class);
     }
 }

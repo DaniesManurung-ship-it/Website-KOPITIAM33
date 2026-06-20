@@ -13,7 +13,7 @@ class PromoController extends Controller
 {
     public function index()
     {
-        $promos = Promo::with('menu')->orderBy('created_at', 'desc')->get();
+        $promos = Promo::with('menus')->orderBy('created_at', 'desc')->get();
         $menus = Menu::all();
         return view('admin.promo', compact('promos', 'menus'));
     }
@@ -21,31 +21,50 @@ class PromoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'menus' => 'required|array',
+            'menus.*' => 'exists:menus,id',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
         
-        Promo::create([
-            'menu_id' => $request->menu_id,
+        $menuImage = '';
+        if ($request->has('menus') && count($request->menus) > 0) {
+            $firstMenu = Menu::find($request->menus[0]);
+            if ($firstMenu) {
+                $menuImage = $firstMenu->image ?? '';
+            }
+        }
+        
+        $promo = Promo::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $menuImage,
             'discount' => $request->discount,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'is_active' => true,
             'user_id' => Auth::id(),
         ]);
+
+        // Attach menus to this promo
+        if ($request->has('menus')) {
+            Menu::whereIn('id', $request->menus)->update(['promo_id' => $promo->id]);
+        }
         
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil ditambahkan!');
     }
     
     public function edit($id)
     {
-        $promo = Promo::with('menu')->findOrFail($id);
+        $promo = Promo::with('menus')->findOrFail($id);
         return response()->json([
             'id' => $promo->id,
-            'menu_id' => $promo->menu_id,
-            'original_price' => $promo->menu ? $promo->menu->price : 0,
+            'name' => $promo->name,
+            'description' => $promo->description,
+            'menus' => $promo->menus->pluck('id'),
             'discount' => $promo->discount,
             'start_date' => $promo->start_date->format('Y-m-d'),
             'end_date' => $promo->end_date->format('Y-m-d'),
@@ -58,18 +77,38 @@ class PromoController extends Controller
         $promo = Promo::findOrFail($id);
         
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'menus' => 'required|array',
+            'menus.*' => 'exists:menus,id',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
         
-        $promo->update([
-            'menu_id' => $request->menu_id,
-            'discount' => $request->discount,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $menuImage = $promo->image;
+        if ($request->has('menus') && count($request->menus) > 0) {
+            $firstMenu = Menu::find($request->menus[0]);
+            if ($firstMenu) {
+                $menuImage = $firstMenu->image ?? '';
+            }
+        }
+        
+        $promo->name = $request->name;
+        $promo->description = $request->description;
+        $promo->image = $menuImage;
+        $promo->discount = $request->discount;
+        $promo->start_date = $request->start_date;
+        $promo->end_date = $request->end_date;
+        $promo->save();
+
+        // Update menus
+        // Detach all menus first
+        Menu::where('promo_id', $promo->id)->update(['promo_id' => null]);
+        // Attach selected menus
+        if ($request->has('menus')) {
+            Menu::whereIn('id', $request->menus)->update(['promo_id' => $promo->id]);
+        }
         
         $this->updateActiveStatus($promo);
         
@@ -79,6 +118,7 @@ class PromoController extends Controller
     public function destroy($id)
     {
         $promo = Promo::findOrFail($id);
+        // We don't delete the image file because it belongs to the Menu!
         $promo->delete();
         return redirect()->route('admin.promo')->with('success', 'Promo berhasil dihapus!');
     }

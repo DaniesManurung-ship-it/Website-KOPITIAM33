@@ -23,7 +23,7 @@ class MenuSpesialController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
+            'menu_id' => 'required|exists:menus,id|unique:menu_spesials,menu_id',
             'is_featured' => 'boolean',
         ]);
         
@@ -54,7 +54,7 @@ class MenuSpesialController extends Controller
         $menu = MenuSpesial::findOrFail($id);
         
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
+            'menu_id' => 'required|exists:menus,id|unique:menu_spesials,menu_id,' . $id,
             'is_featured' => 'boolean',
         ]);
         

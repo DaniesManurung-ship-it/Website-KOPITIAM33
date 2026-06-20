@@ -148,11 +148,33 @@
     }
     
     function getFilteredItems() {
-        let filtered = [...promoData];
+        let allPromoMenus = [];
+        promoData.forEach(promo => {
+            if(promo.menus && promo.menus.length > 0) {
+                promo.menus.forEach(menu => {
+                    allPromoMenus.push({
+                        promo_id: promo.id,
+                        menu_id: menu.id,
+                        name: menu.name,
+                        description: menu.description,
+                        originalPrice: menu.price,
+                        discount: promo.discount,
+                        finalPrice: Math.floor(menu.price - (menu.price * promo.discount / 100)),
+                        image: menu.image,
+                        promo_name: promo.name,
+                        start_date: promo.start_date,
+                        end_date: promo.end_date
+                    });
+                });
+            }
+        });
+        
+        let filtered = [...allPromoMenus];
         if (currentSearch) {
             filtered = filtered.filter(item => 
                 item.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                (item.description && item.description.toLowerCase().includes(currentSearch.toLowerCase()))
+                (item.description && item.description.toLowerCase().includes(currentSearch.toLowerCase())) ||
+                item.promo_name.toLowerCase().includes(currentSearch.toLowerCase())
             );
         }
         return filtered;
@@ -175,20 +197,18 @@
         
         let htmlContent = '';
         
-        paginatedItems.forEach(promo => {
-            const originalPrice = promo.original_price || 0;
-            const finalPrice = Math.floor(originalPrice - (originalPrice * promo.discount / 100));
-            const imageUrl = getImageUrl(promo.image);
+        paginatedItems.forEach(item => {
+            const imageUrl = getImageUrl(item.image);
             
             // Data untuk lightbox
-            const promoDataLightbox = {
-                id: promo.id,
-                name: promo.name,
-                original_price: originalPrice,
-                discount: promo.discount,
-                image: promo.image
+            const itemDataLightbox = {
+                id: item.menu_id,
+                name: item.name,
+                original_price: item.originalPrice,
+                discount: item.discount,
+                image: item.image
             };
-            const promoJson = JSON.stringify(promoDataLightbox).replace(/"/g, '&quot;');
+            const itemJson = JSON.stringify(itemDataLightbox).replace(/"/g, '&quot;');
             
             let buttonHtml = '';
             if (!isLoggedIn) {
@@ -207,17 +227,17 @@
             } else {
                 buttonHtml = `
                     <div class="button-group">
-                        <button class="cart-btn" onclick="addToCart(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">🛒 Keranjang</button>
-                        <button class="order-now-btn" onclick="orderNow(${promo.id}, ${finalPrice}, ${originalPrice}, ${promo.discount})">📝 Pesan</button>
+                        <button class="cart-btn" onclick="addToCart(${item.menu_id}, ${item.finalPrice}, ${item.originalPrice}, ${item.discount}, '${escapeHtml(item.name)}', '${item.image}')">🛒 Keranjang</button>
+                        <button class="order-now-btn" onclick="orderNow(${item.menu_id}, ${item.finalPrice}, ${item.originalPrice}, ${item.discount}, '${escapeHtml(item.name)}', '${item.image}')">📝 Pesan</button>
                     </div>
                 `;
             }
             
             htmlContent += `
                 <div class="promo-card">
-                    <div class="promo-badge">⚡ ${promo.discount}% OFF</div>
-                    <div class="promo-image-container" onclick='openLightbox(${promoJson})'>
-                        <img src="${imageUrl}" alt="${escapeHtml(promo.name)}" class="promo-image" onerror="this.src='/storage/default-menu.jpg'">
+                    <div class="promo-badge">⚡ ${item.discount}% OFF - ${escapeHtml(item.promo_name)}</div>
+                    <div class="promo-image-container" onclick='openLightbox(${itemJson})'>
+                        <img src="${imageUrl}" alt="${escapeHtml(item.name)}" class="promo-image" onerror="this.src='/storage/default-menu.jpg'">
                         <div class="zoom-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
@@ -225,18 +245,18 @@
                         </div>
                     </div>
                     <div class="promo-content">
-                        <h3 class="promo-title">${escapeHtml(promo.name)}</h3>
-                        <p class="promo-description">${escapeHtml(promo.description || 'Nikmati promo menarik ini')}</p>
+                        <h3 class="promo-title">${escapeHtml(item.name)}</h3>
+                        <p class="promo-description">${escapeHtml(item.description || 'Nikmati promo menarik ini')}</p>
                         <div class="price-section">
-                            <span class="old-price">Rp ${formatPrice(originalPrice)}</span>
-                            <span class="new-price">Rp ${formatPrice(finalPrice)}</span>
-                            <span class="discount-text">-${promo.discount}%</span>
+                            <span class="old-price">Rp ${formatPrice(item.originalPrice)}</span>
+                            <span class="new-price">Rp ${formatPrice(item.finalPrice)}</span>
+                            <span class="discount-text">-${item.discount}%</span>
                         </div>
                         <div class="promo-period">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span>${formatDate(promo.start_date)} - ${formatDate(promo.end_date)}</span>
+                            <span>${formatDate(item.start_date)} - ${formatDate(item.end_date)}</span>
                         </div>
                         ${buttonHtml}
                     </div>
@@ -284,11 +304,8 @@
         renderPromo();
     }
     
-    function addToCart(promoId, price, originalPrice, discount) {
+    function addToCart(menuId, price, originalPrice, discount, name, image) {
         if (!requireLogin()) return;
-        
-        const promo = promoData.find(p => p.id === promoId);
-        if (!promo) return;
         
         // Kirim ke server untuk disimpan di session per user
         fetch('{{ route("cart.add") }}', {
@@ -299,12 +316,12 @@
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                item_id: promo.id,
-                item_type: 'promo',
-                name: promo.name,
+                item_id: menuId,
+                item_type: 'menu',
+                name: name,
                 price: parseInt(price),
                 quantity: 1,
-                image: promo.image,
+                image: image,
                 is_promo: true,
                 is_menu_spesial: false
             })
@@ -312,7 +329,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showNotification(`${promo.name} ditambahkan ke keranjang! 🛒`);
+                showNotification(`${name} ditambahkan ke keranjang! 🛒`);
                 
                 // Update local cart array dengan response dari server
                 if (data.cart) {
@@ -329,24 +346,18 @@
         });
     }
     
-    function orderNow(promoId, price, originalPrice, discount) {
-        const promo = promoData.find(p => p.id === promoId);
-        if (!promo) {
-            showNotification('Error: Promo tidak ditemukan');
-            return;
-        }
-        
+    function orderNow(menuId, price, originalPrice, discount, name, image) {
         selectedPromo = {
-            id: promo.id,
-            name: promo.name,
+            id: menuId,
+            name: name,
             finalPrice: price,
             originalPrice: originalPrice,
             discountValue: discount,
-            image: promo.image
+            image: image
         };
         selectedQuantity = 1;
         document.getElementById('quantityValue').textContent = selectedQuantity;
-        document.getElementById('modalTitle').textContent = promo.name;
+        document.getElementById('modalTitle').textContent = name;
         document.getElementById('quantityModal').classList.add('show');
     }
     
