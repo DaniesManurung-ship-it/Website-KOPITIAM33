@@ -13,7 +13,7 @@ class MenuSpesialController extends Controller
 {
     public function index()
     {
-        $spesialMenus = MenuSpesial::with('menu')->orderBy('is_featured', 'desc')
+        $spesialMenus = MenuSpesial::with('menu')->orderBy('is_featured', 'desc')  // mengambil data menu spesial dengan relasi menu, urutkan yang unggulan dulu
             ->orderBy('created_at', 'desc')
             ->get();
         $menus = Menu::all();
@@ -69,6 +69,7 @@ class MenuSpesialController extends Controller
     
     public function destroy($id)
     {
+        
         $menu = MenuSpesial::findOrFail($id);
         $menu->delete();
         
@@ -79,11 +80,14 @@ class MenuSpesialController extends Controller
     public function toggleFeatured($id)
     {
         $menu = MenuSpesial::findOrFail($id);
-        
+
+        // Jika mau dijadikan unggulan, nonaktifkan unggulan lain dulu
+        // Menampilkan hanya satu menu unggulan
         if (!$menu->is_featured) {
             MenuSpesial::where('is_featured', true)->update(['is_featured' => false]);
         }
         
+        // Hanya 1 menu yang bisa menjadi unggulan (is_featured = true) dalam satu waktu.
         $menu->is_featured = !$menu->is_featured;
         $menu->save();
         

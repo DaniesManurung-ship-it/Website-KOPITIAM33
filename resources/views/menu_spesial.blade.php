@@ -16,7 +16,7 @@
     </div>
 </section>
 
-<!-- Featured Menu -->
+<!-- Featured Menu (ambil gambar dari menu yang direferensikan)--> 
 @if(isset($featuredMenu) && $featuredMenu)
 @php
     $featuredData = [

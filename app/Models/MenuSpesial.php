@@ -35,7 +35,7 @@ class MenuSpesial extends Model
         return $this->belongsTo(User::class);
     }
     
-    // Accessors to delegate to Menu
+    // Tidak perlu menabahkan menambahkan quary join manual, data, nama, harga akan otomatis diambil dari  
     public function getNameAttribute()
     {
         return $this->menu ? $this->menu->name : 'Unknown Menu';

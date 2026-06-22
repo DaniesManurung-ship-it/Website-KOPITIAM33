@@ -101,7 +101,7 @@
     
     const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     
-    // Format harga tanpa .00
+    // Code Untuk menampilkan harga 
     function formatPrice(price) {
         return new Intl.NumberFormat('id-ID').format(price);
     }
@@ -531,7 +531,7 @@
     
     // ==================== EVENT LISTENERS ====================
     document.addEventListener('DOMContentLoaded', function() {
-        // Search input
+        // Search menu (untuk mencari menu secara real-time)
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', function(e) {

@@ -16,6 +16,7 @@ class MenuSpesialController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
+            // Memisahkan menu unggulan dan menu reguler
         $featuredMenu = $menuSpesial->where('is_featured', true)->first();
         $regularMenus = $menuSpesial->where('is_featured', false);
         

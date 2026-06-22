@@ -25,6 +25,7 @@ class Promo extends Model
         'image_url'
     ];
 
+    // Satu Promo dapat memiliki banyak menu
     public function menus()
     {
         return $this->hasMany(Menu::class);
@@ -52,7 +53,7 @@ class Promo extends Model
             return false;
         }
         
-        // Jika manual di-set false -> TIDAK AKTIF
+        // Jika admin mau menonaktifkan promo secara manual, tampa menunggu tanggal berakhir
         if (!$this->is_active) {
             return false;
         }

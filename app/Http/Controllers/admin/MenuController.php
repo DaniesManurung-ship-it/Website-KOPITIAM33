@@ -30,7 +30,7 @@ class MenuController extends Controller
             $file = $request->file('image');
             $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
             
-            // Simpan ke public/uploads/menus
+            // Simpan ke public/uploads/menus (code menyimpan gambar)
             $destinationPath = public_path('uploads/menus');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);

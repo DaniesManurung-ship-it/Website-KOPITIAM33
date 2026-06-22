@@ -40,7 +40,8 @@ class OrderController extends Controller
             foreach ($cart as $item) {
                 // Cek apakah ini item promo
                 if (isset($item['is_promo']) && $item['is_promo'] === true) {
-                    $promo = Promo::find($item['id']);
+                    $menu = Menu::with('promo')->find($item['id']);
+                    $promo = $menu ? $menu->promo : null;
                     
                     // ========== PERBAIKAN: Cek promo masih berlaku ==========
                     if ($promo && $promo->is_active) {
@@ -49,15 +50,15 @@ class OrderController extends Controller
                         
                         // Cek apakah promo masih dalam periode berlaku
                         if ($now >= $startDate && $now <= $endDate) {
-                            $finalPrice = $promo->original_price - ($promo->original_price * $promo->discount / 100);
+                            $finalPrice = $menu->price - ($menu->price * $promo->discount / 100);
                             $itemData = [
-                                'id' => $promo->id,
-                                'name' => $promo->name,
+                                'id' => $menu->id,
+                                'name' => $menu->name . ' (Promo: ' . $promo->name . ')',
                                 'price' => (int) $finalPrice,
                                 'quantity' => (int) $item['quantity'],
-                                'image' => $promo->image,
+                                'image' => $menu->image,
                                 'type' => 'promo',
-                                'original_price' => $promo->original_price,
+                                'original_price' => $menu->price,
                                 'discount' => $promo->discount
                             ];
                             $items[] = $itemData;
@@ -76,7 +77,7 @@ class OrderController extends Controller
                             'message' => "Promo tidak tersedia!"
                         ], 400);
                     }
-                } 
+                }
                 // Cek apakah ini item menu spesial
                 elseif (isset($item['is_menu_spesial']) && $item['is_menu_spesial'] === true) {
                     $menuSpesial = MenuSpesial::find($item['id']);

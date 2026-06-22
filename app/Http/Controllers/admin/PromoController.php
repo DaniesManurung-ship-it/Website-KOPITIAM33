@@ -14,7 +14,7 @@ class PromoController extends Controller
     public function index()
     {
         $promos = Promo::with('menus')->orderBy('created_at', 'desc')->get();
-        $menus = Menu::all();
+        $menus = Menu::all();  // Menampilkan semua menu untuk dropdown di form tambah/edit promo
         return view('admin.promo', compact('promos', 'menus'));
     }
     
@@ -23,7 +23,7 @@ class PromoController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'menus' => 'required|array',
+            'menus' => 'required|array',  // harus memilih minimal satu menu
             'menus.*' => 'exists:menus,id',
             'discount' => 'required|integer|min:1|max:100',
             'start_date' => 'required|date',
@@ -107,7 +107,7 @@ class PromoController extends Controller
         Menu::where('promo_id', $promo->id)->update(['promo_id' => null]);
         // Attach selected menus
         if ($request->has('menus')) {
-            Menu::whereIn('id', $request->menus)->update(['promo_id' => $promo->id]);
+            Menu::whereIn('id', $request->menus)->update(['promo_id' => $promo->id]);  // Menghubungkan menu dengan promo
         }
         
         $this->updateActiveStatus($promo);
