@@ -20,9 +20,15 @@ class Order extends Model
         'customer_name',
         'customer_email',
         'customer_phone',
+        'table_number',
+        'floor',
+        'voucher_code',
+        'discount_amount',
         'items',
         'subtotal',
         'status',
+        'payment_status',
+        'payment_proof',
         'can_cancel',
         'notes'
     ];
@@ -164,5 +170,31 @@ class Order extends Model
         ];
         
         return $classes[$this->status] ?? 'status-default';
+    }
+    
+    // Helper method untuk format payment status
+    public function getPaymentStatusLabelAttribute()
+    {
+        $labels = [
+            'unpaid' => 'Belum Dibayar',
+            'awaiting_confirmation' => 'Menunggu Konfirmasi',
+            'paid' => 'Lunas',
+            'failed' => 'Gagal'
+        ];
+        
+        return $labels[$this->payment_status] ?? $this->payment_status;
+    }
+    
+    // Helper method untuk get payment status badge class
+    public function getPaymentBadgeClassAttribute()
+    {
+        $classes = [
+            'unpaid' => 'status-cancelled', // red
+            'awaiting_confirmation' => 'status-pending', // orange
+            'paid' => 'status-completed', // green
+            'failed' => 'status-archived' // gray
+        ];
+        
+        return $classes[$this->payment_status] ?? 'status-default';
     }
 }

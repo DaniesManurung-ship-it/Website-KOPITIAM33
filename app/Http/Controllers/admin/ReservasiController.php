@@ -58,6 +58,11 @@ class ReservasiController extends Controller
             
             if (in_array($request->status, ['confirmed', 'cancelled', 'completed', 'archived'])) {
                 $reservasi->can_edit = false;
+                
+                // Jika konfirmasi dan customer sudah memilih meja, simpan sebagai assigned_table
+                if ($request->status == 'confirmed' && $reservasi->customer_reply) {
+                    $reservasi->assigned_table = $reservasi->customer_reply;
+                }
             } elseif ($request->status == 'pending') {
                 $reservasi->can_edit = true;
             }
@@ -222,6 +227,50 @@ class ReservasiController extends Controller
             ]);
         } catch (\Exception $e) {
             return redirect()->route('admin.reservasi')->with('error', 'Gagal mengexport data: ' . $e->getMessage());
+        }
+    }
+    
+    public function sendMessage(Request $request, $id)
+    {
+        try {
+            $reservasi = Reservation::findOrFail($id);
+            
+            $request->validate([
+                'admin_message' => 'required|string'
+            ]);
+            
+            $reservasi->admin_message = $request->admin_message;
+            $reservasi->save();
+            
+            // Create notification for customer
+            if ($reservasi->user_id) {
+                try {
+                    \App\Models\Notification::create([
+                        'user_id' => $reservasi->user_id,
+                        'type' => 'reservation_message',
+                        'title' => 'Pesan dari Admin (Reservasi Meja)',
+                        'message' => 'Admin telah merespon reservasi Anda dan mengirimkan daftar meja yang tersedia. Silakan cek dan pilih meja Anda.',
+                        'data' => [
+                            'reservation_id' => $reservasi->id,
+                            'icon' => '💬',
+                        ],
+                        'reference_id' => $reservasi->id,
+                        'reference_type' => 'Reservation'
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to create notification for admin message: ' . $e->getMessage());
+                }
+            }
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Pesan daftar meja berhasil dikirim ke customer!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Gagal mengirim pesan: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

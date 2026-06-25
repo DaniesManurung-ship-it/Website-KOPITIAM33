@@ -3,15 +3,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuSpesial;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenuSpesialController extends Controller
 {
     public function index()
     {
-        $menuSpesial = MenuSpesial::with('menu')
-            ->where('is_active', true)
+        $menuSpesial = Menu::where('is_special_menu', true)
+            ->where('is_available', true)
             ->orderBy('is_featured', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();

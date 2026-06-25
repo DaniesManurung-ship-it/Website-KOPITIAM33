@@ -70,11 +70,25 @@
                                     <div class="admin-notification-content">
                                         <div class="admin-notification-title">Reservasi Baru</div>
                                         <div class="admin-notification-message">
-                                            <span x-text="newReservations > 0 ? newReservations + ' reservasi menunggu konfirmasi' : 'Tidak ada reservasi baru'"></span>
+                                            <span x-text="newReservations > 0 ? newReservations + ' reservasi menunggu meja/konfirmasi' : 'Tidak ada reservasi baru'"></span>
                                         </div>
-                                        <div class="admin-notification-time" x-show="newReservations > 0">Perlu segera dikonfirmasi</div>
                                     </div>
                                     <div class="admin-notification-count" x-show="newReservations > 0" x-text="newReservations"></div>
+                                </div>
+                                
+                                <!-- Reservasi Menunggu Konfirmasi (Sudah Pilih Meja) -->
+                                <div class="admin-notification-item" :class="{ 'unread': repliedReservations > 0 }" @click="goToReservations()" x-show="repliedReservations > 0">
+                                    <div class="admin-notification-icon reservation" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                        <span>💬</span>
+                                    </div>
+                                    <div class="admin-notification-content">
+                                        <div class="admin-notification-title" style="color: #059669;">Balasan Meja Customer</div>
+                                        <div class="admin-notification-message">
+                                            <span x-text="repliedReservations + ' customer telah memilih meja, konfirmasi sekarang'"></span>
+                                        </div>
+                                        <div class="admin-notification-time">Segera konfirmasi</div>
+                                    </div>
+                                    <div class="admin-notification-count" x-text="repliedReservations" style="background: #10b981;"></div>
                                 </div>
                             </div>
                             
@@ -108,33 +122,12 @@
                         Semua Menu
                     </a>
                     
-                    <div class="dropdown-nav" x-data="{ open: {{ request()->routeIs('admin.menu-spesial') || request()->routeIs('admin.promo') ? 'true' : 'false' }} }">
-                        <button @click="open = !open" class="dropdown-nav-btn">
-                            <div class="dropdown-nav-btn-content">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                                <span>Menu Lainnya</span>
-                            </div>
-                            <svg class="dropdown-arrow" :class="{ 'open': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        <div class="dropdown-nav-content" :class="{ 'show': open }">
-                            <a href="{{ route('admin.menu-spesial') }}" class="dropdown-nav-item {{ request()->routeIs('admin.menu-spesial') ? 'active' : '' }}">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                                </svg>
-                                Menu Spesial
-                            </a>
-                            <a href="{{ route('admin.promo') }}" class="dropdown-nav-item {{ request()->routeIs('admin.promo') ? 'active' : '' }}">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
-                                </svg>
-                                Promo
-                            </a>
-                        </div>
-                    </div>
+                    <a href="{{ route('admin.popup-promo') }}" class="nav-item {{ request()->routeIs('admin.popup-promo') ? 'active' : '' }}">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                        </svg>
+                        Pop-up Promo
+                    </a>
                     
                     <a href="{{ route('admin.gallery') }}" class="nav-item {{ request()->routeIs('admin.gallery') ? 'active' : '' }}">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,6 +212,7 @@
                 dropdownOpen: false,
                 newOrders: 0,
                 newReservations: 0,
+                repliedReservations: 0,
                 totalUnread: 0,
                 intervalId: null,
                 
@@ -262,7 +256,8 @@
                         .then(data => {
                             this.newOrders = data.new_orders || 0;
                             this.newReservations = data.new_reservations || 0;
-                            this.totalUnread = this.newOrders + this.newReservations;
+                            this.repliedReservations = data.replied_reservations || 0;
+                            this.totalUnread = this.newOrders + this.newReservations + this.repliedReservations;
                             
                             // Update badge di menu navigasi
                             const ordersNav = document.getElementById('nav-orders');
@@ -279,8 +274,9 @@
                             const reservationsNav = document.getElementById('nav-reservations');
                             const reservationsBadge = reservationsNav ? reservationsNav.querySelector('.nav-badge') : null;
                             if (reservationsBadge) {
-                                if (this.newReservations > 0) {
-                                    reservationsBadge.textContent = this.newReservations;
+                                const totalRes = this.newReservations + this.repliedReservations;
+                                if (totalRes > 0) {
+                                    reservationsBadge.textContent = totalRes;
                                     reservationsBadge.style.display = 'inline-flex';
                                 } else {
                                     reservationsBadge.style.display = 'none';

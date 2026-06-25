@@ -22,11 +22,27 @@ class DashboardController extends Controller
         $totalTestimoni = Testimonial::count();
         $totalCustomers = User::where('role', 'customer')->count();
         
-        // Data untuk chart (12 bulan terakhir)
+        // Data untuk chart pesanan (12 bulan terakhir)
         $chartData = [];
+        // Data untuk statistik keuangan bulanan (pendapatan bersih dari pesanan selesai)
+        $revenueData = [];
+        
         for ($i = 1; $i <= 12; $i++) {
+            // Jumlah pesanan per bulan
             $count = Order::whereMonth('created_at', $i)->whereYear('created_at', date('Y'))->count();
             $chartData[] = $count;
+            
+            // Pendapatan per bulan (hanya untuk pesanan yang selesai)
+            $completedOrders = Order::whereMonth('created_at', $i)
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 'completed')
+                ->get();
+                
+            $monthlyRevenue = 0;
+            foreach ($completedOrders as $order) {
+                $monthlyRevenue += ($order->subtotal - ($order->discount_amount ?? 0));
+            }
+            $revenueData[] = $monthlyRevenue;
         }
         
         // 🔥 PERBAIKAN: Ambil semua testimoni, tidak hanya approved
@@ -47,6 +63,7 @@ class DashboardController extends Controller
             'totalTestimoni',
             'totalCustomers',
             'chartData',
+            'revenueData',
             'testimonies',
             'latestReservations',
             'latestOrders'

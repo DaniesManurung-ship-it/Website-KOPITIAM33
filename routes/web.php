@@ -9,14 +9,12 @@ use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\PromoController;
 use App\Http\Controllers\MenuSpesialController;
 use App\Http\Controllers\CartController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Admin\MenuSpesialController as AdminMenuSpesialController;
-use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
 use App\Http\Controllers\Admin\PesananController;
@@ -28,7 +26,6 @@ Route::get('/home', [HomeController::class, 'index']);
 
 // Customer Menu Routes (Hanya untuk melihat)
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
-Route::get('/promo', [PromoController::class, 'index'])->name('promo');
 Route::get('/menu-spesial', [MenuSpesialController::class, 'index'])->name('menu-spesial');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
 
@@ -71,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reservasi/history', [ReservasiController::class, 'history'])->name('reservasi.history');
     Route::get('/reservasi/{id}/edit', [ReservasiController::class, 'edit'])->name('reservasi.edit');
     Route::put('/reservasi/{id}', [ReservasiController::class, 'update'])->name('reservasi.update');
+    Route::post('/reservasi/{id}/reply', [ReservasiController::class, 'replyMessage'])->name('reservasi.reply');
     Route::delete('/reservasi/{id}', [ReservasiController::class, 'destroy'])->name('reservasi.destroy');
     
     // Customer Testimonial (Hanya untuk yang login)
@@ -82,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
     // Customer Order (Hanya untuk yang login)
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::get('/order/history', [OrderController::class, 'history'])->name('orders.history');
+    Route::get('/order/{id}/payment', [OrderController::class, 'payment'])->name('order.payment');
+    Route::post('/order/{id}/payment', [OrderController::class, 'uploadPayment'])->name('order.payment.upload');
     Route::patch('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
     
     // Testimonial Routes untuk user yang login
@@ -126,20 +126,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     
     // Menu Spesial Management
     Route::get('/menu-spesial', [AdminMenuSpesialController::class, 'index'])->name('menu-spesial');
-    Route::post('/menu-spesial', [AdminMenuSpesialController::class, 'store'])->name('menu-spesial.store');
-    Route::get('/menu-spesial/{id}/edit', [AdminMenuSpesialController::class, 'edit'])->name('menu-spesial.edit');
-    Route::put('/menu-spesial/{id}', [AdminMenuSpesialController::class, 'update'])->name('menu-spesial.update');
-    Route::delete('/menu-spesial/{id}', [AdminMenuSpesialController::class, 'destroy'])->name('menu-spesial.destroy');
     Route::patch('/menu-spesial/{id}/toggle-featured', [AdminMenuSpesialController::class, 'toggleFeatured'])->name('menu-spesial.toggle-featured');
     Route::patch('/menu-spesial/{id}/toggle-status', [AdminMenuSpesialController::class, 'toggleStatus'])->name('menu-spesial.toggle-status');
     
-    // Promo Management
-    Route::get('/promo', [AdminPromoController::class, 'index'])->name('promo');
-    Route::post('/promo', [AdminPromoController::class, 'store'])->name('promo.store');
-    Route::get('/promo/{id}/edit', [AdminPromoController::class, 'edit'])->name('promo.edit');
-    Route::put('/promo/{id}', [AdminPromoController::class, 'update'])->name('promo.update');
-    Route::delete('/promo/{id}', [AdminPromoController::class, 'destroy'])->name('promo.destroy');
-    Route::patch('/promo/{id}/toggle', [AdminPromoController::class, 'toggleStatus'])->name('promo.toggle');
+    // Popup Promo Management
+    Route::get('/popup-promo', [\App\Http\Controllers\Admin\PopupPromoController::class, 'index'])->name('popup-promo');
+    Route::post('/popup-promo', [\App\Http\Controllers\Admin\PopupPromoController::class, 'store'])->name('popup-promo.store');
+    Route::put('/popup-promo/{id}', [\App\Http\Controllers\Admin\PopupPromoController::class, 'update'])->name('popup-promo.update');
+    Route::delete('/popup-promo/{id}', [\App\Http\Controllers\Admin\PopupPromoController::class, 'destroy'])->name('popup-promo.destroy');
+    Route::patch('/popup-promo/{id}/toggle', [\App\Http\Controllers\Admin\PopupPromoController::class, 'toggleStatus'])->name('popup-promo.toggle');
     
     // Gallery Management
     Route::get('/gallery', [AdminGalleryController::class, 'index'])->name('gallery');
@@ -151,6 +146,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Reservasi Management
     Route::get('/reservasi', [AdminReservasiController::class, 'index'])->name('reservasi');
     Route::patch('/reservasi/{id}/status', [AdminReservasiController::class, 'updateStatus'])->name('reservasi.status');
+    Route::post('/reservasi/{id}/message', [AdminReservasiController::class, 'sendMessage'])->name('reservasi.message');
     Route::delete('/reservasi/{id}', [AdminReservasiController::class, 'destroy'])->name('reservasi.destroy');
     Route::patch('/reservasi/{id}/restore', [AdminReservasiController::class, 'restore'])->name('reservasi.restore');
     Route::post('/reservasi/bulk', [AdminReservasiController::class, 'bulkAction'])->name('reservasi.bulk');
@@ -160,6 +156,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Pesanan Management (Order)
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
     Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.status');
+    Route::patch('/pesanan/{id}/confirm-payment', [PesananController::class, 'confirmPayment'])->name('pesanan.confirm-payment');
     Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::patch('/pesanan/{id}/restore', [PesananController::class, 'restore'])->name('pesanan.restore');
     

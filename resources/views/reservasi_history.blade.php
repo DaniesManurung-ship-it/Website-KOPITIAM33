@@ -103,12 +103,40 @@
                 
                 @if($reservasi->status == 'pending' && $reservasi->can_edit)
                     <div class="action-buttons">
-                        <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn-edit">
-                            ✏️ Edit Reservasi
-                        </a>
-                        <button class="btn-delete" onclick="deleteReservasi({{ $reservasi->id }})">
-                            🗑️ Batalkan Reservasi
-                        </button>
+                        @if(!$reservasi->admin_message)
+                            <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn-edit">
+                                ✏️ Edit Reservasi
+                            </a>
+                            <button class="btn-delete" onclick="deleteReservasi({{ $reservasi->id }})">
+                                🗑️ Batalkan Reservasi
+                            </button>
+                        @elseif($reservasi->admin_message && !$reservasi->customer_reply)
+                            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin-bottom: 12px; text-align: left;">
+                                <h4 style="color: #166534; margin-top: 0; margin-bottom: 8px;">📩 Pesan dari Admin</h4>
+                                <p style="color: #15803d; font-size: 0.95rem; margin-bottom: 12px;"><strong>Opsi Meja Tersedia:</strong> {{ $reservasi->admin_message }}</p>
+                                
+                                <form action="{{ route('reservasi.reply', $reservasi->id) }}" method="POST" style="margin-top: 12px;">
+                                    @csrf
+                                    <label style="display: block; font-size: 0.9rem; color: #374151; margin-bottom: 4px; font-weight: 500;">Pilih Meja Anda:</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" name="customer_reply" placeholder="Ketik pilihan Anda..." required style="flex: 1; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; outline: none;">
+                                        <button type="submit" style="background-color: var(--sage); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Kirim</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <button class="btn-delete" onclick="deleteReservasi({{ $reservasi->id }})" style="width: 100%;">
+                                🗑️ Batalkan Reservasi
+                            </button>
+                        @elseif($reservasi->customer_reply)
+                            <div style="background-color: #fef3c7; border: 1px solid #fde68a; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: left;">
+                                <span style="font-size: 0.85rem; color: #92400e; display: block; font-weight: bold;">Meja Pilihan Anda:</span>
+                                <span style="font-size: 1rem; color: #b45309; display: block; margin-bottom: 8px;">{{ $reservasi->customer_reply }}</span>
+                                <span style="font-size: 0.8rem; color: #d97706; display: block;">⏳ Menunggu konfirmasi final admin...</span>
+                            </div>
+                            <button class="btn-delete" onclick="deleteReservasi({{ $reservasi->id }})" style="width: 100%;">
+                                🗑️ Batalkan Reservasi
+                            </button>
+                        @endif
                     </div>
                 @elseif($reservasi->status == 'pending' && !$reservasi->can_edit)
                     <div class="status-message pending">
@@ -117,6 +145,11 @@
                 @elseif($reservasi->status == 'confirmed')
                     <div class="status-message confirmed">
                         ✅ Reservasi telah dikonfirmasi. Silakan datang tepat waktu!
+                        @if($reservasi->assigned_table)
+                            <div style="margin-top: 10px; background: white; color: var(--wood); padding: 8px 12px; border-radius: 6px; display: inline-block; font-weight: bold; border: 1px solid var(--sage);">
+                                🎯 Meja Anda: {{ $reservasi->assigned_table }}
+                            </div>
+                        @endif
                     </div>
                 @elseif($reservasi->status == 'cancelled')
                     <div class="status-message cancelled">

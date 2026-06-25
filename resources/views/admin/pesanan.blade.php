@@ -85,7 +85,7 @@
                     <th>Info Order</th>
                     <th>Customer</th>
                     <th>Item Pesanan</th>
-                    <th>Total</th>
+                    <th>Total & Bayar</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -127,7 +127,12 @@
                         <div class="customer-name">
                             <span>👤</span> {{ $pesanan->customer_name }}
                         </div>
-                        <div class="customer-email">{{ $pesanan->customer_email }}</div>
+                        <div class="customer-email" style="margin-bottom: 5px;">{{ $pesanan->customer_email }}</div>
+                        @if($pesanan->table_number || $pesanan->floor)
+                        <div class="customer-location" style="font-size: 0.85rem; color: #4b5563; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px;">
+                            <span>📍</span> {{ $pesanan->floor ?? '-' }} - Meja {{ $pesanan->table_number ?? '-' }}
+                        </div>
+                        @endif
                      </td>
                     
                     <!-- Items -->
@@ -146,8 +151,14 @@
                         </div>
                      </td>
                     
-                    <!-- Total -->
-                    <td class="price-total">Rp {{ number_format($pesanan->subtotal, 0, ',', '.') }}</td>
+                    <!-- Total & Bayar -->
+                    <td class="price-total">
+                        Rp {{ number_format($pesanan->subtotal, 0, ',', '.') }}
+                        <br>
+                        <span class="status-badge {{ $pesanan->payment_badge_class }}" style="font-size: 0.75rem; margin-top: 5px; display: inline-block;">
+                            {{ $pesanan->payment_status_label }}
+                        </span>
+                    </td>
                     
                     <!-- Status -->
                     <td>
@@ -172,6 +183,12 @@
                     <td class="action-buttons">
                         @if($pesanan->status != 'archived')
                             <div class="status-action-group">
+                                @if($pesanan->payment_status == 'awaiting_confirmation')
+                                    <button class="btn-process" onclick="viewPaymentProof({{ $pesanan->id }}, '/{{ str_replace('#', '%23', ltrim($pesanan->payment_proof, '/')) }}')" style="background: var(--latte); color: var(--wood); border-color: var(--gold); margin-bottom: 5px; width: 100%;">
+                                        👁️ Cek Pembayaran
+                                    </button>
+                                @endif
+                                
                                 @if($pesanan->status == 'pending')
                                     <button class="btn-process" onclick="updateStatus({{ $pesanan->id }}, 'processed', this)">
                                         🔄 Proses
@@ -241,6 +258,20 @@
     </div>
 </div>
 
+<!-- Payment Proof Modal -->
+<div id="paymentProofModal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="width: 90%; max-width: 500px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center;">
+        <h3 style="color: var(--wood); margin-top: 0;">Bukti Pembayaran QRIS</h3>
+        <div style="background: #f8fafc; padding: 10px; border-radius: 8px; margin: 15px 0;">
+            <img id="paymentProofImage" src="" alt="Bukti Pembayaran" style="max-width: 100%; max-height: 60vh; object-fit: contain; border-radius: 4px;">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button onclick="closePaymentModal()" style="padding: 10px 20px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; cursor: pointer; font-weight: 500;">Tutup</button>
+            <button id="confirmPaymentBtn" onclick="" style="padding: 10px 20px; border: none; border-radius: 8px; background: var(--sage); color: white; cursor: pointer; font-weight: bold;">✅ Konfirmasi Lunas</button>
+        </div>
+    </div>
+</div>
+
 <script>
     function updateStatus(id, status, btn) {
         let statusText = status == 'processed' ? 'Diproses' : (status == 'completed' ? 'Selesai' : 'Dibatalkan');
@@ -265,6 +296,55 @@
                     location.reload();
                 } else {
                     alert('❌ ' + (data.message || 'Gagal mengubah status'));
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('⚠️ Terjadi kesalahan pada server');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+    }
+    
+    function viewPaymentProof(id, imageUrl) {
+        document.getElementById('paymentProofImage').src = imageUrl;
+        document.getElementById('confirmPaymentBtn').setAttribute('onclick', `confirmPayment(${id})`);
+        
+        const modal = document.getElementById('paymentProofModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closePaymentModal() {
+        const modal = document.getElementById('paymentProofModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function confirmPayment(id) {
+        if(confirm('Konfirmasi bahwa pembayaran ini valid dan LUNAS?')) {
+            const btn = document.getElementById('confirmPaymentBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Memproses...';
+            btn.disabled = true;
+            
+            fetch(`/admin/pesanan/${id}/confirm-payment`, {
+                method: 'PATCH',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload();
+                } else {
+                    alert('❌ ' + (data.message || 'Gagal mengkonfirmasi pembayaran'));
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }

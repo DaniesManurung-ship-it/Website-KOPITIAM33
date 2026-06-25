@@ -108,4 +108,22 @@ class ReservasiController extends Controller
         
         return redirect()->route('reservasi.history')->with('success', 'Reservasi berhasil dibatalkan!');
     }
+    
+    public function replyMessage(Request $request, $id)
+    {
+        $reservation = Reservation::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->firstOrFail();
+            
+        $request->validate([
+            'customer_reply' => 'required|string|max:255'
+        ]);
+        
+        $reservation->update([
+            'customer_reply' => $request->customer_reply
+        ]);
+        
+        return redirect()->route('reservasi.history')->with('success', 'Balasan meja Anda telah dikirim! Menunggu konfirmasi admin.');
+    }
 }

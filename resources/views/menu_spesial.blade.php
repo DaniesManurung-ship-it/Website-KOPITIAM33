@@ -107,6 +107,23 @@
             <span class="qty-value" id="qtyValue">1</span>
             <button class="qty-btn" onclick="incrementQty()">+</button>
         </div>
+        
+        <div class="order-form-group" style="margin-top: 15px; margin-bottom: 20px; text-align: left;">
+            <label for="modalFloorSelect" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Lantai / Area <span style="color:red">*</span></label>
+            <select id="modalFloorSelect" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; font-family: inherit;">
+                <option value="">-- Pilih Area --</option>
+                <option value="Lantai 1">Lantai 1</option>
+                <option value="Lantai 2">Lantai 2</option>
+                <option value="Outdoor">Outdoor</option>
+            </select>
+            
+            <label for="modalTableNumber" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Nomor Meja <span style="color:red">*</span></label>
+            <input type="text" id="modalTableNumber" class="form-input" placeholder="Contoh: 12" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; margin-bottom: 10px;">
+
+            <label for="modalVoucherCode" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Kode Voucher (Opsional)</label>
+            <input type="text" id="modalVoucherCode" class="form-input" placeholder="Masukkan kode voucher" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; text-transform: uppercase;">
+        </div>
+        
         <div class="modal-buttons">
             <button class="modal-cancel" onclick="closeModal()">Batal</button>
             <button class="modal-confirm" onclick="confirmOrder()">Pesan Sekarang</button>
@@ -293,7 +310,7 @@
                     <div class="menu-info">
                         <div class="menu-header-row">
                             <h3 class="menu-title">${escapeHtml(item.name)}</h3>
-                            <span class="menu-price">Rp ${formattedPrice}</span>
+                            <span class="menu-price"> ${formattedPrice}</span>
                         </div>
                         <p class="menu-description">${escapeHtml(item.description || 'Nikmati kelezatan menu spesial kami')}</p>
                         <div class="menu-footer">
@@ -355,12 +372,11 @@
             },
             body: JSON.stringify({
                 item_id: item.id,
-                item_type: 'menu_spesial',
+                item_type: 'menu',
                 name: item.name,
                 price: parseInt(item.price),
                 quantity: 1,
                 image: item.image,
-                is_promo: false,
                 is_menu_spesial: true
             })
         })
@@ -426,6 +442,14 @@
             return;
         }
         
+        const floor = document.getElementById('modalFloorSelect').value;
+        const tableNumber = document.getElementById('modalTableNumber').value;
+        
+        if (!floor || !tableNumber) {
+            showNotification('Silakan isi Nomor Meja dan Area/Lantai terlebih dahulu!');
+            return;
+        }
+        
         const confirmBtn = document.querySelector('.modal-confirm');
         const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm';
         if (confirmBtn) {
@@ -449,14 +473,19 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({ cart: [orderItem] })
+            body: JSON.stringify({ 
+                cart: [orderItem],
+                table_number: tableNumber,
+                floor: floor,
+                voucher_code: document.getElementById('modalVoucherCode') ? document.getElementById('modalVoucherCode').value : ''
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showNotification('✅ Pesanan berhasil!');
+                showNotification('✅ Pesanan berhasil! Mengalihkan ke pembayaran...');
                 setTimeout(() => {
-                    window.location.href = '{{ route("orders.history") }}';
+                    window.location.href = `/order/${data.order_id}/payment`;
                 }, 1500);
             } else {
                 showNotification('❌ Gagal: ' + (data.message || 'Error'));

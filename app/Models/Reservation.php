@@ -27,7 +27,10 @@ class Reservation extends Model
         'notes', 
         'status',
         'edit_token',
-        'can_edit'
+        'can_edit',
+        'admin_message',
+        'customer_reply',
+        'assigned_table'
     ];
     
     protected $casts = [

@@ -123,11 +123,11 @@
             </div>
             
             <div class="form-group">
-                <label class="form-label">Gambar <span>*</span></label>
-                <input type="file" name="image" id="image" class="form-input-file" accept="image/*" onchange="previewImage(this)">
-                <img id="imagePreview" class="preview-image" style="display: none;">
-                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                    📷 Format: JPG, PNG, JPEG, GIF, WEBP (Max 2MB)
+                <label class="form-label">Gambar (Maksimal 5) <span>*</span></label>
+                <input type="file" name="images[]" id="image" class="form-input-file" accept="image/*" multiple onchange="previewImages(this)">
+                <div id="imagePreviewContainer" class="preview-container" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;"></div>
+                <small style="color: var(--gray); display: block; margin-top: 0.5rem;" id="imageHelpText">
+                    📷 Format: JPG, PNG, JPEG, GIF, WEBP (Max 2MB per gambar, Maksimal 5 gambar)
                 </small>
             </div>
             
@@ -158,15 +158,32 @@
 </div>
 
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
+    function previewImages(input) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const helpText = document.getElementById('imageHelpText');
+        previewContainer.innerHTML = '';
+        
+        if (input.files && input.files.length > 0) {
+            if (input.files.length > 5) {
+                alert('Maksimal hanya 5 gambar yang diperbolehkan!');
+                input.value = ''; // Reset input
+                return;
             }
-            reader.readAsDataURL(input.files[0]);
+            
+            for (let i = 0; i < input.files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-image';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '4px';
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(input.files[i]);
+            }
         }
     }
     
@@ -194,7 +211,7 @@
         document.getElementById('modalTitle').innerText = 'Tambah Gambar';
         document.getElementById('galleryForm').reset();
         document.getElementById('gallery_id').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('imagePreviewContainer').innerHTML = '';
         document.getElementById('method').value = 'POST';
         document.getElementById('galleryForm').action = "{{ route('admin.gallery.store') }}";
         document.getElementById('galleryModal').classList.add('show');
@@ -204,12 +221,37 @@
         fetch(`/admin/gallery/${id}/edit`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('modalTitle').innerText = 'Edit Gambar';
+                document.getElementById('modalTitle').innerText = 'Edit Galeri';
                 document.getElementById('gallery_id').value = data.id;
                 document.getElementById('title').value = data.title;
                 document.getElementById('category').value = data.category;
                 document.getElementById('description').value = data.description || '';
-                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('imagePreviewContainer').innerHTML = '';
+                
+                // Show existing images if any
+                const previewContainer = document.getElementById('imagePreviewContainer');
+                if (data.images && data.images.length > 0) {
+                    data.images.forEach(imgPath => {
+                        const img = document.createElement('img');
+                        img.src = '/' + imgPath;
+                        img.className = 'preview-image';
+                        img.style.width = '80px';
+                        img.style.height = '80px';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '4px';
+                        previewContainer.appendChild(img);
+                    });
+                } else if (data.image) {
+                    const img = document.createElement('img');
+                    img.src = '/' + data.image;
+                    img.className = 'preview-image';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '4px';
+                    previewContainer.appendChild(img);
+                }
+                
                 document.getElementById('method').value = 'PUT';
                 document.getElementById('galleryForm').action = `/admin/gallery/${id}`;
                 document.getElementById('galleryModal').classList.add('show');

@@ -18,12 +18,6 @@
                 </svg>
                 Menu Spesial
             </h1>
-            <button class="btn-add" onclick="openAddModal()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Tambah Menu Spesial
-            </button>
         </div>
         <div class="header-stats">
             <div class="stat-card">
@@ -35,8 +29,8 @@
                 <div class="stat-label">Menu Unggulan</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ $spesialMenus->where('is_active', true)->count() }}</div>
-                <div class="stat-label">Aktif</div>
+                <div class="stat-number">{{ $spesialMenus->where('is_available', true)->count() }}</div>
+                <div class="stat-label">Tersedia</div>
             </div>
         </div>
     </div>
@@ -98,17 +92,11 @@
                         @endif
                     </td>
                     <td>
-                        <span class="{{ $menu->is_active ? 'active-badge' : 'inactive-badge' }}">
-                            {{ $menu->is_active ? '● Aktif' : '○ Nonaktif' }}
+                        <span class="{{ $menu->is_available ? 'active-badge' : 'inactive-badge' }}">
+                            {{ $menu->is_available ? '● Tersedia' : '○ Tidak Tersedia' }}
                         </span>
                     </td>
                     <td class="action-buttons">
-                        <button class="btn-edit" onclick="editMenu({{ $menu->id }})">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Edit
-                        </button>
                         <button class="btn-featured" onclick="toggleFeatured({{ $menu->id }})">
                             <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
@@ -119,13 +107,7 @@
                             <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                             </svg>
-                            {{ $menu->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                        </button>
-                        <button class="btn-delete" onclick="deleteMenu({{ $menu->id }})">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Hapus
+                            {{ $menu->is_available ? 'Nonaktifkan' : 'Aktifkan' }}
                         </button>
                     </td>
                 </tr>
@@ -137,7 +119,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                             </svg>
                             <p>Belum ada menu spesial</p>
-                            <button class="btn-add" onclick="openAddModal()" style="margin-top: 1rem; display: inline-flex;">+ Tambah Menu Spesial Pertama</button>
+                            <a href="{{ route('admin.menu.index') }}" class="btn-add" style="margin-top: 1rem; display: inline-flex; text-decoration: none;">+ Tambah Menu Spesial di Kelola Menu</a>
                         </div>
                     </td>
                 </tr>
@@ -147,85 +129,7 @@
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Menu -->
-<div id="menuModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalTitle">Tambah Menu Spesial</h3>
-            <button class="close-modal" onclick="closeModal()">✕</button>
-        </div>
-        <form id="menuForm" method="POST">
-            @csrf
-            <input type="hidden" id="spesial_id" name="spesial_id">
-            <input type="hidden" id="method" name="_method" value="POST">
-            
-            <div class="form-group">
-                <label class="form-label">Pilih Menu <span>*</span></label>
-                <select name="menu_id" id="menu_id" class="form-select" required>
-                    <option value="">-- Pilih Menu --</option>
-                    @foreach($menus as $menuData)
-                        <option value="{{ $menuData->id }}">
-                            {{ $menuData->name }} - Rp {{ number_format($menuData->price, 0, ',', '.') }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" name="is_featured" id="is_featured" value="1">
-                <label for="is_featured">⭐ Jadikan sebagai Menu Unggulan (Signature Dish)</label>
-            </div>
-            
-            <button type="submit" class="btn-submit">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                </svg>
-                Simpan Menu Spesial
-            </button>
-        </form>
-    </div>
-</div>
-
 <script>
-    function openAddModal() {
-        document.getElementById('modalTitle').innerText = 'Tambah Menu Spesial';
-        document.getElementById('menuForm').reset();
-        document.getElementById('spesial_id').value = '';
-        document.getElementById('menu_id').value = '';
-        document.getElementById('method').value = 'POST';
-        document.getElementById('menuForm').action = "{{ route('admin.menu-spesial.store') }}";
-        document.getElementById('menuModal').classList.add('show');
-    }
-    
-    function editMenu(id) {
-        fetch(`/admin/menu-spesial/${id}/edit`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('modalTitle').innerText = 'Edit Menu Spesial';
-                document.getElementById('spesial_id').value = data.id;
-                document.getElementById('menu_id').value = data.menu_id;
-                document.getElementById('is_featured').checked = data.is_featured === 1 || data.is_featured === true;
-                document.getElementById('method').value = 'PUT';
-                document.getElementById('menuForm').action = `/admin/menu-spesial/${id}`;
-                document.getElementById('menuModal').classList.add('show');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Gagal mengambil data menu');
-            });
-    }
-    
-    function deleteMenu(id) {
-        if(confirm('Yakin ingin menghapus menu spesial ini?')) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/admin/menu-spesial/${id}`;
-            form.innerHTML = `@csrf @method('DELETE')`;
-            document.body.appendChild(form);
-            form.submit();
-        }
-    }
-    
     function toggleFeatured(id) {
         if(confirm('Ubah status unggulan menu ini?')) {
             fetch(`/admin/menu-spesial/${id}/toggle-featured`, {
@@ -236,20 +140,12 @@
     }
     
     function toggleStatus(id) {
-        if(confirm('Ubah status menu ini?')) {
+        if(confirm('Ubah status ketersediaan menu ini?')) {
             fetch(`/admin/menu-spesial/${id}/toggle-status`, {
                 method: 'PATCH',
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
             }).then(() => location.reload());
         }
     }
-    
-    function closeModal() {
-        document.getElementById('menuModal').classList.remove('show');
-    }
-    
-    document.getElementById('menuModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
 </script>
 @endsection

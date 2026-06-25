@@ -38,7 +38,7 @@
                     x-data="{ menuOpen: false, timeout: null }"
                     @mouseenter="clearTimeout(timeout); menuOpen = true"
                     @mouseleave="timeout = setTimeout(() => { menuOpen = false }, 150)">
-                    <button class="dropdown-button" :class="{ 'dropdown-button-active': activeMenu === 'menu' || activeMenu === 'promo' || activeMenu === 'menu-spesial' }">
+                    <button class="dropdown-button" :class="{ 'dropdown-button-active': activeMenu === 'menu' || activeMenu === 'menu-spesial' }">
                         Menu
                         <svg class="dropdown-icon" :class="{ 'rotate': menuOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -48,7 +48,6 @@
                         @mouseenter="clearTimeout(timeout); menuOpen = true"
                         @mouseleave="timeout = setTimeout(() => { menuOpen = false }, 150)">
                         <a href="{{ route('menu') }}" class="dropdown-item" @click="setActiveMenu('menu')">Semua Menu</a>
-                        <a href="{{ route('promo') }}" class="dropdown-item" @click="setActiveMenu('promo')">Promo</a>
                         <a href="{{ route('menu-spesial') }}" class="dropdown-item" @click="setActiveMenu('menu-spesial')">Menu Spesial</a>
                     </div>
                 </div>
@@ -219,7 +218,6 @@
                     </button>
                     <div x-show="menuOpenMobile" x-cloak class="mobile-submenu">
                         <a href="{{ route('menu') }}" class="mobile-submenu-link" @click="toggleMobileMenu">📋 Semua Menu</a>
-                        <a href="{{ route('promo') }}" class="mobile-submenu-link" @click="toggleMobileMenu">🔥 Promo</a>
                         <a href="{{ route('menu-spesial') }}" class="mobile-submenu-link" @click="toggleMobileMenu">⭐ Menu Spesial</a>
                     </div>
                 </div>
@@ -320,7 +318,6 @@
                             price: item.price,
                             quantity: item.quantity,
                             image: item.image,
-                            is_promo: item.is_promo,
                             is_menu_spesial: item.is_menu_spesial
                         })
                     });
@@ -342,7 +339,6 @@
                 const path = window.location.pathname;
                 if (path === '/' || path === '/home') this.activeMenu = 'home';
                 else if (path === '/menu') this.activeMenu = 'menu';
-                else if (path === '/promo') this.activeMenu = 'promo';
                 else if (path === '/menu-spesial') this.activeMenu = 'menu-spesial';
                 else if (path === '/reservasi') this.activeMenu = 'reservasi';
                 else if (path === '/gallery') this.activeMenu = 'gallery';

@@ -146,4 +146,6 @@
         startAutoSlide();
     })();
 </script>
+
+@include('components.promo_popup')
 @endsection

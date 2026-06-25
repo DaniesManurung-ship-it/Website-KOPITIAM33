@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Menu;
-use App\Models\Promo;
-use App\Models\MenuSpesial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Carbon\Carbon; // TAMBAHKAN INI
 
 class OrderController extends Controller
 {
@@ -25,6 +21,11 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'table_number' => 'required|string',
+                'floor' => 'required|string|in:Lantai 1,Lantai 2,Outdoor',
+            ]);
+
             $cart = $request->cart;
             
             \Log::info('Cart data:', ['cart' => $cart]);
@@ -35,91 +36,26 @@ class OrderController extends Controller
             
             $items = [];
             $subtotal = 0;
-            $now = Carbon::now(); // TAMBAHKAN: waktu sekarang
             
             foreach ($cart as $item) {
-                // Cek apakah ini item promo
-                if (isset($item['is_promo']) && $item['is_promo'] === true) {
-                    $menu = Menu::with('promo')->find($item['id']);
-                    $promo = $menu ? $menu->promo : null;
-                    
-                    // ========== PERBAIKAN: Cek promo masih berlaku ==========
-                    if ($promo && $promo->is_active) {
-                        $startDate = Carbon::parse($promo->start_date);
-                        $endDate = Carbon::parse($promo->end_date);
-                        
-                        // Cek apakah promo masih dalam periode berlaku
-                        if ($now >= $startDate && $now <= $endDate) {
-                            $finalPrice = $menu->price - ($menu->price * $promo->discount / 100);
-                            $itemData = [
-                                'id' => $menu->id,
-                                'name' => $menu->name . ' (Promo: ' . $promo->name . ')',
-                                'price' => (int) $finalPrice,
-                                'quantity' => (int) $item['quantity'],
-                                'image' => $menu->image,
-                                'type' => 'promo',
-                                'original_price' => $menu->price,
-                                'discount' => $promo->discount
-                            ];
-                            $items[] = $itemData;
-                            $subtotal += $finalPrice * $item['quantity'];
-                        } else {
-                            // Promo sudah expired atau belum dimulai
-                            $status = $now < $startDate ? 'belum dimulai' : 'sudah berakhir';
-                            return response()->json([
-                                'success' => false, 
-                                'message' => "Promo {$promo->name} {$status}! Tidak dapat dipesan."
-                            ], 400);
-                        }
-                    } else {
-                        return response()->json([
-                            'success' => false, 
-                            'message' => "Promo tidak tersedia!"
-                        ], 400);
-                    }
-                }
-                // Cek apakah ini item menu spesial
-                elseif (isset($item['is_menu_spesial']) && $item['is_menu_spesial'] === true) {
-                    $menuSpesial = MenuSpesial::find($item['id']);
-                    if ($menuSpesial && $menuSpesial->is_active) {
-                        $itemData = [
-                            'id' => $menuSpesial->id,
-                            'name' => $menuSpesial->name,
-                            'price' => (int) $menuSpesial->price,
-                            'quantity' => (int) $item['quantity'],
-                            'image' => $menuSpesial->image,
-                            'type' => 'menu_spesial',
-                            'badge' => $menuSpesial->badge
-                        ];
-                        $items[] = $itemData;
-                        $subtotal += $menuSpesial->price * $item['quantity'];
-                    } else {
-                        return response()->json([
-                            'success' => false, 
-                            'message' => "Menu Spesial tidak tersedia!"
-                        ], 400);
-                    }
-                }
-                // Menu biasa
-                else {
-                    $menu = Menu::find($item['id']);
-                    if ($menu && $menu->is_available) {
-                        $itemData = [
-                            'id' => $menu->id,
-                            'name' => $menu->name,
-                            'price' => (int) $menu->price,
-                            'quantity' => (int) $item['quantity'],
-                            'image' => $menu->image,
-                            'type' => 'menu'
-                        ];
-                        $items[] = $itemData;
-                        $subtotal += $menu->price * $item['quantity'];
-                    } else {
-                        return response()->json([
-                            'success' => false, 
-                            'message' => "Menu tidak tersedia!"
-                        ], 400);
-                    }
+                $menu = Menu::find($item['id']);
+                if ($menu && $menu->is_available) {
+                    $itemData = [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'price' => (int) $menu->price,
+                        'quantity' => (int) $item['quantity'],
+                        'image' => $menu->image,
+                        'type' => 'menu',
+                        'badge' => $menu->badge
+                    ];
+                    $items[] = $itemData;
+                    $subtotal += $menu->price * $item['quantity'];
+                } else {
+                    return response()->json([
+                        'success' => false, 
+                        'message' => "Menu tidak tersedia!"
+                    ], 400);
                 }
             }
             
@@ -127,7 +63,34 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Tidak ada item yang valid!']);
             }
             
-            // ========== PERBAIKAN: Order number lebih rapi ==========
+            $voucherCode = $request->voucher_code;
+            $discountAmount = 0;
+            $appliedVoucher = null;
+
+            if ($voucherCode) {
+                $popupPromo = \App\Models\PopupPromo::where('voucher_code', $voucherCode)
+                    ->where('is_active', true)
+                    ->where('start_date', '<=', now())
+                    ->where('end_date', '>=', now())
+                    ->first();
+                
+                if ($popupPromo) {
+                    $hasUsed = Order::where('user_id', Auth::id())
+                        ->where('voucher_code', $voucherCode)
+                        ->whereIn('status', ['pending', 'processing', 'completed'])
+                        ->exists();
+
+                    if (!$hasUsed) {
+                        $discountAmount = ($subtotal * $popupPromo->discount_percent) / 100;
+                        $appliedVoucher = $voucherCode;
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Anda sudah menggunakan voucher ini sebelumnya!']);
+                    }
+                } else {
+                    return response()->json(['success' => false, 'message' => 'Kode voucher tidak valid atau sudah kadaluarsa!']);
+                }
+            }
+
             $orderNumber = $this->generateOrderNumber();
             
             $order = Order::create([
@@ -135,16 +98,18 @@ class OrderController extends Controller
                 'order_number' => $orderNumber,
                 'customer_name' => Auth::user()->name,
                 'customer_email' => Auth::user()->email,
+                'table_number' => $request->table_number,
+                'floor' => $request->floor,
                 'items' => $items,
-                'subtotal' => (int) $subtotal,
+                'subtotal' => (int) ($subtotal - $discountAmount),
+                'voucher_code' => $appliedVoucher,
+                'discount_amount' => (int) $discountAmount,
                 'status' => 'pending',
                 'can_cancel' => true,
             ]);
             
             \Log::info('Order created:', ['order' => $order->toArray()]);
             
-            // ========== Hapus keranjang setelah order ==========
-            // Kirim event untuk clear cart
             return response()->json([
                 'success' => true, 
                 'order_id' => $order->id,
@@ -161,14 +126,12 @@ class OrderController extends Controller
         }
     }
     
-    // ========== TAMBAHKAN: Method untuk generate order number yang rapi ==========
     private function generateOrderNumber()
     {
         $date = date('ymd');
         $lastOrder = Order::whereDate('created_at', today())->count();
         $sequence = str_pad($lastOrder + 1, 3, '0', STR_PAD_LEFT);
         
-        // Format: #240429-001 (lebih kecil dan rapi)
         return "#{$date}-{$sequence}";
     }
     
@@ -185,5 +148,55 @@ class OrderController extends Controller
         $order->save();
         
         return response()->json(['success' => true]);
+    }
+    
+    public function payment($id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+            
+        // Jika sudah lunas atau menunggu konfirmasi, redirect ke history
+        if (in_array($order->payment_status, ['paid', 'awaiting_confirmation'])) {
+            return redirect()->route('orders.history')->with('success', 'Pesanan ini sudah dibayar atau sedang menunggu konfirmasi.');
+        }
+        
+        return view('order_payment', compact('order'));
+    }
+    
+    public function uploadPayment(Request $request, $id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+            
+        if (in_array($order->payment_status, ['paid', 'awaiting_confirmation'])) {
+            return back()->with('error', 'Status pembayaran pesanan ini sudah tidak dapat diubah.');
+        }
+        
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // max 5MB
+        ]);
+        
+        if ($request->hasFile('payment_proof')) {
+            $file = $request->file('payment_proof');
+            $safeOrderNumber = str_replace('#', '', $order->order_number);
+            $filename = time() . '_payment_' . $safeOrderNumber . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/payments');
+            
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            
+            $file->move($destinationPath, $filename);
+            
+            $order->payment_proof = 'uploads/payments/' . $filename;
+            $order->payment_status = 'awaiting_confirmation';
+            $order->save();
+            
+            return redirect()->route('orders.history')->with('success', 'Bukti pembayaran berhasil dikirim! Menunggu konfirmasi admin.');
+        }
+        
+        return back()->with('error', 'Gagal mengupload bukti pembayaran.');
     }
 }

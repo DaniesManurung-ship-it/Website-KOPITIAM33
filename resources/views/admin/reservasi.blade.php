@@ -166,6 +166,11 @@
                             @else
                                 <span class="floor-badge">-</span>
                             @endif
+                            @if($reservasi->assigned_table)
+                                <span class="table-badge" style="background-color: var(--sage); color: white;">
+                                    🎯 {{ $reservasi->assigned_table }}
+                                </span>
+                            @endif
                         </div>
                         @if($reservasi->notes)
                             <small style="display: block; margin-top: 0.3rem; color: var(--gray); font-size: 0.6rem;">
@@ -190,12 +195,30 @@
                         @if($reservasi->status != 'archived')
                             <div class="status-action-group">
                                 @if($reservasi->status == 'pending')
-                                    <button class="btn-confirm" onclick="updateStatus({{ $reservasi->id }}, 'confirmed', this)">
-                                        ✅ Konfirmasi
-                                    </button>
-                                    <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)">
-                                        ❌ Batalkan
-                                    </button>
+                                    @if(!$reservasi->admin_message)
+                                        <button onclick="openMessageModal({{ $reservasi->id }}, '{{ $reservasi->floor ?? 'Semua Lantai' }}')" style="background-color: var(--sage); color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; width: 100%; font-size: 0.85rem; font-weight: 600;">
+                                            💬 Kirim Info Meja
+                                        </button>
+                                        <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)" style="width: 100%;">
+                                            ❌ Batalkan
+                                        </button>
+                                    @elseif($reservasi->admin_message && !$reservasi->customer_reply)
+                                        <span style="font-size: 0.8rem; color: #d97706; display: block; margin-bottom: 8px; font-weight: 500;">⏳ Menunggu balasan customer</span>
+                                        <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)" style="width: 100%;">
+                                            ❌ Batalkan
+                                        </button>
+                                    @elseif($reservasi->customer_reply)
+                                        <div style="background: #fef3c7; border: 1px solid #fde68a; padding: 6px; border-radius: 4px; margin-bottom: 8px;">
+                                            <span style="font-size: 0.8rem; color: #92400e; display: block; font-weight: bold;">Pilihan Meja:</span>
+                                            <span style="font-size: 0.9rem; color: #b45309; display: block;">{{ $reservasi->customer_reply }}</span>
+                                        </div>
+                                        <button class="btn-confirm" onclick="updateStatus({{ $reservasi->id }}, 'confirmed', this)" style="width: 100%; margin-bottom: 8px;">
+                                            ✅ Konfirmasi Akhir
+                                        </button>
+                                        <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)" style="width: 100%;">
+                                            ❌ Batalkan
+                                        </button>
+                                    @endif
                                 @endif
                             </div>
                             <div class="archive-action-group">
@@ -236,7 +259,78 @@
     </div>
 </div>
 
+<!-- Modal Kirim Pesan Meja -->
+<div id="messageModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <h3 style="margin-bottom: 16px; color: var(--wood); font-family: 'Playfair Display', serif; font-size: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 12px;">💬 Kirim Info Meja Tersedia</h3>
+        <p style="font-size: 0.95rem; margin-bottom: 16px; color: #4b5563;">Mengirim opsi meja untuk Lantai: <span id="modalFloorName" style="font-weight: bold; color: var(--sage);"></span></p>
+        <form id="messageForm">
+            <input type="hidden" id="messageReservasiId">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 500; color: #374151;">Daftar Meja Kosong (Pisahkan dengan koma):</label>
+                <textarea id="adminMessage" rows="3" placeholder="Contoh: Meja 1, Meja 3, Meja 5" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; outline: none; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" onclick="closeMessageModal()" style="padding: 8px 20px; border: 1px solid #d1d5db; background: white; border-radius: 6px; cursor: pointer; font-weight: 500; color: #4b5563; transition: all 0.2s;">Batal</button>
+                <button type="button" onclick="submitMessage()" style="padding: 8px 20px; border: none; background: var(--sage); color: white; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s;">Kirim Pesan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    function openMessageModal(id, floor) {
+        document.getElementById('messageReservasiId').value = id;
+        document.getElementById('modalFloorName').innerText = floor || '-';
+        document.getElementById('adminMessage').value = '';
+        document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    function closeMessageModal() {
+        document.getElementById('messageModal').style.display = 'none';
+    }
+
+    function submitMessage() {
+        const id = document.getElementById('messageReservasiId').value;
+        const message = document.getElementById('adminMessage').value;
+        
+        if (!message.trim()) {
+            alert('Pesan tidak boleh kosong!');
+            return;
+        }
+
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳...';
+        btn.disabled = true;
+
+        fetch(`/admin/reservasi/${id}/message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ admin_message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                location.reload();
+            } else {
+                alert('❌ ' + (data.message || 'Gagal mengirim pesan'));
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('⚠️ Terjadi kesalahan pada server');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+
     function updateStatus(id, status, btn) {
         let statusText = status === 'confirmed' ? 'Dikonfirmasi' : 'Dibatalkan';
         

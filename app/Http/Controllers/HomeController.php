@@ -14,6 +14,11 @@ class HomeController extends Controller
                             ->limit(4)
                             ->get();
         
-        return view('home', compact('featuredMenus'));
+        $popupPromo = \App\Models\PopupPromo::where('is_active', true)
+                            ->whereDate('start_date', '<=', now())
+                            ->whereDate('end_date', '>=', now())
+                            ->first();
+
+        return view('home', compact('featuredMenus', 'popupPromo'));
     }
 }

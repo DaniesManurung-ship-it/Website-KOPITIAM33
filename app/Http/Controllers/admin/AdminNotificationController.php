@@ -18,7 +18,8 @@ class AdminNotificationController extends Controller
         $counts = Cache::remember($cacheKey, 60, function () {
             return [
                 'new_orders' => Order::where('status', 'pending')->count(),
-                'new_reservations' => Reservation::where('status', 'pending')->count(),
+                'new_reservations' => Reservation::where('status', 'pending')->whereNull('customer_reply')->count(),
+                'replied_reservations' => Reservation::where('status', 'pending')->whereNotNull('customer_reply')->count(),
                 'processed_orders' => Order::where('status', 'processed')->count(),
                 'completed_today' => Order::where('status', 'completed')
                     ->whereDate('updated_at', today())

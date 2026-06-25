@@ -46,6 +46,12 @@ class PesananController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
+            
+            // Cek apakah pesanan sudah dibayar jika ingin diproses/selesai
+            if (in_array($request->status, ['processed', 'completed']) && $order->payment_status !== 'paid') {
+                return response()->json(['success' => false, 'message' => 'Pembayaran belum dikonfirmasi!'], 400);
+            }
+            
             $order->status = $request->status;
             
             // Update can_cancel based on status
@@ -58,6 +64,23 @@ class PesananController extends Controller
             // Notifikasi sudah dihandle oleh Model Order via boot method
             
             return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+    
+    public function confirmPayment($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            if ($order->payment_status !== 'awaiting_confirmation') {
+                return response()->json(['success' => false, 'message' => 'Status pembayaran tidak valid.'], 400);
+            }
+            
+            $order->payment_status = 'paid';
+            $order->save();
+            
+            return response()->json(['success' => true, 'message' => 'Pembayaran berhasil dikonfirmasi.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }

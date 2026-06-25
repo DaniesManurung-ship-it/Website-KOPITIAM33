@@ -98,9 +98,6 @@
     }
     
     function getProductBadge(item) {
-        if (item.is_promo) {
-            return '<span class="product-badge badge-promo">🔥 Promo Spesial</span>';
-        }
         if (item.is_menu_spesial) {
             return '<span class="product-badge badge-spesial">⭐ Menu Spesial</span>';
         }
@@ -232,6 +229,23 @@
                     <div class="summary-row total">
                         <span class="summary-label">Total Pesanan</span>
                         <span class="summary-value">Rp ${total.toLocaleString('id-ID')}</span>
+                    </div>
+                    
+                    <!-- Form Pemesanan -->
+                    <div class="order-form-group" style="margin-top: 15px; margin-bottom: 15px; text-align: left;">
+                        <label for="floorSelect" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Lantai / Area <span style="color:red">*</span></label>
+                        <select id="floorSelect" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; font-family: inherit;">
+                            <option value="">-- Pilih Area --</option>
+                            <option value="Lantai 1">Lantai 1</option>
+                            <option value="Lantai 2">Lantai 2</option>
+                            <option value="Outdoor">Outdoor</option>
+                        </select>
+                        
+                        <label for="tableNumber" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Nomor Meja <span style="color:red">*</span></label>
+                        <input type="text" id="tableNumber" class="form-input" placeholder="Contoh: 12" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; font-family: inherit;">
+
+                        <label for="voucherCode" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Kode Voucher (Opsional)</label>
+                        <input type="text" id="voucherCode" class="form-input" placeholder="Masukkan kode voucher" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; text-transform: uppercase;">
                     </div>
                     
                     ${checkoutButtonHtml}
@@ -374,6 +388,15 @@
             return;
         }
         
+        const floor = document.getElementById('floorSelect').value;
+        const tableNumber = document.getElementById('tableNumber').value;
+        const voucherCode = document.getElementById('voucherCode') ? document.getElementById('voucherCode').value : '';
+        
+        if (!floor || !tableNumber) {
+            showNotification('Silakan isi Nomor Meja dan Area/Lantai terlebih dahulu!', true);
+            return;
+        }
+        
         showLoading();
         
         fetch('{{ route("order.store") }}', {
@@ -385,6 +408,9 @@
             },
             body: JSON.stringify({
                 cart: cart,
+                table_number: tableNumber,
+                floor: floor,
+                voucher_code: voucherCode,
                 payment_method: 'Cash'
             })
         })
@@ -403,10 +429,10 @@
                     cart = [];
                     localStorage.removeItem('kopitiam_cart');
                     window.dispatchEvent(new CustomEvent('cart-updated'));
-                    showNotification('Pesanan berhasil dibuat! Silakan ambil pesanan di kasir.');
+                    showNotification('Pesanan berhasil dibuat! Mengalihkan ke halaman pembayaran...');
                     setTimeout(() => {
-                        window.location.href = '{{ route("orders.history") }}';
-                    }, 2000);
+                        window.location.href = `/order/${data.order_id}/payment`;
+                    }, 1500);
                 });
             } else {
                 showNotification(data.message || 'Gagal menyimpan pesanan', true);

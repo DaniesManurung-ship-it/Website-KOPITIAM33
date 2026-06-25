@@ -27,7 +27,6 @@
                 <h4 class="footer-title">Menu Cepat</h4>
                 <ul class="footer-list">
                     <li><a href="{{ route('menu') }}">🍽️ Semua Menu</a></li>
-                    <li><a href="{{ route('promo') }}">🔥 Promo Spesial</a></li>
                     <li><a href="{{ route('menu-spesial') }}">⭐ Menu Spesial</a></li>
                     <li><a href="{{ route('reservasi') }}">📅 Reservasi</a></li>
                 </ul>

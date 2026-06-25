@@ -31,7 +31,6 @@ class CartController extends Controller
                 'image' => $item->image,
                 'db_id' => $item->id,
                 // SEKARANG METADATA-NYA TERBACA
-                'is_promo' => $metadata['is_promo'] ?? false,
                 'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
             $total += $item->price * $item->quantity;
@@ -63,7 +62,6 @@ class CartController extends Controller
                 'quantity' => $item->quantity,
                 'image' => $item->image,
                 'db_id' => $item->id,
-                'is_promo' => $metadata['is_promo'] ?? false,
                 'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
@@ -108,7 +106,6 @@ class CartController extends Controller
                 'quantity' => (int)($request->quantity ?? 1),
                 'image' => $request->image,
                 'metadata' => [
-                    'is_promo' => $request->is_promo ?? false,
                     'is_menu_spesial' => $request->is_menu_spesial ?? false,
                 ]
             ]);
@@ -128,7 +125,6 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
-                'is_promo' => $metadata['is_promo'] ?? false,
                 'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
@@ -188,7 +184,6 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
-                'is_promo' => $metadata['is_promo'] ?? false,
                 'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }
@@ -236,7 +231,6 @@ class CartController extends Controller
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'image' => $item->image,
-                'is_promo' => $metadata['is_promo'] ?? false,
                 'is_menu_spesial' => $metadata['is_menu_spesial'] ?? false,
             ];
         }

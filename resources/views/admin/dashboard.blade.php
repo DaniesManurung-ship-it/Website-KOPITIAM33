@@ -62,9 +62,9 @@
         </div>
     </div>
     
-    <!-- Chart & Recent Orders -->
-    <div class="two-columns">
-        <!-- Chart - DIAGRAM BATANG (BAR CHART) -->
+    <!-- Charts -->
+    <div class="two-columns" style="grid-template-columns: repeat(2, 1fr);">
+        <!-- Chart Pesanan -->
         <div class="chart-card">
             <div class="chart-title">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,13 +74,33 @@
             </div>
             <div class="bar-chart-container">
                 <div class="bar-chart-wrapper">
-                    <div class="custom-bar-chart" id="barChart">
+                    <div class="custom-bar-chart" id="orderChart">
                         <!-- Bar chart akan diisi dengan JavaScript -->
                     </div>
                 </div>
             </div>
         </div>
         
+        <!-- Chart Keuangan -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Statistik Keuangan Bulanan (Rp)
+            </div>
+            <div class="bar-chart-container">
+                <div class="bar-chart-wrapper">
+                    <div class="custom-bar-chart" id="revenueChart">
+                        <!-- Bar chart akan diisi dengan JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders & Reservations -->
+    <div class="two-columns">
         <!-- Recent Orders -->
         <div class="recent-card">
             <div class="recent-header">
@@ -108,7 +128,6 @@
             <div class="empty-state">Belum ada pesanan</div>
             @endforelse
         </div>
-    </div>
     
     <!-- Recent Reservations & Testimonials -->
     <div class="two-columns">
@@ -139,7 +158,10 @@
             <div class="empty-state">Belum ada reservasi</div>
             @endforelse
         </div>
-        
+    </div>
+    
+    <!-- Testimonials -->
+    <div class="two-columns" style="grid-template-columns: 1fr; margin-top: 1.5rem;">
         <!-- Testimonials -->
         <div class="recent-card">
             <div class="recent-header">
@@ -173,44 +195,83 @@
 <script>
     // Data chart dari controller
     const chartData = @json($chartData ?? array_fill(0, 12, 0));
+    const revenueData = @json($revenueData ?? array_fill(0, 12, 0));
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     
     // Cari nilai maksimum untuk skala
-    const maxValue = Math.max(...chartData, 1);
-    const chartHeight = 250; // tinggi maksimum chart dalam px
+    const maxOrderValue = Math.max(...chartData, 1);
+    const maxRevenueValue = Math.max(...revenueData, 100000); // minimal skala 100k
     
-    function renderBarChart() {
-        const container = document.getElementById('barChart');
-        if (!container) return;
+    // Format uang rupiah
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(number);
+    }
+    
+    // Format angka pendek untuk label bar (misal: 1jt, 500rb)
+    function formatShort(number) {
+        if (number >= 1000000) {
+            return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'jt';
+        } else if (number >= 1000) {
+            return (number / 1000).toFixed(0) + 'rb';
+        }
+        return number;
+    }
+    
+    function renderCharts() {
+        const orderContainer = document.getElementById('orderChart');
+        const revenueContainer = document.getElementById('revenueChart');
         
-        let html = '';
-        
-        chartData.forEach((value, index) => {
-            // Hitung tinggi bar dalam px (max 220px, sisanya untuk label)
-            const barHeight = value > 0 ? (value / maxValue) * 200 : 4;
-            const displayValue = value > 0 ? value : 0;
-            
-            html += `
-                <div class="bar-item">
-                    <div class="bar" style="height: ${barHeight}px; position: relative;">
-                        ${value > 0 ? `<div class="bar-value">${displayValue}</div>` : ''}
+        if (orderContainer) {
+            let orderHtml = '';
+            chartData.forEach((value, index) => {
+                const barHeight = value > 0 ? (value / maxOrderValue) * 200 : 4;
+                const displayValue = value > 0 ? value : 0;
+                
+                orderHtml += `
+                    <div class="bar-item" title="${months[index]}: ${value} Pesanan">
+                        <div class="bar" style="height: ${barHeight}px; position: relative;">
+                            ${value > 0 ? `<div class="bar-value" style="font-size: 0.8rem;">${displayValue}</div>` : ''}
+                        </div>
+                        <div class="bar-label">${months[index]}</div>
                     </div>
-                    <div class="bar-label">${months[index]}</div>
-                </div>
-            `;
-        });
+                `;
+            });
+            orderContainer.innerHTML = orderHtml;
+        }
         
-        container.innerHTML = html;
+        if (revenueContainer) {
+            let revenueHtml = '';
+            revenueData.forEach((value, index) => {
+                const barHeight = value > 0 ? (value / maxRevenueValue) * 200 : 4;
+                const shortValue = value > 0 ? formatShort(value) : 0;
+                const tooltipValue = formatRupiah(value);
+                
+                revenueHtml += `
+                    <div class="bar-item" title="${months[index]}: ${tooltipValue}">
+                        <div class="bar" style="height: ${barHeight}px; position: relative; background: linear-gradient(180deg, #10b981 0%, #059669 100%);">
+                            ${value > 0 ? `<div class="bar-value" style="font-size: 0.7rem; color: #059669;">${shortValue}</div>` : ''}
+                        </div>
+                        <div class="bar-label">${months[index]}</div>
+                    </div>
+                `;
+            });
+            revenueContainer.innerHTML = revenueHtml;
+        }
     }
     
     // Render chart saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
-        renderBarChart();
+        renderCharts();
     });
     
     // Responsif: update chart saat window resize
     window.addEventListener('resize', function() {
-        renderBarChart();
+        renderCharts();
     });
 </script>
 @endsection

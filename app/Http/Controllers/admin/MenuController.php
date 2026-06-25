@@ -39,14 +39,31 @@ class MenuController extends Controller
             $imagePath = 'uploads/menus/' . $filename;
         }
         
+        $is_featured = false;
+        $badge = $request->badge;
+        $is_special_menu = $request->has('is_special_menu') ? true : false;
+        
+        // Cek jika ini adalah Menu Spesial dan badge unggulan dipilih
+        if ($is_special_menu && $badge === 'unggulan') {
+            $is_featured = true;
+            $badge = null; // Opsional: Kosongkan teks badge atau biarkan tetap 'unggulan' jika ingin ditampilkan
+            
+            // Nonaktifkan unggulan lain di Menu Spesial
+            Menu::where('is_special_menu', true)->where('is_featured', true)->update(['is_featured' => false]);
+        } elseif (!$is_special_menu && $badge === 'unggulan') {
+            $badge = null; // Reset jika bukan menu spesial tapi unggulan dikirim
+        }
+        
         Menu::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
+            'is_special_menu' => $is_special_menu,
             'image' => $imagePath,
-            'badge' => $request->badge,
+            'badge' => $badge,
             'is_available' => true,
+            'is_featured' => $is_featured,
         ]);
         
         return redirect()->route('admin.menu.index')->with('success', 'Menu berhasil ditambahkan');
@@ -70,12 +87,40 @@ class MenuController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
         
+        $is_featured = $menu->is_featured;
+        $badge = $request->badge;
+        $is_special_menu = $request->has('is_special_menu') ? true : false;
+        
+        // Cek jika ini Menu Spesial dan badge unggulan dipilih
+        if ($is_special_menu && $badge === 'unggulan') {
+            $is_featured = true;
+            $badge = null;
+            
+            // Nonaktifkan unggulan lain kecuali menu ini sendiri
+            Menu::where('is_special_menu', true)
+                ->where('is_featured', true)
+                ->where('id', '!=', $id)
+                ->update(['is_featured' => false]);
+        } elseif ($is_special_menu && $is_featured) {
+            // Jika sebelumnya unggulan tapi badge diubah, cabut unggulannya
+            if ($badge !== 'unggulan' && $request->has('badge')) {
+                $is_featured = false;
+            }
+        } else {
+            $is_featured = false; // Reset jika bukan Menu Spesial
+            if ($badge === 'unggulan') {
+                $badge = null;
+            }
+        }
+
         $data = [
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
-            'badge' => $request->badge,
+            'is_special_menu' => $is_special_menu,
+            'badge' => $badge,
+            'is_featured' => $is_featured,
         ];
         
         if ($request->hasFile('image')) {

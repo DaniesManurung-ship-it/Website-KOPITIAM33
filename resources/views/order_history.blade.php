@@ -56,6 +56,11 @@
                 <div class="order-header">
                     <div>
                         <span class="order-number">{{ $order->order_number }}</span>
+                        @if($order->table_number || $order->floor)
+                        <div class="order-location" style="font-size: 0.85rem; color: #4b5563; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; margin-bottom: 4px;">
+                            <span>📍</span> {{ $order->floor ?? '-' }} - Meja {{ $order->table_number ?? '-' }}
+                        </div>
+                        @endif
                         <div class="time-detail">
                             <span class="time-item">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,17 +76,24 @@
                             </span>
                         </div>
                     </div>
-                    <span class="status-{{ $order->status }}">
-                        @if($order->status == 'pending') 
-                            ⏳ Menunggu Diproses
-                        @elseif($order->status == 'processed') 
-                            🔄 Sedang Diproses
-                        @elseif($order->status == 'completed') 
-                            ✅ Selesai
-                        @else 
-                            ❌ Dibatalkan
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                        <span class="status-{{ $order->status }}">
+                            @if($order->status == 'pending') 
+                                ⏳ Menunggu Diproses
+                            @elseif($order->status == 'processed') 
+                                🔄 Sedang Diproses
+                            @elseif($order->status == 'completed') 
+                                ✅ Selesai
+                            @else 
+                                ❌ Dibatalkan
+                            @endif
+                        </span>
+                        @if($order->status != 'cancelled')
+                        <span class="{{ $order->payment_badge_class }}" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">
+                            💳 {{ $order->payment_status_label }}
+                        </span>
                         @endif
-                    </span>
+                    </div>
                 </div>
                 
                 <div class="order-items">
@@ -97,11 +109,21 @@
                 </div>
                 
                 <div class="order-footer">
-                    <div class="order-total">
-                        Total Pesanan: <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
+                    <div class="order-total" style="display: flex; flex-direction: column; gap: 4px;">
+                        <div style="font-size: 0.9rem; color: #4b5563;">Subtotal: Rp {{ number_format($order->subtotal + ($order->discount_amount ?? 0), 0, ',', '.') }}</div>
+                        @if($order->voucher_code)
+                            <div style="font-size: 0.9rem; color: var(--sage);">Diskon ({{ $order->voucher_code }}): -Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</div>
+                        @endif
+                        <div style="font-weight: bold; font-size: 1.1rem;">Total Pesanan: <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span></div>
                     </div>
                     
                     <div class="action-buttons-group">
+                        @if($order->payment_status == 'unpaid' && $order->status != 'cancelled')
+                            <a href="{{ route('order.payment', $order->id) }}" class="btn-complete" style="background: var(--sage); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+                                💳 Bayar Sekarang
+                            </a>
+                        @endif
+                        
                         @if($order->status == 'pending' && isset($order->can_cancel) && $order->can_cancel)
                             <button class="btn-cancel" onclick="cancelOrder({{ $order->id }})">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +141,7 @@
                             </div>
                         @elseif($order->status == 'completed')
                             <div class="status-message confirmed">
-                                ✅ Pesanan telah selesai. Terima kasih!
+                                ✅ Pesanan telah selesai. Terima kasih😊!
                             </div>
                             @if($updatedAt->diffInDays($createdAt) > 0)
                             <div class="status-message confirmed" style="font-size:0.7rem;">

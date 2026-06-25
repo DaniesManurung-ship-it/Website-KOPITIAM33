@@ -84,16 +84,20 @@
                         @elseif($menu->badge == 'new')
                             <span class="badge-new">✨ Baru</span>
                         @endif
+                        @if($menu->is_special_menu)
+                            <span style="background: var(--latte); color: var(--wood); font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid var(--gold); margin-left: 0.3rem; white-space: nowrap;">👑 Spesial</span>
+                        @endif
                     </td>
                     <td>
                         @php
                             $categoryClass = '';
-                            if(in_array($menu->category, ['minuman-hot', 'minuman-cold'])) $categoryClass = 'category-minuman';
-                            elseif(in_array($menu->category, ['jus-hot', 'jus-cold'])) $categoryClass = 'category-jus';
-                            else $categoryClass = 'category-' . $menu->category;
+                            $safeCategory = str_replace(' ', '-', strtolower($menu->category));
+                            if(in_array($safeCategory, ['minuman-hot', 'minuman-cold'])) $categoryClass = 'category-minuman';
+                            elseif(in_array($safeCategory, ['jus-hot', 'jus-cold'])) $categoryClass = 'category-jus';
+                            else $categoryClass = 'category-' . $safeCategory;
                         @endphp
                         <span class="category-badge {{ $categoryClass }}">
-                            {{ ucfirst(str_replace('-', ' ', $menu->category)) }}
+                            {{ ucwords(str_replace('-', ' ', $menu->category)) }}
                         </span>
                     </td>
                     <td class="price">Rp {{ number_format($menu->price, 0, ',', '.') }}</td>
@@ -181,13 +185,22 @@
                 </div>
             </div>
             
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 15px;">
+                <input type="checkbox" name="is_special_menu" id="is_special_menu" value="1" style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="is_special_menu" style="cursor: pointer; font-weight: 500; margin: 0;">Jadikan Menu Spesial</label>
+            </div>
+            
             <div class="form-group">
                 <label class="form-label">Badge (Label Khusus)</label>
                 <select name="badge" id="badge" class="form-select">
                     <option value="">Tidak Ada</option>
                     <option value="best-seller">⭐ Best Seller</option>
                     <option value="new">✨ Baru</option>
+                    <option value="unggulan">⭐ Unggulan (Khusus Menu Spesial)</option>
                 </select>
+                <small id="badgeHelp" style="color: var(--sage); display: none; margin-top: 0.5rem;">
+                    * Opsi 'Unggulan' akan menjadikan menu ini tampil utama di halaman Menu Spesial.
+                </small>
             </div>
             
             <div class="form-group">
@@ -229,6 +242,10 @@
         document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('method').value = 'POST';
         document.getElementById('menuForm').action = "{{ route('admin.menu.store') }}";
+        
+        // Trigger change event untuk reset state dropdown UI
+        document.getElementById('category').dispatchEvent(new Event('change'));
+        
         document.getElementById('menuModal').classList.add('show');
     }
     
@@ -242,7 +259,18 @@
                 document.getElementById('description').value = data.description;
                 document.getElementById('price').value = data.price;
                 document.getElementById('category').value = data.category;
-                document.getElementById('badge').value = data.badge || '';
+                document.getElementById('is_special_menu').checked = data.is_special_menu;
+                
+                // Map is_featured ke badge 'unggulan' jika dia adalah Menu Spesial
+                if (data.is_special_menu && data.is_featured) {
+                    document.getElementById('badge').value = 'unggulan';
+                } else {
+                    document.getElementById('badge').value = data.badge || '';
+                }
+                
+                // Trigger change event untuk mengupdate UI opsi badge
+                document.getElementById('is_special_menu').dispatchEvent(new Event('change'));
+                
                 document.getElementById('imagePreview').style.display = 'none';
                 document.getElementById('method').value = 'PUT';
                 document.getElementById('menuForm').action = `/admin/menu/${id}`;
@@ -280,6 +308,24 @@
     
     document.getElementById('menuModal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
+    });
+    
+    // Tampilkan helper text badge jika is_special_menu dicentang
+    document.getElementById('is_special_menu').addEventListener('change', function() {
+        const badgeHelp = document.getElementById('badgeHelp');
+        const badgeSelect = document.getElementById('badge');
+        if (this.checked) {
+            badgeHelp.style.display = 'block';
+            Array.from(badgeSelect.options).forEach(opt => {
+                if(opt.value === 'unggulan') opt.style.display = 'block';
+            });
+        } else {
+            badgeHelp.style.display = 'none';
+            if(badgeSelect.value === 'unggulan') badgeSelect.value = '';
+            Array.from(badgeSelect.options).forEach(opt => {
+                if(opt.value === 'unggulan') opt.style.display = 'none';
+            });
+        }
     });
 </script>
 @endsection

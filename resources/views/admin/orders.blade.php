@@ -32,8 +32,20 @@
                 <tr>
                     <td>{{ $order->id }}</td>
                     <td>{{ $order->order_number }}</td>
-                    <td>{{ $order->customer_name }}<br><small>{{ $order->customer_email }}</small></td>
-                    <td>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                    <td>
+                        {{ $order->customer_name }}<br>
+                        <small>{{ $order->customer_email }}</small><br>
+                        @if($order->table_number || $order->floor)
+                            <small style="color: var(--sage); font-weight: bold;">📍 {{ $order->floor ?? '-' }} - Meja {{ $order->table_number ?? '-' }}</small>
+                        @endif
+                    </td>
+                    <td>
+                        <div style="font-weight:bold; font-size:1.05rem; color:var(--wood)">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</div>
+                        @if($order->voucher_code)
+                            <small style="color: #6b7280; text-decoration: line-through;">Rp {{ number_format($order->subtotal + $order->discount_amount, 0, ',', '.') }}</small><br>
+                            <small style="color: var(--sage); font-weight:bold;">Diskon: -Rp {{ number_format($order->discount_amount, 0, ',', '.') }} ({{ $order->voucher_code }})</small>
+                        @endif
+                    </td>
                     <td><span class="status-{{ $order->status }}">
                         @if($order->status == 'pending') Menunggu
                         @elseif($order->status == 'processed') Diproses

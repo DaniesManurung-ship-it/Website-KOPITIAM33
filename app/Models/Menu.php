@@ -11,13 +11,14 @@ class Menu extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'description', 'price', 'category', 'image', 'badge', 'is_featured', 'is_available', 'user_id', 'promo_id'
+        'name', 'description', 'price', 'category', 'is_special_menu', 'image', 'badge', 'is_featured', 'is_available', 'user_id'
     ];
     
     protected $casts = [
         'price' => 'integer',
         'is_featured' => 'boolean',
         'is_available' => 'boolean',
+        'is_special_menu' => 'boolean',
     ];
     
     // Accessor untuk URL gambar
@@ -45,15 +46,5 @@ class Menu extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function promo()
-    {
-        return $this->belongsTo(Promo::class);
-    }
-
-    public function menuSpesial()
-    {
-        return $this->hasOne(MenuSpesial::class);
     }
 }

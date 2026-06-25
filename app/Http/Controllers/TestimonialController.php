@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
 
 class TestimonialController extends Controller
 {
@@ -30,6 +31,15 @@ class TestimonialController extends Controller
                 return response()->json(['success' => false, 'message' => 'Silakan login terlebih dahulu'], 401);
             }
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+        }
+        
+        // Cek apakah user memiliki pesanan yang sudah selesai
+        $hasCompletedOrder = Order::where('user_id', Auth::id())->where('status', 'completed')->exists();
+        if (!$hasCompletedOrder) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Maaf, hanya pelanggan yang pernah melakukan pemesanan sampai selesai yang dapat memberikan testimoni.'], 403);
+            }
+            return redirect()->back()->with('error', 'Maaf, hanya pelanggan yang pernah melakukan pemesanan sampai selesai yang dapat memberikan testimoni.');
         }
         
         $request->validate([

@@ -20,32 +20,42 @@ class GalleryController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images' => 'required|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'category' => 'required|string',
             'description' => 'nullable|string'
         ]);
         
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
-            
-            // SIMPAN KE PUBLIC/UPLOADS (bukan storage)
+        $imagePaths = [];
+        $firstImage = null;
+        
+        if ($request->hasFile('images')) {
             $destinationPath = public_path('uploads/gallery');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
             }
-            $file->move($destinationPath, $filename);
-            $imagePath = 'uploads/gallery/' . $filename;
+            
+            foreach($request->file('images') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
+                $file->move($destinationPath, $filename);
+                $path = 'uploads/gallery/' . $filename;
+                $imagePaths[] = $path;
+                
+                if ($index === 0) {
+                    $firstImage = $path;
+                }
+            }
             
             Gallery::create([
                 'title' => $request->title,
-                'image' => $imagePath,
+                'image' => $firstImage, // Backward compatibility
+                'images' => $imagePaths, // New JSON column
                 'category' => $request->category,
                 'description' => $request->description,
             ]);
         }
         
-        return redirect()->route('admin.gallery')->with('success', 'Gambar berhasil ditambahkan!');
+        return redirect()->route('admin.gallery')->with('success', 'Galeri berhasil ditambahkan!');
     }
     
     public function destroy($id)
@@ -53,13 +63,19 @@ class GalleryController extends Controller
         $gallery = Gallery::findOrFail($id);
         
         // Hapus file gambar dari public/uploads
-        if ($gallery->image && file_exists(public_path($gallery->image))) {
+        if ($gallery->images && is_array($gallery->images)) {
+            foreach($gallery->images as $imgPath) {
+                if (file_exists(public_path($imgPath))) {
+                    unlink(public_path($imgPath));
+                }
+            }
+        } elseif ($gallery->image && file_exists(public_path($gallery->image))) {
             unlink(public_path($gallery->image));
         }
         
         $gallery->delete();
         
-        return redirect()->route('admin.gallery')->with('success', 'Gambar berhasil dihapus!');
+        return redirect()->route('admin.gallery')->with('success', 'Galeri berhasil dihapus!');
     }
     
     public function edit($id)
@@ -76,7 +92,8 @@ class GalleryController extends Controller
             'title' => 'required|string|max:255',
             'category' => 'required|string',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
         
         $data = [
@@ -85,21 +102,36 @@ class GalleryController extends Controller
             'description' => $request->description,
         ];
         
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('images')) {
             // Hapus gambar lama
-            if ($gallery->image && file_exists(public_path($gallery->image))) {
+            if ($gallery->images && is_array($gallery->images)) {
+                foreach($gallery->images as $imgPath) {
+                    if (file_exists(public_path($imgPath))) {
+                        unlink(public_path($imgPath));
+                    }
+                }
+            } elseif ($gallery->image && file_exists(public_path($gallery->image))) {
                 unlink(public_path($gallery->image));
             }
             
-            $file = $request->file('image');
-            $filename = time() . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
+            $imagePaths = [];
             $destinationPath = public_path('uploads/gallery');
-            $file->move($destinationPath, $filename);
-            $data['image'] = 'uploads/gallery/' . $filename;
+            
+            foreach($request->file('images') as $index => $file) {
+                $filename = time() . '_' . $index . '_' . Str::slug($request->title) . '.' . $file->getClientOriginalExtension();
+                $file->move($destinationPath, $filename);
+                $path = 'uploads/gallery/' . $filename;
+                $imagePaths[] = $path;
+                
+                if ($index === 0) {
+                    $data['image'] = $path; // Backward compatibility
+                }
+            }
+            $data['images'] = $imagePaths;
         }
         
         $gallery->update($data);
         
-        return redirect()->route('admin.gallery')->with('success', 'Gambar berhasil diupdate!');
+        return redirect()->route('admin.gallery')->with('success', 'Galeri berhasil diupdate!');
     }
 }
