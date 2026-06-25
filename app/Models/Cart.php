@@ -8,8 +8,14 @@ class Cart extends Model
 {
     protected $table = 'carts';
     protected $fillable = [
-        'user_id', 'item_id', 'item_type', 'name', 'price', 
-        'quantity', 'image', 'metadata'
+        'user_id',
+        'item_id',
+        'item_type',
+        'name',
+        'price',
+        'quantity',
+        'image',
+        'metadata'
     ];
     
     protected $casts = [

@@ -18,7 +18,9 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: #F5EFE6;
+    background: #EDE8DF;
+    color: #374151;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Wrapper untuk sidebar dan konten */
@@ -29,9 +31,10 @@ body {
 
 /* Sidebar Styles */
 .admin-sidebar {
-    width: 280px;
+    width: 260px;
     background: white;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+    border-right: 1px solid rgba(139, 168, 136, 0.12);
     position: fixed;
     left: 0;
     top: 0;
@@ -45,15 +48,16 @@ body {
 /* Konten Utama */
 .admin-content {
     flex: 1;
-    margin-left: 280px;
-    padding: 1.5rem;
+    margin-left: 260px;
+    padding: 1.75rem 2rem;
     min-height: 100vh;
+    background: #EDE8DF;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .admin-sidebar {
-        transform: translateX(-280px);
+        transform: translateX(-260px);
         overflow-x: hidden;
     }
     
@@ -177,7 +181,7 @@ body {
 .admin-notification-dropdown {
     position: fixed;
     top: 70px;
-    left: 290px;
+    left: 270px;
     width: 360px;
     background: white;
     border-radius: 12px;
@@ -380,10 +384,12 @@ body {
     padding: 0.6rem 1rem;
     border-radius: 0.5rem;
     color: #6b7280;
+    font-size: 0.9rem;
     text-decoration: none;
     transition: all 0.2s;
     margin-bottom: 0.25rem;
     position: relative;
+    white-space: nowrap;
 }
 
 .nav-item:hover {

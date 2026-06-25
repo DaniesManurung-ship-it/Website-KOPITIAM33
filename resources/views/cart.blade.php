@@ -1,24 +1,51 @@
-{{-- resources/views/cart.blade.php --}}
+{{-- resources/views/cart.blade.php - IMPROVED VERSION --}}
 @extends('layouts.app')
 
 @section('title', 'Keranjang Belanja - Café Kopitiam33')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
+<style>
+    /* Enhanced animations & transitions */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .cart-section {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .product-info {
+        animation: fadeInUp 0.4s ease backwards;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .cart-table tr {
+            animation: fadeInUp 0.5s ease backwards;
+        }
+    }
+</style>
 @endpush
 
 @section('content')
-<!-- Loading Overlay -->
+<!-- Loading Overlay with enhanced styling -->
 <div id="loadingOverlay" class="loading-overlay">
     <div class="spinner"></div>
-    <div class="loading-text">Memproses pesanan...</div>
+    <div class="loading-text">⏳ Memproses pesanan Anda...</div>
 </div>
 
-<!-- Cart Header - SOLID SAGE BACKGROUND -->
-<section class="cart-header" style="background: #8BA888 !important; background-color: #8BA888 !important;">
+<!-- Cart Header - Professional Design -->
+<section class="cart-header">
     <div class="container">
         <h1>🛒 Keranjang Belanja</h1>
-        <p>Tinjau pesanan Anda sebelum melakukan checkout</p>
+        <p>Tinjau pesanan Anda sebelum melakukan checkout di Kopitiam33</p>
     </div>
 </section>
 
@@ -30,8 +57,8 @@
 </section>
 
 <script>
-    // ========== FETCH CART DATA FROM SERVER (PER USER) ==========
-    let cart = [];
+    // ========== CART STATE MANAGEMENT ==========
+    let cart = {!! json_encode(array_values($cart ?? [])) !!};
     const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     const userId = {{ Auth::id() ?? 'null' }};
     
@@ -48,31 +75,12 @@
             } else {
                 cart = [];
             }
-            renderCart();
-            return;
         }
-        
-        fetch('{{ route("cart.get") }}', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                cart = data.cart;
-            }
-            renderCart();
-        })
-        .catch(error => {
-            console.error('Error loading cart:', error);
-            renderCart();
-        });
+        // Jika sudah login, 'cart' sudah diisi dari server melalui Blade (lebih cepat)
+        renderCart();
     }
     
-    // Fungsi untuk mendapatkan URL gambar yang benar
+    // ========== IMAGE URL HANDLER ==========
     function getImageUrl(image) {
         if (!image) {
             return '/storage/default-menu.jpg';
@@ -97,6 +105,7 @@
         return '/storage/' + image;
     }
     
+    // ========== PRODUCT BADGE ==========
     function getProductBadge(item) {
         if (item.is_menu_spesial) {
             return '<span class="product-badge badge-spesial">⭐ Menu Spesial</span>';
@@ -104,6 +113,7 @@
         return '';
     }
     
+    // ========== CART COUNT UPDATE ==========
     function updateCartCount() {
         const cartCount = document.querySelector('.cart-count');
         if (cartCount) {
@@ -117,16 +127,18 @@
         }
     }
     
+    // ========== LOGIN CHECK ==========
     function requireLogin() {
         if (!isLoggedIn) {
-            if(confirm('🔒 Anda harus login terlebih dahulu untuk melanjutkan checkout. Buka halaman login?')) {
+            window.customConfirmAction('🔒 Anda harus login terlebih dahulu untuk melanjutkan checkout. Buka halaman login?', () => {
                 window.location.href = '{{ route("login") }}';
-            }
+            });
             return false;
         }
         return true;
     }
     
+    // ========== MAIN RENDER FUNCTION ==========
     function renderCart() {
         const container = document.getElementById('cartContent');
         
@@ -137,8 +149,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                     <h3>Keranjang Kosong</h3>
-                    <p>Belum ada item di keranjang Anda. Yuk mulai pesan!</p>
-                    <a href="{{ route('menu') }}" class="shop-btn">🍽️ Mulai Belanja</a>
+                    <p>Belum ada item di keranjang Anda. Mari mulai pesan menu favorit Anda dari Kopitiam33!</p>
+                    <a href="{{ route('menu') }}" class="shop-btn">🍽️ Jelajahi Menu</a>
                 </div>
             `;
             updateCartCount();
@@ -165,15 +177,15 @@
                     <td class="item-price">Rp${item.price.toLocaleString('id-ID')}</td>
                     <td>
                         <div class="quantity-control">
-                            <button class="qty-btn" onclick="updateQuantity(${index}, -1)">−</button>
-                            <span class="qty-value">${item.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            <button class="qty-btn" onclick="updateQuantity(${index}, -1)" title="Kurangi jumlah" aria-label="Kurangi">−</button>
+                            <span class="qty-value" aria-live="polite">${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity(${index}, 1)" title="Tambah jumlah" aria-label="Tambah">+</button>
                         </div>
                     </td>
                     <td class="item-price">Rp${subtotal.toLocaleString('id-ID')}</td>
                     <td>
-                        <button class="remove-btn" onclick="removeItem(${index})" title="Hapus item">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="remove-btn" onclick="removeItem(${index})" title="Hapus item dari keranjang" aria-label="Hapus">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                         </button>
@@ -182,7 +194,7 @@
             `;
         });
         
-        // Tampilkan tombol checkout yang berbeda untuk guest dan user
+        // Conditional checkout button
         let checkoutButtonHtml = '';
         if (!isLoggedIn) {
             checkoutButtonHtml = `
@@ -198,7 +210,7 @@
             `;
         } else {
             checkoutButtonHtml = `
-                <button class="checkout-btn" onclick="checkout()">
+                <button class="checkout-btn" onclick="checkout()" title="Lanjutkan ke pembayaran">
                     ✅ Lanjutkan Pesanan
                 </button>
             `;
@@ -228,24 +240,24 @@
                     
                     <div class="summary-row total">
                         <span class="summary-label">Total Pesanan</span>
-                        <span class="summary-value">Rp ${total.toLocaleString('id-ID')}</span>
+                        <span class="summary-value" id="totalPrice">Rp ${total.toLocaleString('id-ID')}</span>
                     </div>
                     
                     <!-- Form Pemesanan -->
-                    <div class="order-form-group" style="margin-top: 15px; margin-bottom: 15px; text-align: left;">
-                        <label for="floorSelect" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Lantai / Area <span style="color:red">*</span></label>
-                        <select id="floorSelect" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; font-family: inherit;">
+                    <div class="order-form-group">
+                        <label for="floorSelect">Lantai / Area <span style="color:#D63031">*</span></label>
+                        <select id="floorSelect" class="form-select" required aria-describedby="floor-help">
                             <option value="">-- Pilih Area --</option>
                             <option value="Lantai 1">Lantai 1</option>
                             <option value="Lantai 2">Lantai 2</option>
                             <option value="Outdoor">Outdoor</option>
                         </select>
                         
-                        <label for="tableNumber" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Nomor Meja <span style="color:red">*</span></label>
-                        <input type="text" id="tableNumber" class="form-input" placeholder="Contoh: 12" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; font-family: inherit;">
+                        <label for="tableNumber">Nomor Meja <span style="color:#D63031">*</span></label>
+                        <input type="text" id="tableNumber" class="form-input" placeholder="Contoh: 12" required aria-describedby="table-help">
 
-                        <label for="voucherCode" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Kode Voucher (Opsional)</label>
-                        <input type="text" id="voucherCode" class="form-input" placeholder="Masukkan kode voucher" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; text-transform: uppercase;">
+                        <label for="voucherCode">Kode Voucher <span style="opacity:0.6">(Opsional)</span></label>
+                        <input type="text" id="voucherCode" class="form-input" placeholder="Masukkan kode voucher" style="text-transform: uppercase;">
                     </div>
                     
                     ${checkoutButtonHtml}
@@ -260,6 +272,7 @@
         updateCartCount();
     }
     
+    // ========== UTILITY FUNCTIONS ==========
     function escapeHtml(text) {
         if (!text) return '';
         const div = document.createElement('div');
@@ -267,6 +280,7 @@
         return div.innerHTML;
     }
     
+    // ========== QUANTITY UPDATE ==========
     function updateQuantity(index, delta) {
         if (cart[index]) {
             const newQty = cart[index].quantity + delta;
@@ -296,10 +310,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Update local cart dengan response dari server
                         cart = data.cart || [];
-                        showNotification(`Jumlah ${cart[index]?.name} diperbarui`);
+                        showNotification(`✏️ Jumlah ${cart[index]?.name} diperbarui`);
                         renderCart();
+                    } else {
+                        showNotification('Gagal mengubah kuantitas', true);
                     }
                 })
                 .catch(error => {
@@ -310,6 +325,7 @@
         }
     }
     
+    // ========== REMOVE ITEM ==========
     function removeItem(index) {
         const itemName = cart[index]?.name || 'Item';
         
@@ -317,7 +333,7 @@
             cart.splice(index, 1);
             localStorage.setItem('kopitiam_cart', JSON.stringify(cart));
             window.dispatchEvent(new CustomEvent('cart-updated'));
-            showNotification(`${itemName} dihapus dari keranjang`);
+            showNotification(`🗑️ ${itemName} dihapus dari keranjang`);
             renderCart();
             return;
         }
@@ -334,10 +350,11 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update local cart dengan response dari server
                 cart = data.cart || [];
-                showNotification(`${itemName} dihapus dari keranjang`);
+                showNotification(`🗑️ ${itemName} dihapus dari keranjang`);
                 renderCart();
+            } else {
+                showNotification('Gagal menghapus item', true);
             }
         })
         .catch(error => {
@@ -346,11 +363,7 @@
         });
     }
     
-    function saveCart() {
-        // Tidak perlu save ke localStorage lagi, semua disimpan di server
-        window.dispatchEvent(new CustomEvent('cart-updated'));
-    }
-    
+    // ========== LOADING HANDLERS ==========
     function showLoading() {
         const overlay = document.getElementById('loadingOverlay');
         if (overlay) overlay.classList.add('show');
@@ -361,19 +374,26 @@
         if (overlay) overlay.classList.remove('show');
     }
     
+    // ========== NOTIFICATION SYSTEM ==========
     function showNotification(message, isError = false) {
         const notif = document.createElement('div');
         notif.className = 'notification';
-        notif.style.background = isError ? '#ef4444' : 'var(--sage)';
-        notif.innerHTML = isError ? `❌ ${message}` : `✅ ${message}`;
+        if (isError) {
+            notif.style.background = '#D63031';
+            notif.innerHTML = `❌ ${message}`;
+        } else {
+            notif.style.background = 'var(--sage)';
+            notif.innerHTML = `✅ ${message}`;
+        }
         document.body.appendChild(notif);
         
         setTimeout(() => {
-            notif.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notif.remove(), 300);
-        }, 3000);
+            notif.style.animation = 'slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            setTimeout(() => notif.remove(), 400);
+        }, 3500);
     }
     
+    // ========== CHECKOUT FUNCTION ==========
     function checkout() {
         if (cart.length === 0) {
             showNotification('Keranjang masih kosong!', true);
@@ -397,6 +417,11 @@
             return;
         }
         
+        if (tableNumber.trim() === '') {
+            showNotification('Nomor meja tidak boleh kosong!', true);
+            return;
+        }
+        
         showLoading();
         
         fetch('{{ route("order.store") }}', {
@@ -408,9 +433,9 @@
             },
             body: JSON.stringify({
                 cart: cart,
-                table_number: tableNumber,
+                table_number: tableNumber.trim(),
                 floor: floor,
-                voucher_code: voucherCode,
+                voucher_code: voucherCode.trim(),
                 payment_method: 'Cash'
             })
         })
@@ -418,22 +443,14 @@
         .then(data => {
             hideLoading();
             if (data.success) {
-                // Clear server-side cart
-                fetch('{{ route("cart.clear") }}', {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                }).then(() => {
-                    cart = [];
-                    localStorage.removeItem('kopitiam_cart');
-                    window.dispatchEvent(new CustomEvent('cart-updated'));
-                    showNotification('Pesanan berhasil dibuat! Mengalihkan ke halaman pembayaran...');
-                    setTimeout(() => {
-                        window.location.href = `/order/${data.order_id}/payment`;
-                    }, 1500);
-                });
+                // Keranjang sudah dihapus di backend (OrderController)
+                cart = [];
+                localStorage.removeItem('kopitiam_cart');
+                window.dispatchEvent(new CustomEvent('cart-updated'));
+                showNotification('🎉 Pesanan berhasil dibuat! Mengalihkan ke halaman pembayaran...');
+                setTimeout(() => {
+                    window.location.href = `/order/${data.order_id}/payment`;
+                }, 1800);
             } else {
                 showNotification(data.message || 'Gagal menyimpan pesanan', true);
             }
@@ -441,12 +458,23 @@
         .catch(error => {
             hideLoading();
             console.error('Error:', error);
-            showNotification('Terjadi kesalahan. Silakan coba lagi.', true);
+            showNotification('❌ Terjadi kesalahan. Silakan coba lagi.', true);
         });
     }
     
+    // ========== INITIALIZE ON DOM READY ==========
     document.addEventListener('DOMContentLoaded', () => {
         loadCartFromServer();
+        
+        // Add enter key support for table number input
+        const tableInput = document.getElementById('tableNumber');
+        if (tableInput) {
+            tableInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkout();
+                }
+            });
+        }
     });
 </script>
 @endsection

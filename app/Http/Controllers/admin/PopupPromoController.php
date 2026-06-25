@@ -51,6 +51,8 @@ class PopupPromoController extends Controller
             $data['is_active'] = false;
         }
 
+        $data['user_id'] = \Illuminate\Support\Facades\Auth::id();
+
         \App\Models\PopupPromo::create($data);
 
         return redirect()->route('admin.popup-promo')->with('success', 'Pop-up Promo berhasil ditambahkan!');
@@ -93,6 +95,8 @@ class PopupPromoController extends Controller
         } else {
             $data['is_active'] = false;
         }
+
+        $data['user_id'] = \Illuminate\Support\Facades\Auth::id();
 
         $promo->update($data);
 

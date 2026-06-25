@@ -190,7 +190,7 @@
     }
     
     function deleteTestimonial(id) {
-        if(confirm('Apakah Anda yakin ingin menghapus testimoni ini?')) {
+        window.customConfirmAction('Apakah Anda yakin ingin menghapus testimoni ini?', () => {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/testimonial/${id}`;
@@ -200,7 +200,7 @@
             `;
             document.body.appendChild(form);
             form.submit();
-        }
+        });
     }
     
     function openEditModal(id, message, rating) {

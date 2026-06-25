@@ -11,7 +11,10 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role',
+        'name',
+        'email',
+        'password',
+        'role',
     ];
 
     protected $hidden = [
@@ -34,5 +37,10 @@ class User extends Authenticatable
     public function isCustomer()
     {
         return $this->role === 'customer';
+    }
+
+    public function popupPromos()
+    {
+        return $this->hasMany(PopupPromo::class);
     }
 }

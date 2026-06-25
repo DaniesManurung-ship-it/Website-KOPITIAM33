@@ -42,7 +42,7 @@ class ReservasiController extends Controller
             'notes' => $request->notes,
             'status' => 'pending',
             'edit_token' => Str::random(32),
-            'can_edit' => true,
+            'edit_status' => true,
         ]);
         
         return redirect()->route('reservasi.history')->with('success', 'Reservasi berhasil dikirim! Anda dapat mengedit atau membatalkan sebelum dikonfirmasi admin.');
@@ -61,7 +61,7 @@ class ReservasiController extends Controller
     {
         $reservation = Reservation::where('id', $id)
             ->where('user_id', Auth::id())
-            ->where('can_edit', true)
+            ->where('edit_status', true)
             ->where('status', 'pending')
             ->firstOrFail();
         
@@ -72,7 +72,7 @@ class ReservasiController extends Controller
     {
         $reservation = Reservation::where('id', $id)
             ->where('user_id', Auth::id())
-            ->where('can_edit', true)
+            ->where('edit_status', true)
             ->where('status', 'pending')
             ->firstOrFail();
         
@@ -100,7 +100,7 @@ class ReservasiController extends Controller
     {
         $reservation = Reservation::where('id', $id)
             ->where('user_id', Auth::id())
-            ->where('can_edit', true)
+            ->where('edit_status', true)
             ->where('status', 'pending')
             ->firstOrFail();
         

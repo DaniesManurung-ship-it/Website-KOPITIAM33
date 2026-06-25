@@ -16,26 +16,26 @@ class Reservation extends Model
     
     protected $fillable = [
         'user_id',
-        'name', 
-        'email', 
-        'phone', 
-        'date', 
-        'time', 
-        'people', 
-        'table_type', 
-        'floor', 
-        'notes', 
+        'name',
+        'email',
+        'phone',
+        'date',
+        'time',
+        'people',
+        'table_type',
+        'floor',
+        'notes',
         'status',
         'edit_token',
-        'can_edit',
+        'edit_status',
         'admin_message',
         'customer_reply',
         'assigned_table'
     ];
     
     protected $casts = [
-        'can_edit' => 'boolean',
         'date' => 'date',
+        'edit_status' => 'boolean',
     ];
     
     public function user()
@@ -45,7 +45,7 @@ class Reservation extends Model
     
     public function canBeEdited()
     {
-        return $this->can_edit && $this->status === 'pending';
+        return $this->edit_status && $this->status === 'pending';
     }
     
     // Scope untuk reservasi pending

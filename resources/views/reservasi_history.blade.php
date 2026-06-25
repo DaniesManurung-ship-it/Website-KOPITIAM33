@@ -101,7 +101,7 @@
                 </div>
                 @endif
                 
-                @if($reservasi->status == 'pending' && $reservasi->can_edit)
+                @if($reservasi->status == 'pending' && $reservasi->edit_status)
                     <div class="action-buttons">
                         @if(!$reservasi->admin_message)
                             <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn-edit">
@@ -138,7 +138,7 @@
                             </button>
                         @endif
                     </div>
-                @elseif($reservasi->status == 'pending' && !$reservasi->can_edit)
+                @elseif($reservasi->status == 'pending' && !$reservasi->edit_status)
                     <div class="status-message pending">
                         ⏳ Menunggu konfirmasi admin, reservasi tidak dapat diedit
                     </div>
@@ -194,7 +194,7 @@
 
 <script>
     function deleteReservasi(id) {
-        if(confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')) {
+        window.customConfirmAction('Apakah Anda yakin ingin membatalkan reservasi ini?', () => {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/reservasi/${id}`;
@@ -204,7 +204,7 @@
             `;
             document.body.appendChild(form);
             form.submit();
-        }
+        });
     }
     
     document.querySelectorAll('.filter-btn').forEach(btn => {

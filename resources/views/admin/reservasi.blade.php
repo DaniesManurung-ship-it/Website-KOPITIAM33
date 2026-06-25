@@ -8,15 +8,16 @@
 @endpush
 
 @section('content')
-<div>
-    <!-- Header Section -->
+<div class="admin-page">
     <div class="page-header">
-        <h1>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="28" height="28">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            Kelola Reservasi
-        </h1>
+        <div class="header-title">
+            <h1>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="28" height="28">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Kelola Reservasi
+            </h1>
+        </div>
     </div>
     
     <!-- Stats Cards -->
@@ -196,14 +197,16 @@
                             <div class="status-action-group">
                                 @if($reservasi->status == 'pending')
                                     @if(!$reservasi->admin_message)
-                                        <button onclick="openMessageModal({{ $reservasi->id }}, '{{ $reservasi->floor ?? 'Semua Lantai' }}')" style="background-color: var(--sage); color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; width: 100%; font-size: 0.85rem; font-weight: 600;">
-                                            💬 Kirim Info Meja
+                                        <button class="btn-process" onclick="openMessageModal({{ $reservasi->id }}, '{{ $reservasi->floor ?? 'Semua Lantai' }}')" style="background-color: var(--sage); color: white; border-color: var(--sage); margin-bottom: 5px; width: 100%;">
+                                            💬 Info Meja
                                         </button>
                                         <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)" style="width: 100%;">
                                             ❌ Batalkan
                                         </button>
                                     @elseif($reservasi->admin_message && !$reservasi->customer_reply)
-                                        <span style="font-size: 0.8rem; color: #d97706; display: block; margin-bottom: 8px; font-weight: 500;">⏳ Menunggu balasan customer</span>
+                                        <div style="font-size: 0.75rem; color: #d97706; text-align: center; background: #fef3c7; padding: 4px 0; border-radius: 4px; margin-bottom: 5px; font-weight: 600;">
+                                            ⏳ Menunggu Customer
+                                        </div>
                                         <button class="btn-cancel" onclick="updateStatus({{ $reservasi->id }}, 'cancelled', this)" style="width: 100%;">
                                             ❌ Batalkan
                                         </button>
@@ -334,7 +337,7 @@
     function updateStatus(id, status, btn) {
         let statusText = status === 'confirmed' ? 'Dikonfirmasi' : 'Dibatalkan';
         
-        if (confirm(`Apakah Anda yakin ingin mengubah status reservasi menjadi ${statusText}?`)) {
+        window.customConfirmAction(`Apakah Anda yakin ingin mengubah status reservasi menjadi ${statusText}?`, () => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
             btn.disabled = true;
@@ -364,13 +367,13 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     // PERBAIKAN: Mengubah method dari DELETE menjadi PATCH
 // PERBAIKAN: Menggunakan method DELETE (sama seperti pesanan)
 function archiveReservasi(id, btn) {
-    if(confirm('📦 Arsipkan reservasi ini? Reservasi akan disembunyikan dari halaman admin.')) {
+    window.customConfirmAction('📦 Arsipkan reservasi ini? Reservasi akan disembunyikan dari halaman admin.', () => {
         const originalText = btn.innerHTML;
         btn.innerHTML = '⏳...';
         btn.disabled = true;
@@ -399,11 +402,11 @@ function archiveReservasi(id, btn) {
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
-    }
+    });
 }
 
 function restoreReservasi(id, btn) {
-    if(confirm('🔄 Pulihkan reservasi ini? Reservasi akan muncul kembali di halaman admin.')) {
+    window.customConfirmAction('🔄 Pulihkan reservasi ini? Reservasi akan muncul kembali di halaman admin.', () => {
         const originalText = btn.innerHTML;
         btn.innerHTML = '⏳...';
         btn.disabled = true;
@@ -432,7 +435,7 @@ function restoreReservasi(id, btn) {
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
-    }
+    });
 }
     
     function bulkAction(action) {
@@ -458,7 +461,7 @@ function restoreReservasi(id, btn) {
             confirmMessage = `🔄 Pulihkan ${selected.length} reservasi yang dipilih?`;
         }
         
-        if(confirm(confirmMessage)) {
+        window.customConfirmAction(confirmMessage, () => {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '{{ route("admin.reservasi.bulk") }}';
@@ -469,7 +472,7 @@ function restoreReservasi(id, btn) {
             `;
             document.body.appendChild(form);
             form.submit();
-        }
+        });
     }
     
     function filterStatus(status) {

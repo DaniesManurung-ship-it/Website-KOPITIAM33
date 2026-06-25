@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-<div>
+<div class="admin-page">
     <!-- Header Section - SAMA DENGAN MENU -->
     <div class="page-header">
         <div class="header-title">
@@ -128,7 +128,7 @@
 
 <script>
     function archiveTestimonial(id) {
-        if(confirm('📦 Arsipkan testimoni ini? Testimoni akan disembunyikan dari halaman customer.')) {
+        window.customConfirmAction('📦 Arsipkan testimoni ini? Testimoni akan disembunyikan dari halaman customer.', () => {
             const btn = event.target;
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
@@ -158,11 +158,11 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function restoreTestimonial(id) {
-        if(confirm('🔄 Pulihkan testimoni ini? Testimoni akan muncul kembali di halaman customer.')) {
+        window.customConfirmAction('🔄 Pulihkan testimoni ini? Testimoni akan muncul kembali di halaman customer.', () => {
             const btn = event.target;
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
@@ -192,11 +192,11 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function deleteTestimonial(id) {
-        if(confirm('⚠️ Yakin ingin menghapus testimoni ini? Data tidak dapat dikembalikan!')) {
+        window.customConfirmAction('⚠️ Yakin ingin menghapus testimoni ini? Data tidak dapat dikembalikan!', () => {
             const btn = event.target;
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
@@ -225,7 +225,7 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function filterTestimonials(status) {

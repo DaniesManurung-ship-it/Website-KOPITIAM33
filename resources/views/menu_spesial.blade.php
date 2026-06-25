@@ -152,9 +152,9 @@
     
     function requireLogin() {
         if (!isLoggedIn) {
-            if(confirm('🔒 Anda harus login terlebih dahulu. Buka halaman login?')) {
+            window.customConfirmAction('🔒 Anda harus login terlebih dahulu. Buka halaman login?', () => {
                 window.location.href = '{{ route("login") }}';
-            }
+            });
             return false;
         }
         return true;

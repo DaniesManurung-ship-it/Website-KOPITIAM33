@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div>
+<div class="admin-page">
     <!-- Header Section -->
     <div class="page-header">
         <div class="header-title">
@@ -263,14 +263,14 @@
     }
     
     function deleteGallery(id) {
-        if(confirm('Yakin ingin menghapus gambar ini?')) {
+        window.customConfirmAction('Yakin ingin menghapus gambar ini?', () => {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/admin/gallery/${id}`;
             form.innerHTML = `@csrf @method('DELETE')`;
             document.body.appendChild(form);
             form.submit();
-        }
+        });
     }
     
     function closeModal() {

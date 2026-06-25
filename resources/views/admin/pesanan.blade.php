@@ -7,14 +7,16 @@
 @endpush
 
 @section('content')
-<div>
+<div class="admin-page">
     <div class="page-header">
-        <h1>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="28" height="28">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-            </svg>
-            Kelola Pesanan
-        </h1>
+        <div class="header-title">
+            <h1>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="28" height="28">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                Kelola Pesanan
+            </h1>
+        </div>
     </div>
     
     <!-- Stats Cards -->
@@ -129,8 +131,8 @@
                         </div>
                         <div class="customer-email" style="margin-bottom: 5px;">{{ $pesanan->customer_email }}</div>
                         @if($pesanan->table_number || $pesanan->floor)
-                        <div class="customer-location" style="font-size: 0.85rem; color: #4b5563; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px;">
-                            <span>📍</span> {{ $pesanan->floor ?? '-' }} - Meja {{ $pesanan->table_number ?? '-' }}
+                        <div class="customer-location" style="font-size: 0.75rem; color: #4b5563; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px;">
+                            {{ $pesanan->floor ?? '-' }} - Meja {{ $pesanan->table_number ?? '-' }}
                         </div>
                         @endif
                      </td>
@@ -276,7 +278,7 @@
     function updateStatus(id, status, btn) {
         let statusText = status == 'processed' ? 'Diproses' : (status == 'completed' ? 'Selesai' : 'Dibatalkan');
         
-        if(confirm(`Ubah status pesanan menjadi ${statusText}?`)) {
+        window.customConfirmAction(`Ubah status pesanan menjadi ${statusText}?`, () => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
             btn.disabled = true;
@@ -306,7 +308,7 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function viewPaymentProof(id, imageUrl) {
@@ -325,7 +327,7 @@
     }
     
     function confirmPayment(id) {
-        if(confirm('Konfirmasi bahwa pembayaran ini valid dan LUNAS?')) {
+        window.customConfirmAction('Konfirmasi bahwa pembayaran ini valid dan LUNAS?', () => {
             const btn = document.getElementById('confirmPaymentBtn');
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳ Memproses...';
@@ -355,11 +357,11 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function archiveOrder(id, btn) {
-        if(confirm('📦 Arsipkan pesanan ini? Pesanan akan disembunyikan dari halaman admin.')) {
+        window.customConfirmAction('📦 Arsipkan pesanan ini? Pesanan akan disembunyikan dari halaman admin.', () => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
             btn.disabled = true;
@@ -388,11 +390,11 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function restoreOrder(id, btn) {
-        if(confirm('🔄 Pulihkan pesanan ini? Pesanan akan muncul kembali di halaman admin.')) {
+        window.customConfirmAction('🔄 Pulihkan pesanan ini? Pesanan akan muncul kembali di halaman admin.', () => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳...';
             btn.disabled = true;
@@ -421,7 +423,7 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
-        }
+        });
     }
     
     function filterStatus(status) {

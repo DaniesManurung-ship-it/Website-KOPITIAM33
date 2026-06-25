@@ -11,7 +11,16 @@ class Menu extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'description', 'price', 'category', 'is_special_menu', 'image', 'badge', 'is_featured', 'is_available', 'user_id'
+        'name',
+        'description',
+        'price',
+        'category',
+        'is_special_menu',
+        'image',
+        'badge',
+        'is_featured',
+        'is_available',
+        'user_id'
     ];
     
     protected $casts = [

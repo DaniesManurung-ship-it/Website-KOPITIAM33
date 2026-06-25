@@ -57,14 +57,14 @@ class ReservasiController extends Controller
             $reservasi->status = $request->status;
             
             if (in_array($request->status, ['confirmed', 'cancelled', 'completed', 'archived'])) {
-                $reservasi->can_edit = false;
+                $reservasi->edit_status = false;
                 
                 // Jika konfirmasi dan customer sudah memilih meja, simpan sebagai assigned_table
                 if ($request->status == 'confirmed' && $reservasi->customer_reply) {
                     $reservasi->assigned_table = $reservasi->customer_reply;
                 }
             } elseif ($request->status == 'pending') {
-                $reservasi->can_edit = true;
+                $reservasi->edit_status = true;
             }
             
             $reservasi->save();
@@ -73,7 +73,7 @@ class ReservasiController extends Controller
                 'success' => true,
                 'message' => 'Status berhasil diubah',
                 'status' => $reservasi->status,
-                'can_edit' => $reservasi->can_edit
+                'edit_status' => $reservasi->edit_status
             ]);
             
         } catch (\Exception $e) {
@@ -88,7 +88,7 @@ class ReservasiController extends Controller
         try {
             $reservasi = Reservation::findOrFail($id);
             $reservasi->status = 'archived';
-            $reservasi->can_edit = false;
+            $reservasi->edit_status = false;
             $reservasi->save();
             
             return response()->json(['success' => true, 'message' => 'Reservasi telah diarsipkan']);
@@ -102,7 +102,7 @@ class ReservasiController extends Controller
         try {
             $reservasi = Reservation::findOrFail($id);
             $reservasi->status = 'pending';
-            $reservasi->can_edit = true;
+            $reservasi->edit_status = true;
             $reservasi->save();
             
             return response()->json(['success' => true, 'message' => 'Reservasi berhasil dipulihkan']);
@@ -141,7 +141,7 @@ class ReservasiController extends Controller
             $reservasi->update($validated);
             
             if (in_array($reservasi->status, ['confirmed', 'cancelled', 'completed', 'archived'])) {
-                $reservasi->can_edit = false;
+                $reservasi->edit_status = false;
                 $reservasi->save();
             }
             
@@ -161,16 +161,16 @@ class ReservasiController extends Controller
             }
             
             if ($request->action == 'archive') {
-                Reservation::whereIn('id', $ids)->update(['status' => 'archived', 'can_edit' => false]);
+                Reservation::whereIn('id', $ids)->update(['status' => 'archived', 'edit_status' => false]);
                 $message = count($ids) . ' reservasi berhasil diarsipkan!';
             } elseif ($request->action == 'confirm') {
-                Reservation::whereIn('id', $ids)->update(['status' => 'confirmed', 'can_edit' => false]);
+                Reservation::whereIn('id', $ids)->update(['status' => 'confirmed', 'edit_status' => false]);
                 $message = count($ids) . ' reservasi berhasil dikonfirmasi!';
             } elseif ($request->action == 'cancel') {
-                Reservation::whereIn('id', $ids)->update(['status' => 'cancelled', 'can_edit' => false]);
+                Reservation::whereIn('id', $ids)->update(['status' => 'cancelled', 'edit_status' => false]);
                 $message = count($ids) . ' reservasi berhasil dibatalkan!';
             } elseif ($request->action == 'restore') {
-                Reservation::whereIn('id', $ids)->update(['status' => 'pending', 'can_edit' => true]);
+                Reservation::whereIn('id', $ids)->update(['status' => 'pending', 'edit_status' => true]);
                 $message = count($ids) . ' reservasi berhasil dipulihkan!';
             } else {
                 return redirect()->route('admin.reservasi')->with('error', 'Aksi tidak valid');
@@ -212,7 +212,7 @@ class ReservasiController extends Controller
                     $r->floor ?? '-', 
                     $r->notes ?? '-', 
                     $r->status,
-                    $r->can_edit ? 'Ya' : 'Tidak', 
+                    $r->edit_status ? 'Ya' : 'Tidak', 
                     $r->created_at
                 ]);
             }

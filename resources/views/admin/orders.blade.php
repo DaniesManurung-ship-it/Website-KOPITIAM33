@@ -72,24 +72,24 @@
 
 <script>
     function updateStatus(id, status) {
-        if(confirm(`Ubah status pesanan menjadi ${status}?`)) {
+        window.customConfirmAction(`Ubah status pesanan menjadi ${status}?`, () => {
             fetch(`/admin/orders/${id}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify({ status: status })
             }).then(() => location.reload());
-        }
+        });
     }
     
     function deleteOrder(id) {
-        if(confirm('Yakin ingin menghapus pesanan ini?')) {
+        window.customConfirmAction('Yakin ingin menghapus pesanan ini?', () => {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/admin/orders/${id}`;
             form.innerHTML = `@csrf @method('DELETE')`;
             document.body.appendChild(form);
             form.submit();
-        }
+        });
     }
 </script>
 @endsection

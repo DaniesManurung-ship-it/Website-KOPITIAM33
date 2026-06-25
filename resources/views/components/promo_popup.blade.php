@@ -21,15 +21,16 @@
     }
 
     .promo-popup-content {
-        background: white;
-        border-radius: 12px;
+        background: radial-gradient(circle at top right, #3E2723 0%, #1F110B 100%);
+        border: 1px solid rgba(212, 175, 55, 0.3); /* Subtle Gold border */
+        border-radius: 20px;
         width: 85%;
         max-width: 380px;
         position: relative;
         transform: scale(0.9) translateY(20px);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.15);
     }
 
     .promo-popup-overlay.show .promo-popup-content {
@@ -61,93 +62,191 @@
         color: #ef4444;
     }
 
+    .promo-popup-img-container {
+        position: relative;
+        width: 100%;
+        height: 160px;
+    }
+
     .promo-popup-img {
         width: 100%;
-        height: 140px;
+        height: 100%;
         object-fit: cover;
     }
 
+    .promo-popup-img-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 80px;
+        background: linear-gradient(to bottom, rgba(31,17,11,0) 0%, #1F110B 100%);
+    }
+
     .promo-popup-body {
-        padding: 16px;
+        padding: 0px 24px 28px;
         text-align: center;
+        position: relative;
+        z-index: 2;
     }
 
     .promo-popup-title {
         font-family: 'Playfair Display', serif;
-        color: var(--wood);
-        font-size: 1.25rem;
-        margin-bottom: 6px;
-        font-weight: 700;
+        background: linear-gradient(45deg, #F3E5AB 0%, #D4AF37 50%, #FFF8DC 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
     }
 
     .promo-popup-desc {
-        color: #4b5563;
-        font-size: 0.85rem;
-        margin-bottom: 12px;
-        line-height: 1.4;
+        color: #E0E0E0;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        font-style: italic;
     }
 
     .promo-popup-dates {
         display: inline-block;
-        background: #f3f4f6;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        color: #6b7280;
-        margin-bottom: 12px;
-        font-weight: 500;
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        padding: 6px 16px;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        color: #F3E5AB;
+        margin-bottom: 24px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    @keyframes pulse-glow {
+        0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
+        50% { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.8)); }
+        100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
     }
 
     .promo-popup-box {
         position: relative;
-        margin: 10px auto;
-        width: 100px;
+        margin: 20px auto 30px;
+        width: 120px;
         height: 80px;
         cursor: pointer;
+        animation: pulse-glow 2.5s infinite ease-in-out;
         transition: transform 0.3s;
+        background: #e8b072; /* Inside back of envelope */
+        border-radius: 4px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .promo-popup-box:hover {
-        transform: translateY(-5px) scale(1.05);
+        animation: none;
+        transform: translateY(-5px) scale(1.1);
     }
 
-    /* Box Animation Elements */
-    .box-lid {
+    /* Envelope Animation Elements */
+    /* Envelope Animation Elements */
+    .envelope-flap {
+        width: 0;
+        height: 0;
+        border-left: 60px solid transparent;
+        border-right: 60px solid transparent;
+        border-top: 50px solid #de9f5f; /* Top flap color */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 4;
+        transform-origin: top;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .envelope-letter {
+        position: absolute;
+        bottom: 5px;
+        left: 10px;
         width: 100px;
-        height: 35px;
-        background: var(--sage);
-        border-radius: 8px;
+        height: 60px;
+        background: #fff;
+        z-index: 1;
+        transition: transform 0.6s;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        box-sizing: border-box;
+        gap: 6px;
+    }
+    
+    .envelope-letter-line {
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+    }
+
+    .envelope-left {
+        width: 0;
+        height: 0;
+        border-top: 40px solid transparent;
+        border-bottom: 40px solid transparent;
+        border-left: 60px solid #d49354;
         position: absolute;
         top: 0;
         left: 0;
         z-index: 2;
-        transform-origin: bottom center;
-        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
-    .box-lid::before {
-        content: '🎁';
-        font-size: 1.25rem;
+    .envelope-right {
+        width: 0;
+        height: 0;
+        border-top: 40px solid transparent;
+        border-bottom: 40px solid transparent;
+        border-right: 60px solid #d49354;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
     }
 
-    .box-body {
-        width: 90px;
-        height: 60px;
-        background: var(--matcha);
-        border-radius: 0 0 8px 8px;
+    .envelope-bottom {
+        width: 0;
+        height: 0;
+        border-left: 60px solid transparent;
+        border-right: 60px solid transparent;
+        border-bottom: 50px solid #eab883;
         position: absolute;
         bottom: 0;
-        left: 5px;
-        z-index: 1;
-        box-shadow: inset 0 10px 20px rgba(0,0,0,0.1);
+        left: 0;
+        z-index: 3;
     }
 
-    .promo-popup-box.opened .box-lid {
-        transform: rotateX(120deg) translateY(-20px);
+    .envelope-seal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        z-index: 5;
+        transition: opacity 0.4s;
+        line-height: 1;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+    }
+
+    .promo-popup-box.opened .envelope-flap {
+        transform: rotateX(180deg);
+        z-index: 0;
+    }
+
+    .promo-popup-box.opened .envelope-letter {
+        transform: translateY(-40px);
+        z-index: 3;
+    }
+
+    .promo-popup-box.opened .envelope-seal {
         opacity: 0;
     }
 
@@ -156,13 +255,28 @@
         opacity: 0;
         transform: translateY(10px) scale(0.9);
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        background: white;
-        padding: 12px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        border: 2px dashed var(--sage);
-        margin: 0 auto;
+        background: linear-gradient(135deg, #FFF8DC 0%, #F5DEB3 100%);
+        padding: 20px 16px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        border: 2px dashed #B8860B;
+        margin: 10px auto 0;
         width: 90%;
+        position: relative;
+    }
+
+    .voucher-reveal::before {
+        content: '👑';
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3E2723;
+        border: 2px solid #D4AF37;
+        padding: 4px;
+        font-size: 1.2rem;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .voucher-reveal.show {
@@ -172,35 +286,44 @@
     }
 
     .voucher-code-text {
-        font-family: monospace;
-        font-size: 1.25rem;
-        font-weight: bold;
-        color: var(--wood);
-        letter-spacing: 1px;
-        margin: 6px 0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #8B4513;
+        letter-spacing: 3px;
+        margin: 10px 0;
+        text-transform: uppercase;
+        text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
     }
 
     .voucher-discount {
-        color: #10b981;
-        font-weight: bold;
-        font-size: 1rem;
+        color: #c62828;
+        font-weight: 900;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        margin-bottom: 5px;
     }
 
     .btn-claim {
-        background: var(--wood);
-        color: white;
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        color: #3E2723;
         border: none;
         padding: 12px 24px;
         border-radius: 8px;
-        font-weight: 600;
+        font-weight: 800;
         width: 100%;
         cursor: pointer;
-        transition: background 0.3s;
+        transition: all 0.3s;
         margin-top: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
     }
 
     .btn-claim:hover {
-        background: #5a3c22;
+        background: linear-gradient(135deg, #FFDF00 0%, #D4AF37 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
     }
 
     .guest-message {
@@ -222,40 +345,50 @@
             </svg>
         </button>
 
-        @if($popupPromo->image)
-            <img src="{{ asset($popupPromo->image) }}" alt="{{ $popupPromo->title }}" class="promo-popup-img" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}'; this.style.display='none';">
-        @else
-            <div class="promo-popup-img" style="background: var(--cream); display:flex; align-items:center; justify-content:center;">
-                <span style="font-size:4rem;">🎉</span>
-            </div>
-        @endif
+        <div class="promo-popup-img-container">
+            @if($popupPromo->image)
+                <img src="{{ asset($popupPromo->image) }}" alt="{{ $popupPromo->title }}" class="promo-popup-img" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}'; this.style.display='none';">
+            @else
+                <div class="promo-popup-img" style="background: var(--cream); display:flex; align-items:center; justify-content:center; height: 100%;">
+                    <span style="font-size:4rem;">🎉</span>
+                </div>
+            @endif
+        </div>
 
         <div class="promo-popup-body">
             <h2 class="promo-popup-title">{{ $popupPromo->title }}</h2>
             <p class="promo-popup-desc">{{ $popupPromo->description }}</p>
             <div class="promo-popup-dates">
-                🗓️ Berlaku: {{ \Carbon\Carbon::parse($popupPromo->start_date)->format('d M') }} - {{ \Carbon\Carbon::parse($popupPromo->end_date)->format('d M Y') }}
+                🌟 Berlaku: {{ \Carbon\Carbon::parse($popupPromo->start_date)->format('d M') }} - {{ \Carbon\Carbon::parse($popupPromo->end_date)->format('d M Y') }}
             </div>
 
             @auth
                 <div id="claimSection">
-                    <p style="font-weight: 600; color: var(--wood); margin-bottom: 10px;">Klik kotak di bawah untuk klaim!</p>
+                    <p style="font-weight: 800; color: #D4AF37; margin-bottom: 5px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Klik Amplop Untuk Klaim!</p>
                     <div class="promo-popup-box" id="promoBox">
-                        <div class="box-lid"></div>
-                        <div class="box-body"></div>
+                        <div class="envelope-flap"></div>
+                        <div class="envelope-letter">
+                            <div class="envelope-letter-line" style="width: 40%;"></div>
+                            <div class="envelope-letter-line" style="width: 80%;"></div>
+                            <div class="envelope-letter-line" style="width: 60%;"></div>
+                        </div>
+                        <div class="envelope-left"></div>
+                        <div class="envelope-right"></div>
+                        <div class="envelope-bottom"></div>
+                        <div class="envelope-seal">❤️</div>
                     </div>
                     <div class="voucher-reveal" id="voucherReveal">
-                        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Kode Voucher Anda</div>
+                        <div style="font-size: 0.8rem; color: #8B4513; text-transform: uppercase; font-weight: 700;">Kode Voucher Anda</div>
                         <div class="voucher-code-text" id="voucherCodeText">{{ $popupPromo->voucher_code }}</div>
                         <div class="voucher-discount">Diskon {{ $popupPromo->discount_percent }}%</div>
-                        <button onclick="copyPromoCode()" class="btn-claim" id="copyBtn" style="margin-top: 10px; padding: 6px 12px; font-size: 0.85rem; background: var(--sage); display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                        <button onclick="copyPromoCode()" class="btn-claim" id="copyBtn" style="margin-top: 15px; padding: 10px 16px; font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(to right, #4caf50, #2e7d32); color: white; box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
                             </svg>
                             Salin Kode
                         </button>
                     </div>
-                    <p id="claimInstruction" style="font-size: 0.75rem; color: #6b7280; display: none; margin-top: 15px;">
+                    <p id="claimInstruction" style="font-size: 0.8rem; color: #A0A0A0; display: none; margin-top: 20px; font-style: italic;">
                         Gunakan kode di atas saat checkout pemesanan.
                     </p>
                 </div>
@@ -293,13 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.setItem(storageKey, 'true'); // Save to session storage so it doesn't appear again in this session
     });
 
-    // Close when clicking outside
-    overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) {
-            overlay.classList.remove('show');
-            sessionStorage.setItem(storageKey, 'true');
-        }
-    });
+    // Prevent closing when clicking outside (overlay click event removed as requested)
 
     // Animation box click
     if (promoBox) {

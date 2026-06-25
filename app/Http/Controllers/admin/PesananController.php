@@ -54,9 +54,9 @@ class PesananController extends Controller
             
             $order->status = $request->status;
             
-            // Update can_cancel based on status
+            // Update cancel_status based on status
             if ($request->status != 'pending') {
-                $order->can_cancel = false;
+                $order->cancel_status = false;
             }
             
             $order->save();
@@ -91,7 +91,7 @@ class PesananController extends Controller
         try {
             $order = Order::findOrFail($id);
             $order->status = 'archived';
-            $order->can_cancel = false;
+            $order->cancel_status = false;
             $order->save();
             
             return response()->json(['success' => true, 'message' => 'Pesanan telah diarsipkan']);
@@ -105,7 +105,7 @@ class PesananController extends Controller
         try {
             $order = Order::findOrFail($id);
             $order->status = 'pending';
-            $order->can_cancel = true;
+            $order->cancel_status = true;
             $order->save();
             
             return response()->json(['success' => true, 'message' => 'Pesanan berhasil dipulihkan']);

@@ -1,0 +1,134 @@
+/* Pop-up Promo — styles spesifik halaman (shared components di base.css) */
+
+.table { min-width: 820px; }
+
+.promo-img-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--light);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.promo-title {
+    font-weight: 600;
+    color: var(--wood);
+}
+
+.promo-desc {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.2rem;
+}
+
+.period-dates {
+    font-size: 0.85rem;
+    color: var(--dark);
+    white-space: nowrap;
+    margin-bottom: 0.4rem;
+}
+
+.period-arrow {
+    color: var(--gray);
+    margin: 0 0.25rem;
+}
+
+.period-status {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.period-ongoing { background: #E8F5E9; color: var(--success); }
+.period-upcoming { background: #dbeafe; color: #1e40af; }
+.period-expired { background: #f3f4f6; color: #4b5563; }
+
+.voucher-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--light);
+    border: 1px dashed var(--sage);
+    color: var(--sage-dark);
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.voucher-code:hover { background: var(--sage-light); }
+
+.voucher-code.copied {
+    background: #E8F5E9;
+    border-color: var(--success);
+    color: var(--success);
+    border-style: solid;
+}
+
+.voucher-code svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.discount-tag {
+    display: inline-block;
+    margin-top: 0.4rem;
+    background: linear-gradient(135deg, var(--accent), var(--wood));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+}
+
+.form-col { flex: 1; }
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--sage);
+}
+
+.form-check label {
+    font-weight: 600;
+    color: var(--wood);
+    cursor: pointer;
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.preview-image {
+    max-width: 100%;
+    height: 140px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    margin-top: 0.6rem;
+    border: 2px solid var(--border);
+    display: none;
+}
+
+.modal-content { max-width: 600px; }

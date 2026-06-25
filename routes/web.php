@@ -14,7 +14,6 @@ use App\Http\Controllers\CartController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
-use App\Http\Controllers\Admin\MenuSpesialController as AdminMenuSpesialController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
 use App\Http\Controllers\Admin\PesananController;
@@ -124,10 +123,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('menu', AdminMenuController::class);
     Route::patch('menu/{id}/toggle-available', [AdminMenuController::class, 'toggleAvailable'])->name('menu.toggle');
     
-    // Menu Spesial Management
-    Route::get('/menu-spesial', [AdminMenuSpesialController::class, 'index'])->name('menu-spesial');
-    Route::patch('/menu-spesial/{id}/toggle-featured', [AdminMenuSpesialController::class, 'toggleFeatured'])->name('menu-spesial.toggle-featured');
-    Route::patch('/menu-spesial/{id}/toggle-status', [AdminMenuSpesialController::class, 'toggleStatus'])->name('menu-spesial.toggle-status');
+
     
     // Popup Promo Management
     Route::get('/popup-promo', [\App\Http\Controllers\Admin\PopupPromoController::class, 'index'])->name('popup-promo');

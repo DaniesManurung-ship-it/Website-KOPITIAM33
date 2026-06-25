@@ -8,6 +8,16 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logokopitiam33.png') }}">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'Café Kopitiam33') }} - @yield('title')</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logokopitiam33.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +26,48 @@
     
     <!-- Alpine JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.customConfirmAction = function(message, callback) {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#285430',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal',
+                background: '#fdfbf7',
+                customClass: {
+                    title: 'swal-title',
+                    popup: 'swal-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                }
+            });
+        };
+
+        window.customConfirmForm = function(form, event, message) {
+            if (form.dataset.confirmed === 'true') return true;
+            event.preventDefault();
+            window.customConfirmAction(message, () => {
+                form.dataset.confirmed = 'true';
+                form.submit();
+            });
+            return false;
+        };
+    </script>
+
+    <style>
+        .swal-popup { border-radius: 12px !important; }
+        .swal-title { color: #3b2818 !important; }
+    </style>
     
     <link rel="stylesheet" href="{{ asset('css/layouts/app.css') }}">
     

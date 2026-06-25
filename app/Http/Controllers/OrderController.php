@@ -105,10 +105,14 @@ class OrderController extends Controller
                 'voucher_code' => $appliedVoucher,
                 'discount_amount' => (int) $discountAmount,
                 'status' => 'pending',
-                'can_cancel' => true,
+                'cancel_status' => true,
             ]);
             
             \Log::info('Order created:', ['order' => $order->toArray()]);
+            
+            // Hapus keranjang setelah pesanan berhasil dibuat
+            \App\Models\Cart::where('user_id', Auth::id())->delete();
+            session()->forget('cart_' . Auth::id());
             
             return response()->json([
                 'success' => true, 
@@ -139,12 +143,12 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)
             ->where('user_id', Auth::id())
-            ->where('can_cancel', true)
+            ->where('cancel_status', true)
             ->where('status', 'pending')
             ->firstOrFail();
         
         $order->status = 'cancelled';
-        $order->can_cancel = false;
+        $order->cancel_status = false;
         $order->save();
         
         return response()->json(['success' => true]);

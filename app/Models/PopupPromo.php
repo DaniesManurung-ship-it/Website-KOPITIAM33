@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PopupPromo extends Model
 {
     protected $fillable = [
+        'user_id',
         'title',
         'description',
         'image',
@@ -22,4 +23,9 @@ class PopupPromo extends Model
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

@@ -124,7 +124,7 @@
                             </a>
                         @endif
                         
-                        @if($order->status == 'pending' && isset($order->can_cancel) && $order->can_cancel)
+                        @if($order->status == 'pending' && isset($order->cancel_status) && $order->cancel_status)
                             <button class="btn-cancel" onclick="cancelOrder({{ $order->id }})">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -195,7 +195,7 @@
 
 <script>
     function cancelOrder(id) {
-        if(confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
+        window.customConfirmAction('Apakah Anda yakin ingin membatalkan pesanan ini?', () => {
             const cancelBtn = event.target;
             const originalText = cancelBtn.innerHTML;
             
@@ -234,7 +234,7 @@
                 cancelBtn.disabled = false;
                 cancelBtn.innerHTML = originalText;
             });
-        }
+        });
     }
     
     // Filter functionality

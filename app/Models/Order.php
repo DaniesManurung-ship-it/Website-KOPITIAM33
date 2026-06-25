@@ -29,7 +29,7 @@ class Order extends Model
         'status',
         'payment_status',
         'payment_proof',
-        'can_cancel',
+        'cancel_status',
         'notes'
     ];
     

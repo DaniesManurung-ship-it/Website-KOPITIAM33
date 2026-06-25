@@ -176,7 +176,7 @@
 
 <script>
 function markAsRead(btn, id) {
-    if(confirm('Tandai notifikasi ini sebagai sudah dibaca?')) {
+    window.customConfirmAction('Tandai notifikasi ini sebagai sudah dibaca?', () => {
         const originalText = btn.innerHTML;
         
         btn.disabled = true;
@@ -207,11 +207,11 @@ function markAsRead(btn, id) {
             btn.disabled = false;
             btn.innerHTML = originalText;
         });
-    }
+    });
 }
 
 function deleteNotification(btn, id) {
-    if(confirm('Apakah Anda yakin ingin menghapus notifikasi ini?')) {
+    window.customConfirmAction('Apakah Anda yakin ingin menghapus notifikasi ini?', () => {
         const originalText = btn.innerHTML;
         
         btn.disabled = true;
@@ -251,7 +251,7 @@ function deleteNotification(btn, id) {
             btn.disabled = false;
             btn.innerHTML = originalText;
         });
-    }
+    });
 }
 
 // Filter functionality
