@@ -263,7 +263,7 @@
                     ${checkoutButtonHtml}
                     
                     <div class="payment-note">
-                        💳 Pembayaran dilakukan di tempat saat mengambil pesanan
+                        💳Silahkan Lakukan Pembayaran😊
                     </div>
                 </div>
             </div>

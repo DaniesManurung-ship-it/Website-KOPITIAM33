@@ -10,7 +10,10 @@ class MenuController extends Controller
 {
     public function index()
     {
-        $menus = Menu::where('is_available', true)->orderBy('is_featured', 'desc')->get();
+        $menus = Menu::where('is_available', true)
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 1 ELSE 0 END DESC")
+            ->orderBy('is_featured', 'desc')
+            ->get();
         
         // Proses image path untuk setiap menu
         foreach ($menus as $menu) {
