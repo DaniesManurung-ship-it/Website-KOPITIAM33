@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
     public function index()
     {
@@ -19,6 +19,6 @@ class HomeController extends Controller
                             ->whereDate('end_date', '>=', now())
                             ->first();
 
-        return view('home', compact('featuredMenus', 'popupPromo'));
+        return view('dashboard', compact('featuredMenus', 'popupPromo'));
     }
 }

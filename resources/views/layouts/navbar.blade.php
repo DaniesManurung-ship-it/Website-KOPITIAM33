@@ -22,7 +22,7 @@
     <div class="nav-inner">
         <div class="nav-content">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="logo-link">
+            <a href="{{ route('dashboard') }}" class="logo-link">
                 <div class="logo-circle">
                     <span class="logo-text">CK</span>
                 </div>
@@ -31,7 +31,7 @@
 
             <!-- Desktop Menu -->
             <div class="desktop-menu">
-                <a href="{{ route('home') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'home' }">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="nav-link" :class="{ 'nav-link-active': activeMenu === 'dashboard' }">Dashboard</a>
 
                 <!-- Dropdown Menu -->
                 <div class="dropdown" 
@@ -207,7 +207,7 @@
         <!-- Mobile Menu (Sidebar) -->
         <div class="mobile-menu" :class="{ 'open': mobileMenuOpen }">
             <div class="mobile-menu-links">
-                <a href="{{ route('home') }}" class="mobile-link" :class="{ 'mobile-link-active': activeMenu === 'home' }" @click="toggleMobileMenu">🏠 Beranda</a>
+                <a href="{{ route('dashboard') }}" class="mobile-link" :class="{ 'mobile-link-active': activeMenu === 'dashboard' }" @click="toggleMobileMenu">🏠 Beranda</a>
                 
                 <div x-data="{ menuOpenMobile: false }">
                     <button @click="menuOpenMobile = !menuOpenMobile" class="mobile-dropdown-btn">
@@ -270,7 +270,7 @@
             cartItems: [],
             cartTotal: 0,
             cartTotalPrice: 0,
-            activeMenu: 'home',
+            activeMenu: 'dashboard',
             mobileMenuOpen: false,
             
             init() {
@@ -337,7 +337,7 @@
             
             setActiveFromURL() {
                 const path = window.location.pathname;
-                if (path === '/' || path === '/home') this.activeMenu = 'home';
+                if (path === '/' || path === '/dashboard') this.activeMenu = 'dashboard';
                 else if (path === '/menu') this.activeMenu = 'menu';
                 else if (path === '/menu-spesial') this.activeMenu = 'menu-spesial';
                 else if (path === '/reservasi') this.activeMenu = 'reservasi';

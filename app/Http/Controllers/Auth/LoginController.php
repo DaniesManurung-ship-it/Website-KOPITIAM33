@@ -16,7 +16,7 @@ class LoginController extends Controller
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
-            return redirect()->route('home');
+            return redirect()->route('dashboard');
         }
         
         return view('admin.login');
@@ -43,7 +43,7 @@ class LoginController extends Controller
                 return redirect()->route('admin.dashboard');
             }
             
-            return redirect()->route('home');
+            return redirect()->route('dashboard');
             // ========================================
         }
         

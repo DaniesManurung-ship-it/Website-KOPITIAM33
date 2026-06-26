@@ -167,7 +167,7 @@
             </svg>
             <h3>🔕 Belum Ada Notifikasi</h3>
             <p>Notifikasi akan muncul saat pesanan atau reservasi Anda diupdate oleh admin</p>
-            <a href="{{ route('home') }}" class="btn-back-home">
+            <a href="{{ route('dashboard') }}" class="btn-back-home">
                 🏠 Kembali ke Beranda
             </a>
         </div>

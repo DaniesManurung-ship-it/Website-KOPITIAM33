@@ -3,7 +3,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\OrderController;
@@ -12,7 +12,7 @@ use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MenuSpesialController;
 use App\Http\Controllers\CartController;
 
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
@@ -20,8 +20,8 @@ use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 
 // ========== GUEST ROUTES (Customer Frontend - Bisa dilihat semua) ==========
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/home', [HomeController::class, 'index']);
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
 // Customer Menu Routes (Hanya untuk melihat)
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
@@ -116,7 +116,7 @@ Route::get('/testimonials/latest', function() {
 // ========== ADMIN ROUTES (Protected - Hanya admin yang login) ==========
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications/counts', [App\Http\Controllers\Admin\AdminNotificationController::class, 'getCounts'])->name('admin.notifications.counts');
     
     // Menu Management

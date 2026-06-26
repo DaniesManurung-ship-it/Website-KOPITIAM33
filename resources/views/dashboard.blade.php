@@ -1,10 +1,10 @@
-{{-- resources/views/home.blade.php --}}
+{{-- resources/views/dashboard.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Home - Café Kopitiam33')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 @endpush
 
 @section('content')
@@ -88,7 +88,7 @@
                 </a>
             </div>
             <div>
-                <img src="{{ asset('images/home/depan.jpeg') }}" 
+                <img src="{{ asset('images/dashboard/depan.jpeg') }}" 
                      alt="Interior Café" 
                      class="about-image" 
                      fetchpriority="high"

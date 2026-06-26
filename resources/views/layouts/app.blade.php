@@ -507,7 +507,18 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('✓ ' + data.message);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            background: '#fdfbf7',
+                            customClass: {
+                                title: 'swal-title',
+                                popup: 'swal-popup'
+                            }
+                        });
                         closeTestimonialModal();
                         // Refresh testimoni widget jika ada
                         const widgetElement = document.querySelector('[x-data="testimoniWidget()"]');
@@ -515,12 +526,32 @@
                             widgetElement.__x.$data.fetchTestimonials();
                         }
                     } else {
-                        alert('✗ ' + (data.message || 'Gagal mengirim testimoni'));
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: data.message || 'Gagal mengirim testimoni',
+                            confirmButtonColor: '#285430',
+                            background: '#fdfbf7',
+                            customClass: {
+                                title: 'swal-title',
+                                popup: 'swal-popup'
+                            }
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan: ' + error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: error.message,
+                        confirmButtonColor: '#285430',
+                        background: '#fdfbf7',
+                        customClass: {
+                            title: 'swal-title',
+                            popup: 'swal-popup'
+                        }
+                    });
                 })
                 .finally(() => {
                     if (submitBtn) {
